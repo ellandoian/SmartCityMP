@@ -1,25 +1,31 @@
 #include <Arduino_APDS9960.h>
 int potPin = 27;
-int potVal = 2;
+int pushButton = 25;
+
 void setup() {
   Serial.begin(115200);
   APDS.begin();
+  pinMode(pushButton, INPUT);
 }
 
-bool button() // lag en variabel, som
+//kilde, ellandoian/filedump
+bool button(int trueTime)  //trueTime is how long you want the button to return TRUE
+//"pushButton" is the physical button, change name accordingly
 {
-  static bool valg, buttonVar = false;
-    if (digitalRead(pushButton) == HIGH)
-    {
-        buttonVar = true; // setter buttonVar til true mens knappen er klikket ned
-    }
-    if ((digitalRead(pushButton) == LOW) && (buttonVar == true)) // vil kjøre når knappen slippes og endrer retur variablen
-    {
-        valg = !valg;
-        buttonVar = false;
-    }
-    return valg;
+  static bool val, buttonVar, lastButtonState = false;
+  static uint32_t timer;
+  if (digitalRead(pushButton) == HIGH) {
+    buttonVar = true;  // setter buttonVar til true mens knappen er klikket ned
+    timer = millis();
+  }
+  if ((digitalRead(pushButton) == LOW) && (buttonVar == true))  // vil kjøre når knappen slippes og endrer retur variablen
+  {
+    val = true;
+    if (millis() - timer > trueTime) val, buttonVar = false;
+  }
+  return val;
 }
+
 
 int carCount(int proxy) {    //teller hvor mange biler som har kjørt forbi bommen, tar inn proximity dataen
   static int cCounter = -1;  //vil autmatisk telle +1 når koden kjøres første gang, verdi på -1 gjør at den starter på 0
@@ -47,10 +53,12 @@ int proxRead() {
   if (APDS.proximityAvailable()) proximity = APDS.readProximity();
   return proximity;
 }
-int* calibrateCol() {
+/*int* calibrateCol() {
   int* base;
-  if
-}
+  if (button(1000)){
+
+  }
+}*/ //ikke ferdig
 
 void IDcheck(int baseColor[]) {  //funksjonen som skal identisere fargene
   int* curColor;
@@ -86,6 +94,7 @@ void display() {
 void loop() {
   //colorRead();
   //proxRead();
+  static int potVal;
   potVal = analogRead(potPin);  //alt med "pot" i seg er bare for testing, skal fjernes fra ferdig produkt
   if (potVal < 900) display();  //kan starte og stoppe vising av målinger med potmetere (gadd ikke å lage bryter)
   if (potVal > 2000) IDcheck();
