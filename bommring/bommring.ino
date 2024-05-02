@@ -56,11 +56,14 @@ int proxRead() {
 /*int* calibrateCol() {
   int* base;
   if (button(1000)){
-
+//ta ett par målinger og gjennomsnitt eller no for å finne grei tilpassning av grunn fargen, siden den
+//pleier å endre litt på veridene de måler fra måling til måling tror jeg gjennomsnitt er smart
   }
-}*/ //ikke ferdig
+}*/ //ikke ferdig skal brukes til å finne fargen som leses når ingen biler er i nærrheten
 
 void IDcheck(int baseColor[]) {  //funksjonen som skal identisere fargene
+//denne funksjonen bygger på gammelt design, men tanken er å ta inn data fra kalibreringa ta den dataen minus nåværende 
+//vurColor for å se etter store utslag
   int* curColor;
   curColor = colorRead();
   static int colorCheck[3];
@@ -74,7 +77,7 @@ void IDcheck(int baseColor[]) {  //funksjonen som skal identisere fargene
 
 void display() {
   int* colorDis;           //om mann skal kalle på farge detektoren, gjør det slikt
-  colorDis = colorRead();  //------''-----
+  colorDis = colorRead();  //------''------
   Serial.print("red: ");
   Serial.print(colorDis[0]);
   Serial.print(" ");
