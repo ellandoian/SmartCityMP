@@ -1,6 +1,6 @@
 #include <Arduino_APDS9960.h>
 int pushButton = 25;
-int timePeriode = 20000;
+int timePeriode = 60000;
 
 void setup() {
   Serial.begin(115200);
@@ -48,6 +48,7 @@ short carCount(short proxy) {  //teller hvor mange biler som har kjørt forbi bo
   }
   return cCounter;
 }
+
 short carCount60s() {
   static unsigned long carArr[100] = {};
   static short prevCount = carCount(proxRead());
@@ -70,7 +71,6 @@ short carCount60s() {
   }
   return cc60;
 }
-
 
 int* colorRead() {
   static int rgb[3];
