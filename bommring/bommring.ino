@@ -1,11 +1,13 @@
 #include <Arduino_APDS9960.h>
-int potPin = 27;
 int pushButton = 25;
+int timePeriode = 20000;
 
 void setup() {
   Serial.begin(115200);
   APDS.begin();
   pinMode(pushButton, INPUT);
+  delay(timePeriode);
+  Serial.println("ready");
 }
 
 //kilde, ellandoian/filedump
@@ -35,17 +37,40 @@ short proxRead() {
   return proximity;
 }
 
-short carCount(int proxy) {    //teller hvor mange biler som har kjørt forbi bommen, tar inn proximity dataen
+short carCount(short proxy) {  //teller hvor mange biler som har kjørt forbi bommen, tar inn proximity dataen
   static short cCounter = -1;  //vil autmatisk telle +1 når koden kjøres første gang, verdi på -1 gjør at den starter på 0
   static bool countState = false;
 
-  if (proxy < 235) countState = true;    //veien ligger på runt 242, registerer når noe har kommet til bommen
-  else if (proxy > 235 && countState) {  //når bilen har kjørt helt gjennom bommen, vil bilen bli telt
+  if (proxy < 215) countState = true;    //veien ligger på runt 220, registerer når noe har kommet til bommen
+  else if (proxy > 215 && countState) {  //når bilen har kjørt helt gjennom bommen, vil bilen bli telt
     cCounter++;
     countState = false;
   }
   return cCounter;
 }
+short carCount60s() {
+  static unsigned long carArr[100] = {};
+  static short prevCount = carCount(proxRead());
+  static short cc60;
+  static bool flag = false;
+  if (prevCount != carCount(proxRead()) && flag) {
+    cc60++;
+    carArr[cc60 - 1] = millis();
+    prevCount = carCount(proxRead());
+  } else if (prevCount != carCount(proxRead())) {
+    flag = true;
+    prevCount = carCount(proxRead());
+  }
+
+  if (carArr[0] <= millis() - timePeriode && carArr[0] != 0) {
+    for (int i = 0; i < cc60; i++) {
+      carArr[i] = carArr[i + 1];
+    }
+    cc60--;
+  }
+  return cc60;
+}
+
 
 int* colorRead() {
   static int rgb[3];
@@ -58,7 +83,6 @@ int* colorRead() {
 
 int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsnittet
   static uint32_t colCalTime = millis();
-  static bool ccFlag = false;
   static short count;
   static int base[3], prevBase[3];
   if (button(1200, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
@@ -80,49 +104,30 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
   return base;
 }
 
-void IDcheck() {  //funksjonen som skal identisere fargene
-                  //denne funksjonen bygger på gammelt design, men tanken er å ta inn data fra kalibreringa ta den dataen minus nåværende
-                  //curColor for å se etter store utslag
-  static uint32_t testTime = millis();
+String IDcheck() {  //funksjonen som skal identisere fargene
+                    //denne funksjonen bygger på gammelt design, men tanken er å ta inn data fra kalibreringa ta den dataen minus nåværende
+                    //curColor for å se etter store utslag
+  String ID;
   int* baseColor;
   baseColor = calibrateCol();
   int* curColor;
   curColor = colorRead();
   static int colorCheck[3];
   for (short i; i <= 2; i++) {
-    colorCheck[i] = curColor[i] - baseColor[i];
+    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 20));
   }
-  if (millis() - testTime > 1000) {
-    Serial.print(colorCheck[0]);
-    Serial.print(colorCheck[1]);
-    Serial.println(colorCheck[2]);
-    testTime = millis();
-  }
+  return ID;
 }
 
-void display() {
-  /*int* colorDis;           //om mann skal kalle på farge detektoren, gjør det slikt
-  colorDis = colorRead();  //------''------
-  Serial.print("red: ");
-  Serial.print(colorDis[0]);
-  Serial.print(" ");
-  Serial.print("green: ");
-  Serial.print(colorDis[1]);
-  Serial.print(" ");
-  Serial.print("blue: ");
-  Serial.print(colorDis[2]);
-  Serial.print(" ");*/
-  /*Serial.print("prox: ");
-  Serial.println(proxRead());
-  Serial.print("count:");
-  Serial.println(carCount(proxRead()));*/
-  Serial.println();
+void printOnce(short input){
+  static short prevInput = input;
+  if (prevInput != input){
+    Serial.println(input);
+    prevInput = input;
+  }
 }
 
 void loop() {
-  //static int potVal;
-  //potVal = analogRead(potPin);  //alt med "pot" i seg er bare for testing, skal fjernes fra ferdig produkt
-  IDcheck();
-  //if (potVal < 900) display();  //kan starte og stoppe vising av målinger med potmetere (gadd ikke å lage bryter)
-  //if (potVal > 2000) IDcheck();
+  Serial.println(carCount60s());
+  printOnce(IDcheck().toInt());
 }
