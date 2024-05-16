@@ -1,13 +1,10 @@
 #include <Arduino_APDS9960.h>
 int pushButton = 25;
-int timePeriode = 60000;
 
 void setup() {
   Serial.begin(115200);
   APDS.begin();
   pinMode(pushButton, INPUT);
-  delay(timePeriode);
-  Serial.println("ready");
 }
 
 //kilde, ellandoian/filedump
@@ -31,7 +28,7 @@ bool button(int trueTime, bool pulldown) {
   return val;
 }
 
-short proxRead() {  //leser av proximity sensoren
+short proxRead() {
   static short proximity;
   if (APDS.proximityAvailable()) proximity = APDS.readProximity();
   return proximity;
@@ -49,21 +46,21 @@ short carCount(short proxy) {  //teller hvor mange biler som har kjørt forbi bo
   return cCounter;
 }
 
-short carCount60s() {  //teller hvor mange biler som har passert ila 60 sekunder
+short carCount60s() {
   static unsigned long carArr[100] = {};
   static short prevCount = carCount(proxRead());
   static short cc60;
   static bool flag = false;
-  if (prevCount != carCount(proxRead()) && flag) {  //om carCount har opptatert seg og det ikke er  første gjennomkjøring av koden lagres tiden dette kjedde
+  if (prevCount != carCount(proxRead()) && flag) {
     cc60++;
     carArr[cc60 - 1] = millis();
     prevCount = carCount(proxRead());
-  } else if (prevCount != carCount(proxRead())) {  //ser om det er første gjennomkjøring av koden
+  } else if (prevCount != carCount(proxRead())) {
     flag = true;
     prevCount = carCount(proxRead());
   }
 
-  if (carArr[0] <= millis() - timePeriode && carArr[0] != 0) {  //om det er 60 sekunder siden en bil paserte vil denne bilen fjernes fra tellinga av antall biler i intervallet
+  if (carArr[0] + 60000 <= millis() && carArr[0] != 0) {
     for (int i = 0; i < cc60; i++) {
       carArr[i] = carArr[i + 1];
     }
@@ -72,7 +69,7 @@ short carCount60s() {  //teller hvor mange biler som har passert ila 60 sekunder
   return cc60;
 }
 
-int* colorRead() {  //leser av farge sensoren
+int* colorRead() {
   static int rgb[3];
   while (!APDS.colorAvailable()) {
     delay(5);
@@ -104,7 +101,9 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
   return base;
 }
 
-String IDcheck() {  //vil returnere farge koder basert på kaliberering, fargekodene er puttet inn i intervall slik at det vil gi mer gjevn lesing enn rådataen
+String IDcheck() {  //funksjonen som skal identisere fargene
+                    //denne funksjonen bygger på gammelt design, men tanken er å ta inn data fra kalibreringa ta den dataen minus nåværende
+                    //curColor for å se etter store utslag
   String ID;
   int* baseColor;
   baseColor = calibrateCol();
@@ -113,20 +112,21 @@ String IDcheck() {  //vil returnere farge koder basert på kaliberering, fargeko
   static int colorCheck[3];
   for (short i; i <= 2; i++) {
     ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 20));
+    ID += ",";
   }
+  //Serial.println(ID);
+  ID += String(carCount60s());
   return ID;
 }
 
-//om databasen sier ifra om når den har funnet en ID den kjenner igjen kan dette bli forbedret
-void printOnce(short input) { //printer inputten om det som er inputt endrer seg
-  static short prevInput = input;
-  if (prevInput != input) {
-    Serial.println(input);
-    prevInput = input;
+void printOnce() {
+  static String prevInput = IDcheck();
+  if (prevInput != IDcheck()) {
+    Serial.println(IDcheck());
+    prevInput = IDcheck();
   }
 }
 
 void loop() {
-  Serial.println(carCount60s());
-  printOnce(IDcheck().toInt());
+  printOnce();
 }
