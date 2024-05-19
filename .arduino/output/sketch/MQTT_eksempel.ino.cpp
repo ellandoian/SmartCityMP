@@ -1,3 +1,5 @@
+#include <Arduino.h>
+#line 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <Wire.h>
@@ -18,6 +20,17 @@ int value = 0;
 int variabel1 = 0;
 int variabel2 = 0;
 
+#line 21 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+void setup();
+#line 30 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+void setup_wifi();
+#line 50 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+void callback(char* topic, byte* message, unsigned int length);
+#line 73 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+void reconnect();
+#line 92 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+void loop();
+#line 21 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
 void setup() {
   Serial.begin(115200);
   Serial.println("start");
