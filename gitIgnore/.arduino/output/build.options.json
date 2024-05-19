@@ -1,0 +1,11 @@
+{
+  "additionalFiles": "",
+  "builtInToolsFolders": "",
+  "compiler.optimization_flags": "",
+  "customBuildProperties": "",
+  "fqbn": "pololu-a-star:avr:a-star32U4",
+  "hardwareFolders": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages",
+  "otherLibrariesFolders": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries",
+  "runtime.ide.version": "10607",
+  "sketchLocation": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk"
+}

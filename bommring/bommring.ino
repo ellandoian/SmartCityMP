@@ -120,7 +120,7 @@ String IDcheck() {  //funksjonen som skal identisere fargene
   return ID;
 }
 
-void printOnce() {
+void printOnce() { //printer kun når det er ny informasjon, og om den lagra informasjonen har hendt de siste 50 nye avlesningene vil det heller ikke bli printet
   static String prevInput = IDcheck();
   static String dataArr[50] = { String(0) };
   static uint32_t dataTime[50] = {millis()};
@@ -130,7 +130,7 @@ void printOnce() {
   if (j < 50) {
     j = 0;
   }
-  if (prevInput != IDcheck()) {
+  if (prevInput != IDcheck()) { 
     String data = IDcheck();
     //Serial.println(IDcheck());
     for (int i; i <= 50; i++) {
