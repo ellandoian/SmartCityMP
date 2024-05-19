@@ -1,4 +1,6 @@
 #include <Arduino_APDS9960.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
 int pushButton = 25;
 
 void setup() {
@@ -37,9 +39,8 @@ short proxRead() {
 short carCount(short proxy) {  //teller hvor mange biler som har kjørt forbi bommen, tar inn proximity dataen
   static short cCounter = -1;  //vil autmatisk telle +1 når koden kjøres første gang, verdi på -1 gjør at den starter på 0
   static bool countState = false;
-
-  if (proxy < 215) countState = true;    //veien ligger på runt 220, registerer når noe har kommet til bommen
-  else if (proxy > 215 && countState) {  //når bilen har kjørt helt gjennom bommen, vil bilen bli telt
+  if (proxy < 150) countState = true;    //veien ligger på runt 220, registerer når noe har kommet til bommen
+  else if (proxy > 150 && countState) {  //når bilen har kjørt helt gjennom bommen, vil bilen bli telt
     cCounter++;
     countState = false;
   }
@@ -121,8 +122,27 @@ String IDcheck() {  //funksjonen som skal identisere fargene
 
 void printOnce() {
   static String prevInput = IDcheck();
+  static String dataArr[50] = { String(0) };
+  static uint32_t dataTime[50] = {millis()};
+  static int j;
+  static bool io = false;
+  j++;
+  if (j < 50) {
+    j = 0;
+  }
   if (prevInput != IDcheck()) {
-    Serial.println(IDcheck());
+    String data = IDcheck();
+    //Serial.println(IDcheck());
+    for (int i; i <= 50; i++) {
+      if (data == dataArr[i]) {
+        io = true;
+        break;
+      } else io = false;
+    }
+    if (io == false) {
+      Serial.println(data); //putt "push" greia her
+      dataArr[j] = data;
+    }
     prevInput = IDcheck();
   }
 }
