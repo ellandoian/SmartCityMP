@@ -48,9 +48,9 @@ void setup_wifi() {
 }
 
 void callback(char* topic, byte* message, unsigned int length) {
-  Serial.print("Message arrived on topic: ");
+  Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
-  Serial.print(". Message: ");
+  Serial.print(". Melding: ");
   String messageTemp;
   
   for (int i = 0; i < length; i++) {
@@ -60,12 +60,12 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.println();
 
   if (String(topic) == "esp32/output") {
-    Serial.print("Changing output to ");
+    Serial.print("Endrer output til: ");
     if(messageTemp == "on"){
-      Serial.println("on");
+      Serial.println("på");
     }
     else if(messageTemp == "off"){
-      Serial.println("off");
+      Serial.println("av");
     }
   }
 }
@@ -98,23 +98,22 @@ void loop() {
   long now = millis();
   if (now - lastMsg > 5000) {
     lastMsg = now;
-    int temperature = 42;
+    int val1 = 80085;
     //Konverterer verdien fra int til char array, sender tempstring til gitt topic
-    char tempString[8];
-    dtostrf(temperature, 1, 2, tempString);
-    Serial.print("Temperature: ");
-    Serial.println(tempString);
+    char Value_1[8];
+    dtostrf(val1, 1, 2, Value_1);
+    Serial.print("Verdi 1: ");
+    Serial.println(Value_1);
 
-    client.publish("esp32/output", tempString);
+    client.publish("esp32/output", Value_1);
 
-    int humidity = 1;
+    int val2 = 69;
     
     // Verdien som sendes MÅ være et char array, vet ikke hva dtostrf() funksjonen gjør, men den MÅ være der
-    //Denne funksjonen sender verdien fra humidity, men konvertert til char array
-    char humString[8];
-    dtostrf(humidity, 1, 2, humString);
-    Serial.print("Humidity: ");
-    Serial.println(humString);
-    client.publish("esp32/output", humString);
+    char Value_2[8];
+    dtostrf(val2, 1, 2, Value_2);
+    Serial.print("Verdi 2: ");
+    Serial.println(Value_2);
+    client.publish("esp32/output", Value_2);
   }
 }
