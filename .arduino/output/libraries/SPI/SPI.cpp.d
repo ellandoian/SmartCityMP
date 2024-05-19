@@ -1,4 +1,4 @@
-c:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\libraries\SPI\SPI.cpp.o: \
+C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\libraries\SPI\SPI.cpp.o: \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\libraries\SPI\src\SPI.cpp \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\libraries\SPI\src\SPI.h \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Arduino.h \

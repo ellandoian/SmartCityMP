@@ -2,5 +2,5 @@
     "board": "pololu-a-star:avr:a-star32U4",
     "programmer": "avrisp",
     "output": ".arduino/output",
-    "sketch": "BilForbruk/BilForbruk.ino"
+    "sketch": "MQTT_eksempel/MQTT_eksempel.ino"
 }

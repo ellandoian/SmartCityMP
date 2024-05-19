@@ -1,4 +1,4 @@
-c:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\libraries\WiFi-1.2.7\WiFiClient.cpp.o: \
+C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\libraries\WiFi-1.2.7\WiFiClient.cpp.o: \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src\WiFiClient.cpp \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src\utility/wl_definitions.h \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src\utility/wl_types.h \

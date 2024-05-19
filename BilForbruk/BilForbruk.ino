@@ -39,7 +39,7 @@ float distMeasure()
     return distPart;
 }
 
-//Viser batterinivået, mellom 0 og 80
+//Genererer batterinivået, mellom 0 og 80
 
 int batteryDrain(int battery) {
     battery = 80 - (totalDistance/5);
@@ -77,14 +77,14 @@ void Receive(int howMany) {
   }
 }
 
-//Fyller opp batteriet
+//Lader opp batteriet
 
 void Charge() {
     distMultiplier = 0;
     partDisGlobal = 0;
 }
 
-//Sende data til ESP
+//Sende distanse kjørt til ESP
 
 void sendDistance() {
     Wire.write(totalDistance);

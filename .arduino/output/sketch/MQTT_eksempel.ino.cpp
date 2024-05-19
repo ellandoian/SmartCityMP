@@ -1,7 +1,8 @@
-# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
-# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino" 2
-# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino" 2
-# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino" 2
+#include <Arduino.h>
+#line 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <Wire.h>
 
 // wifi og wifipassord
 const char* ssid = "NTNU-IOT";
@@ -19,6 +20,17 @@ int value = 0;
 int variabel1 = 0;
 int variabel2 = 0;
 
+#line 21 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+void setup();
+#line 30 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+void setup_wifi();
+#line 50 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+void callback(char* topic, byte* message, unsigned int length);
+#line 73 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+void reconnect();
+#line 92 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+void loop();
+#line 21 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
 void setup() {
   Serial.begin(115200);
   Serial.println("start");
@@ -53,7 +65,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.print(topic);
   Serial.print(". Melding: ");
   String messageTemp;
-
+  
   for (int i = 0; i < length; i++) {
     Serial.print((char)message[i]);
     messageTemp += (char)message[i];
@@ -109,7 +121,7 @@ void loop() {
     client.publish("esp32/output", Value_1);
 
     int val2 = 69;
-
+    
     // Verdien som sendes MÅ være et char array, vet ikke hva dtostrf() funksjonen gjør, men den MÅ være der
     char Value_2[8];
     dtostrf(val2, 1, 2, Value_2);

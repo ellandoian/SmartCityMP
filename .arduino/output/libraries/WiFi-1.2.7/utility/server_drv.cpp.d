@@ -1,4 +1,4 @@
-c:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\libraries\WiFi-1.2.7\utility\server_drv.cpp.o: \
+C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\libraries\WiFi-1.2.7\utility\server_drv.cpp.o: \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src\utility\server_drv.cpp \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src/utility/server_drv.h \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src/utility/wifi_spi.h \

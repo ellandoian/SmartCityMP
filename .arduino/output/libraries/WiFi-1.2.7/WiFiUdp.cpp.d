@@ -1,4 +1,4 @@
-c:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\libraries\WiFi-1.2.7\WiFiUdp.cpp.o: \
+C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\libraries\WiFi-1.2.7\WiFiUdp.cpp.o: \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src\WiFiUdp.cpp \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src\utility/debug.h \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src\utility/wifi_spi.h \
