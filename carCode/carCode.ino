@@ -4,7 +4,13 @@ Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
 Zumo32U4ButtonC buttonC;
 Zumo32U4OLED display;
-
+/*
+******************************************************************************************************************
+***************************************************|----------|***************************************************
+***************************************************|LES README|***************************************************
+***************************************************|----------|***************************************************
+******************************************************************************************************************
+*/
 static int drip[5];
 
 byte topSpeed = 200;
@@ -18,7 +24,7 @@ void setup() {
   uint32_t startTime = millis();
   while (startFlag) {
     lineSensors.calibrate();
-    if (millis() - startTime >= 5000) startFlag = false;
+    if (millis() - startTime >= 5500) startFlag = false;
   }
   motors.setSpeeds(0, 0);
 }
@@ -32,11 +38,26 @@ short lineSensorRead() {
 void drivingMain() {
   byte filler[3] = { 3, 2, 1 };
   static byte input = 1;
+
   switch (input) {
     case 1:
-
-    case 2:
-      static bool straightFlag = false;
+      static bool leftFlag, leftFlag2 = false;
+      static byte leftCounter = 0;
+      static uint32_t leftTime = millis();
+      lineFollowPID(lineSensorRead());
+      if (lineSensors.readOneSens(drip) >= 900 && leftFlag2 == false) leftFlag, leftFlag2 = true;
+      else if (lineSensors.readOneSens(drip) == 0 && leftFlag) {
+        leftCounter++;
+        leftFlag = false;
+      }
+      if (lineSensors.readOneSens(drip) >= 900 && leftCounter > 0){
+        motors.setSpeeds(-100,150);
+        delay(500);
+        leftCounter = 0;
+        leftFlag2 = false;
+      }
+      case 2:
+        static bool straightFlag = false;
       static byte straightCounter = 0;
       if (straightCounter < 2) {  //fjern if setningen
         lineFollowPID(lineSensorRead());
@@ -49,6 +70,7 @@ void drivingMain() {
       if (straightCounter >= 2) {
         motors.setSpeeds(0, 0);  //her skal break eller no og "straightCounter = 0;"
       }
+
     case 3:
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
