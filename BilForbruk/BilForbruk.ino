@@ -123,6 +123,21 @@ void pidSetup() {
   motors.setSpeeds(0, 0);
 }
 
+void drivingMain() {
+  int filler[3] = { 3, 2, 1 };
+  static int input = 0;
+  switch (input) {
+    case 1:
+      break;
+    case 2:
+      break;
+    case 3:
+      break;
+    default:
+      lineFollowPID(lineSensorRead());
+  }
+}
+
 //Main
 
 void setup() {
@@ -142,7 +157,6 @@ void setup() {
 }
 
 void loop() {
-  lineFollowPID(lineSensorRead());
   partDisGlobal = distMeasure();
   totalDistance = partDisGlobal + (distMultiplier * 255);
   power = batteryDrain(power);
