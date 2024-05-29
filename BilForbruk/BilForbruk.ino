@@ -61,7 +61,7 @@ void showBattery() {
     display.println("Distance drove; ");
     display.gotoXY(0, 4);
     display.print(totalDistance); 
-    display.print("km");
+    display.print("km ");
 }
 
 //Tolker meldinger fra ESP

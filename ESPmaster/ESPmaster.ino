@@ -86,7 +86,7 @@ void reconnect() {
 
 void setup()
 {
-  Wire.begin();
+  Wire.begin(); //Starter kommunikasjon som master
   Serial.begin(115200);
   Serial.println("start");
   // mqtt settup
