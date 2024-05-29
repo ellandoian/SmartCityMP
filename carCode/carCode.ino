@@ -5,6 +5,8 @@ Zumo32U4Motors motors;
 Zumo32U4ButtonC buttonC;
 Zumo32U4OLED display;
 
+static int drip[5];
+
 byte topSpeed = 200;
 
 void setup() {
@@ -16,7 +18,7 @@ void setup() {
   uint32_t startTime = millis();
   while (startFlag) {
     lineSensors.calibrate();
-    if (millis() - startTime >= 4000) startFlag = false;
+    if (millis() - startTime >= 5000) startFlag = false;
   }
   motors.setSpeeds(0, 0);
 }
@@ -29,17 +31,37 @@ short lineSensorRead() {
 
 void drivingMain() {
   byte filler[3] = { 3, 2, 1 };
-  static byte input = 0;
+  static byte input = 1;
   switch (input) {
     case 1:
-      break;
-    case 2:
-      break;
-    case 3:
-      break;
 
-    default:
-      lineFollowPID(lineSensorRead());
+    case 2:
+      static bool straightFlag = false;
+      static byte straightCounter = 0;
+      if (straightCounter < 2) {  //fjern if setningen
+        lineFollowPID(lineSensorRead());
+      }
+      if (lineSensors.readOneSens(drip) >= 900) straightFlag = true;
+      else if (lineSensors.readOneSens(drip) == 0 && straightFlag) {
+        straightCounter++;
+        straightFlag = false;
+      }
+      if (straightCounter >= 2) {
+        motors.setSpeeds(0, 0);  //her skal break eller no og "straightCounter = 0;"
+      }
+    case 3:
+      static bool rightFlag = false;
+      static uint32_t rightTime = millis();
+      if (lineSensors.readOneSens(drip) >= 900) {
+        rightTime = millis();
+        motors.setSpeeds(150, -100);
+        rightFlag = true;
+      }
+      if (millis() - rightTime >= 500 && rightFlag) {
+        //input = 2;  // bytt ut dette med break eller no
+        rightFlag = false;
+        break;
+      } else if (millis() - rightTime >= 500) lineFollowPID(lineSensorRead());
   }
 }
 
@@ -49,21 +71,12 @@ void lineFollowPID(int pos) {  // tar inn posisjonen
   prevPos = pos;
   byte lSpeed = constrain(topSpeed + correction, 0, topSpeed);  // farten på venstre side lik topSpeed + correction
   byte rSpeed = constrain(topSpeed - correction, 0, topSpeed);  // farten på høgre side lik topspeed - correction
-                                                                 // setter slik at verdien vil alltids være mellom 200 og 0, vil forhindre for høye hastigheter, men viktigs
-                                                                 // hindrer at det vil fort gå fra positiv hastighet til negativ hastighet som kan skade motorene.
-  //Serial.println(lSpeed);
+                                                                // setter slik at verdien vil alltids være mellom 200 og 0, vil forhindre for høye hastigheter, men viktigs
+                                                                // hindrer at det vil fort gå fra positiv hastighet til negativ hastighet som kan skade motorene.
   motors.setSpeeds(lSpeed, rSpeed);
 }
 
-/*int test(){
-  static unsigned short lineSensorValsia[5];  // lager en variable med like mange indekser som det er sensorer
-  int swagger = lineSensors.readOneSens(lineSensorValsia[5]);
-  return swagger;
-}*/
-
 void loop() {
-  static int drip[5];
   Serial.println(lineSensors.readOneSens(drip));
-  lineFollowPID(lineSensorRead());
- // Serial.println(test());
+  drivingMain();
 }
