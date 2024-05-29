@@ -23,7 +23,7 @@ float partDisGlobal;
 #line 21 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 float distMeasure();
 #line 39 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
-int batteryDrain(int battery);
+int batteryDrain(byte battery);
 #line 50 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void showBattery();
 #line 64 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
@@ -55,7 +55,7 @@ float distMeasure()
 
 //Genererer batterinivået, mellom 0 og 80
 
-int batteryDrain(int battery) {
+int batteryDrain(byte battery) {
     battery = 80 - (totalDistance/5);
     if (battery < 0) {
         battery = 0;
