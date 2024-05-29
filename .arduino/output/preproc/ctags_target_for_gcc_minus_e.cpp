@@ -81,12 +81,19 @@ void Receive(int howMany) {
   }
 }
 
-//Lader opp batteriet
+//Lader opp batteriet og pauser i 5 sekund
 
 void Charge() {
+    unsigned long time=millis();
     distMultiplier = 0;
     partDisGlobal = 0;
     display.clear();
+    display.println("CHARGING");
+    delay(5000);
+    display.clear();
+    motors.setSpeeds(50,50);
+    delay(500);
+    motors.setSpeeds(0,0);
 }
 
 //Sende distanse kjørt til ESP

@@ -30,11 +30,11 @@ void showBattery();
 void Receive(int howMany);
 #line 77 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void Charge();
-#line 85 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 92 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void sendDistance();
-#line 91 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 98 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void setup();
-#line 106 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 113 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void loop();
 #line 21 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 float distMeasure()
@@ -91,12 +91,19 @@ void Receive(int howMany) {
   }
 }
 
-//Lader opp batteriet
+//Lader opp batteriet og pauser i 5 sekund
 
 void Charge() {
+    unsigned long time=millis();
     distMultiplier = 0;
     partDisGlobal = 0;
     display.clear();
+    display.println("CHARGING");
+    delay(5000);
+    display.clear();
+    motors.setSpeeds(50,50);
+    delay(500);
+    motors.setSpeeds(0,0);
 }
 
 //Sende distanse kjørt til ESP
