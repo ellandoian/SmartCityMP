@@ -1,0 +1,92 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino"
+  },
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\leonardo"
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\MQTT_eksempel.ino.cpp",
+    "Include": "WiFi.h",
+    "Includepath": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\MQTT_eksempel.ino.cpp",
+    "Include": "PubSubClient.h",
+    "Includepath": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\pubsubclient\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\MQTT_eksempel.ino.cpp",
+    "Include": "Wire.h",
+    "Includepath": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\MQTT_eksempel.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src\\WiFi.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src\\WiFiClient.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src\\WiFiServer.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src\\WiFiUdp.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src\\utility\\server_drv.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src\\utility\\spi_drv.cpp",
+    "Include": "SPI.h",
+    "Includepath": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\SPI\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src\\utility\\spi_drv.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src\\utility\\wifi_drv.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\pubsubclient\\src\\PubSubClient.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src\\Wire.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src\\utility\\twi.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\SPI\\src\\SPI.cpp",
+    "Include": "",
+    "Includepath": null
+  }
+]
