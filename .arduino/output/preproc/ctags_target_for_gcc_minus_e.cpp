@@ -4,20 +4,15 @@
 # 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 2
 # 5 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 2
 # 6 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 2
-# 7 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 2
-# 8 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 2
 
 Zumo32U4Motors motors;
-Zumo32U4ButtonA buttonA;
-Zumo32U4ButtonB buttonB;
 Zumo32U4ButtonC buttonC;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4OLED display;
-Zumo32U4Buzzer buzzer;
 Zumo32U4Encoders encoder;
 
 
-int power, distMultiplier;
+byte power, distMultiplier;
 unsigned long totalDistance;
 float partDisGlobal;
 
@@ -56,13 +51,13 @@ int batteryDrain(int battery) {
 void showBattery() {
     display.gotoXY(0, 0);
     display.print((reinterpret_cast<const __FlashStringHelper *>(
-# 57 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
+# 52 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
                  (__extension__({static const char __c[] __attribute__((__progmem__)) = (
-# 57 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+# 52 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
                  "Power: "
-# 57 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
+# 52 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
                  ); &__c[0];}))
-# 57 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+# 52 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
                  )));
     display.gotoXY(0, 1);
     display.print(power);

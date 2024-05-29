@@ -1,22 +1,17 @@
 //Antatt forbruk 0.2kWh per km, 400 km rekkevidde. Maks batteri er 80 kWh.
 
-#include <IRremote.h>
 #include <Wire.h>
 #include <Zumo32U4.h>
 #include <EEPROM.h>
-#include <WiFi.h>
  
 Zumo32U4Motors motors;
-Zumo32U4ButtonA buttonA;
-Zumo32U4ButtonB buttonB;
 Zumo32U4ButtonC buttonC;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4OLED display;
-Zumo32U4Buzzer buzzer;
 Zumo32U4Encoders encoder;
 
 
-int power, distMultiplier;
+byte power, distMultiplier;
 unsigned long totalDistance;
 float partDisGlobal;
 
