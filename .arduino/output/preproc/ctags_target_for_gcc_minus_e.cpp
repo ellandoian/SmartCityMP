@@ -91,6 +91,7 @@ void Receive(int howMany) {
 void Charge() {
     distMultiplier = 0;
     partDisGlobal = 0;
+    display.clear();
 }
 
 //Sende distanse kjørt til ESP
