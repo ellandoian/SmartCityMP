@@ -27,6 +27,22 @@ short lineSensorRead() {
   return error;
 }
 
+void drivingMain() {
+  byte filler[3] = { 3, 2, 1 };
+  static byte input = 0;
+  switch (input) {
+    case 1:
+      break;
+    case 2:
+      break;
+    case 3:
+      break;
+
+    default:
+      lineFollowPID(lineSensorRead());
+  }
+}
+
 void lineFollowPID(int pos) {  // tar inn posisjonen
   static short prevPos;
   short correction = pos / 4 + 6 * (pos - prevPos);  // kilde eksempelkode
@@ -35,10 +51,19 @@ void lineFollowPID(int pos) {  // tar inn posisjonen
   byte rSpeed = constrain(topSpeed - correction, 0, topSpeed);  // farten på høgre side lik topspeed - correction
                                                                  // setter slik at verdien vil alltids være mellom 200 og 0, vil forhindre for høye hastigheter, men viktigs
                                                                  // hindrer at det vil fort gå fra positiv hastighet til negativ hastighet som kan skade motorene.
-  Serial.println(lSpeed);
+  //Serial.println(lSpeed);
   motors.setSpeeds(lSpeed, rSpeed);
 }
 
+/*int test(){
+  static unsigned short lineSensorValsia[5];  // lager en variable med like mange indekser som det er sensorer
+  int swagger = lineSensors.readOneSens(lineSensorValsia[5]);
+  return swagger;
+}*/
+
 void loop() {
+  static int drip[5];
+  Serial.println(lineSensors.readOneSens(drip));
   lineFollowPID(lineSensorRead());
+ // Serial.println(test());
 }
