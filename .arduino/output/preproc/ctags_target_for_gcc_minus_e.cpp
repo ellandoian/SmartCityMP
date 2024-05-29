@@ -12,9 +12,10 @@ Zumo32U4OLED display;
 Zumo32U4Encoders encoder;
 
 byte topSpeed = 200;
-byte power, distMultiplier;
+byte power, distMultiplier, input;
 unsigned long totalDistance;
 float partDisGlobal;
+int courseArray[];
 
 //Avstand kjørt, 1m kjøring er 10km simulert kjøring.
 //Etter 255km kjørt simulert, deles totaldistansen opp i et multiplum av 255 og en rest, slik at EEprom kan lagre hele distansen.
@@ -50,13 +51,13 @@ int batteryDrain(byte battery) {
 void showBattery() {
   display.gotoXY(0, 0);
   display.print((reinterpret_cast<const __FlashStringHelper *>(
-# 51 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
+# 52 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
                (__extension__({static const char __c[] __attribute__((__progmem__)) = (
-# 51 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+# 52 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
                "Power: "
-# 51 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
+# 52 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
                ); &__c[0];}))
-# 51 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+# 52 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
                )));
   display.gotoXY(0, 1);
   display.print(power);
@@ -84,14 +85,10 @@ void Receive(int howMany) {
 
 void Charge() {
   unsigned long time = millis();
-  distMultiplier = 0;
-  partDisGlobal = 0;
   display.clear();
   display.println("CHARGING");
-  delay(5000);
-  display.clear();
-  motors.setSpeeds(50, 50);
-  delay(500);
+  distMultiplier = 0;
+  partDisGlobal = 0;
   motors.setSpeeds(0, 0);
 }
 
@@ -132,6 +129,24 @@ void pidSetup() {
   motors.setSpeeds(0, 0);
 }
 
+void drivingMain() {
+  int filler[3] = { 3, 2, 1 };
+  switch (input) {
+    case 1:
+      break;
+    case 2:
+      break;
+    case 3:
+      break;
+    case 4:
+        Charge();
+
+        break;
+    default:
+      lineFollowPID(lineSensorRead());
+  }
+}
+
 //Main
 
 void setup() {
@@ -151,7 +166,6 @@ void setup() {
 }
 
 void loop() {
-  lineFollowPID(lineSensorRead());
   partDisGlobal = distMeasure();
   totalDistance = partDisGlobal + (distMultiplier * 255);
   power = batteryDrain(power);

@@ -11,9 +11,10 @@ Zumo32U4OLED display;
 Zumo32U4Encoders encoder;
 
 byte topSpeed = 200;
-byte power, distMultiplier;
+byte power, distMultiplier, input;
 unsigned long totalDistance;
 float partDisGlobal;
+int courseArray[];
 
 //Avstand kjørt, 1m kjøring er 10km simulert kjøring.
 //Etter 255km kjørt simulert, deles totaldistansen opp i et multiplum av 255 og en rest, slik at EEprom kan lagre hele distansen.
@@ -75,14 +76,10 @@ void Receive(int howMany) {
 
 void Charge() {
   unsigned long time = millis();
-  distMultiplier = 0;
-  partDisGlobal = 0;
   display.clear();
   display.println("CHARGING");
-  delay(5000);
-  display.clear();
-  motors.setSpeeds(50, 50);
-  delay(500);
+  distMultiplier = 0;
+  partDisGlobal = 0;
   motors.setSpeeds(0, 0);
 }
 
@@ -125,7 +122,6 @@ void pidSetup() {
 
 void drivingMain() {
   int filler[3] = { 3, 2, 1 };
-  static int input = 0;
   switch (input) {
     case 1:
       break;
@@ -133,6 +129,10 @@ void drivingMain() {
       break;
     case 3:
       break;
+    case 4:
+        Charge();
+
+        break;
     default:
       lineFollowPID(lineSensorRead());
   }
