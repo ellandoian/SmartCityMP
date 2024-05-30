@@ -30,9 +30,9 @@ int batteryDrain(byte battery);
 void showBattery();
 #line 65 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void Receive(int howMany);
-#line 79 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 78 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void Charge();
-#line 89 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 88 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void sendDistance();
 #line 98 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 short lineSensorRead();
@@ -77,7 +77,7 @@ int batteryDrain(byte battery) {
 
 void showBattery() {
   display.gotoXY(0, 0);
-  display.print(F("Power: "));
+  display.print(F("Power:  "));
   display.gotoXY(0, 1);
   display.print(power);
   display.gotoXY(0, 3);
@@ -93,30 +93,30 @@ void Receive(int howMany) {
   byte i = 0;
   while (0 < Wire.available())  // loop through all
   {
-    courseArray[i] = Wire.read();  // receive byte as an int
+    byte receivedByte = Wire.read();
+    courseArray[i] = receivedByte - '0';
     Serial.print(courseArray[i]);    // print the character
     i++;
     }
-  Serial.println();
-  Serial.println("Data received");
 }
 
 //Lader opp batteriet og pauser i 5 sekund
 
 void Charge() {
-  unsigned long time = millis();
   display.clear();
   display.println("CHARGING");
   sendChargeDist = true;
   motors.setSpeeds(0, 0);
+  delay(1000);
 }
 
 //Sende distanse kjørt til ESP
 
 void sendDistance() {
   if (sendChargeDist == true) {
+    Serial.println(totalDistance);
     Wire.write(totalDistance);
-    sendChargeDist != sendChargeDist;
+    sendChargeDist = false;
     distMultiplier = 0;
     partDisGlobal = 0;
   }
@@ -186,12 +186,12 @@ void setup() {
   power = EEPROM.read(0);
   partDisGlobal = EEPROM.read(1);
   distMultiplier = EEPROM.read(2);
-  pidSetup();
+  //pidSetup();
 }
 
 void loop() {
   motors.setSpeeds(100,100);
-  static long tid = millis();
+  static long tid;
   partDisGlobal = distMeasure();
   totalDistance = partDisGlobal + (distMultiplier * 255);
   power = batteryDrain(power);
