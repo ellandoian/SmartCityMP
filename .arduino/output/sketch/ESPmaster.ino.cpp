@@ -1,7 +1,8 @@
-# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
-# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
-# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
-# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
+#include <Arduino.h>
+#line 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+#include <Wire.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
 
 // wifi og wifipassord
 const char* ssid = "NTNU-IOT";
@@ -21,6 +22,19 @@ int variabel2 = 0;
 
 
 
+#line 23 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void setup_wifi();
+#line 43 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void callback(char* topic, byte* message, unsigned int length);
+#line 73 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void reconnect();
+#line 94 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void setup();
+#line 107 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void receiveEvent(int howMany);
+#line 116 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void loop();
+#line 23 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
 void setup_wifi() {
   delay(10);
   // Kobler til wifi:
@@ -47,7 +61,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.print(". Melding: ");
   String messageTemp;
   int courseArray[0]={};
-
+  
   /*for (int i = 0; i < length; i++) {
     Serial.print((char)message[i]);
     messageTemp += (char)message[i];
@@ -100,7 +114,7 @@ void setup()
   // mqtt settup
   setup_wifi();
   client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);
+  client.setCallback(callback); 
 }
 
 byte x = 0;
@@ -110,14 +124,14 @@ void receiveEvent(int howMany)
   while(0 < Wire.available()) //x loop through all but the last
   {
     int c = Wire.read(); // receive byte as a character
-    Serial.print(c); // print the character
+    Serial.print(c);         // print the character
   }
 }
 
 void loop() {
   Wire.beginTransmission(1); // transmit to device #4
-  Wire.write(x); // sends one byte  
-  Wire.endTransmission(); // stop transmitting
+  Wire.write(x);              // sends one byte  
+  Wire.endTransmission();    // stop transmitting
 
   x++;
   if (x>=9) {
@@ -146,7 +160,7 @@ void loop() {
     client.publish("esp32/output", Value_1);
 
     int val2 = 69;
-
+    
     // Verdien som sendes MÅ være et char array, vet ikke hva dtostrf() funksjonen gjør, men den MÅ være der
     char Value_2[8];
     dtostrf(val2, 1, 2, Value_2);

@@ -7,7 +7,7 @@ const char* ssid = "NTNU-IOT";
 const char* password = "";
 
 //Broker adresse
-const char* mqtt_server = "10.25.18.138";
+const char* mqtt_server = "10.25.18.149";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -45,12 +45,19 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.print(topic);
   Serial.print(". Melding: ");
   String messageTemp;
+  int courseArray[0]={};
   
-  for (int i = 0; i < length; i++) {
+  /*for (int i = 0; i < length; i++) {
     Serial.print((char)message[i]);
     messageTemp += (char)message[i];
   }
+  Serial.println();*/
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)message[i]);
+    courseArray[i] += (int)message[i];
+  }
   Serial.println();
+
 
   if (String(topic) == "esp32/output") {
     Serial.print("Endrer output til: ");
@@ -99,13 +106,11 @@ byte x = 0;
 
 void receiveEvent(int howMany)
 {
-  while(1 < Wire.available()) //x loop through all but the last
+  while(0 < Wire.available()) //x loop through all but the last
   {
-    char c = Wire.read(); // receive byte as a character
+    int c = Wire.read(); // receive byte as a character
     Serial.print(c);         // print the character
   }
-  int x = Wire.read();    // receive byte as an integer
-  Serial.println(x);         // print the integer
 }
 
 void loop() {
