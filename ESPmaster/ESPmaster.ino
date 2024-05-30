@@ -14,6 +14,8 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
+char courseGlobal[]={};
+byte courseLength;
 
 int variabel1 = 0;
 int variabel2 = 0;
@@ -44,24 +46,25 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
   Serial.print(". Melding: ");
-  int courseArray[0]={};
-  byte arrayLength;
+  char courseArray[length+1]={};
   
   /*for (int i = 0; i < length; i++) {
     Serial.print((char)message[i]);
     messageTemp += (char)message[i];
   }
   Serial.println();*/
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)message[i]);
+  
+  for (int i = 0; i < length; i++) {;
     courseArray[i] = (char)message[i];
-    arrayLength++;
+    courseLength++;
+  }
+  courseArray[length] = '\0';  // Null-terminate the string
+  for (int i = 0; i < length; i++) {
+    int intValue = courseArray[i] - '0';  // Convert character to integer
+    Serial.print(intValue);
+    courseGlobal[i]=courseArray[i];
   }
   Serial.println();
-  for (int i = 0; i < arrayLength; i++) {
-    Serial.println(courseArray[i]);
-  }
-  Serial.println("Finished");
 }
 
 void reconnect() {
@@ -103,22 +106,23 @@ void receiveEvent(int howMany)
   while(0 < Wire.available()) //x loop through all but the last
   {
     int c = Wire.read(); // receive byte as an integer
-    Serial.print(c);         // print the character
+    if(c != -1) {
+      Serial.print("Hei");         // print the character
+  }
   }
 }
 
 void loop() {
-  Wire.beginTransmission(1); // transmit to device #4
-  Wire.write(x);              // sends one byte  
+  Wire.beginTransmission(1); // transmit to device #1
+  for (int i=0; i < courseLength; i++){
+    Wire.write(courseGlobal[i]);
+    }
   Wire.endTransmission();    // stop transmitting
-
-  x++;
-  if (x>=9) {
-    x = 0;
-  }
-  delay(500);
+  courseLength = 0;
   Wire.requestFrom(1, 1);
-  if (Wire.read() != -1) Serial.println(Wire.read());
+  if (Wire.read() > 0) {
+    Serial.println(Wire.read());
+  }
   if (!client.connected()) {
     reconnect();
   }
@@ -126,7 +130,7 @@ void loop() {
 
   long now = millis();
 
-  if (now - lastMsg > 5000) {
+  /*if (now - lastMsg > 5000) {
     lastMsg = now;
     int val1 = 8;
     //Konverterer verdien fra int til char array, sender tempstring til gitt topic
@@ -145,5 +149,5 @@ void loop() {
     Serial.print("Verdi 2: ");
     Serial.println(Value_2);
     client.publish("esp32/output", Value_2);
-  }
+  }*/
 }

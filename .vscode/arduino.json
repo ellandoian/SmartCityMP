@@ -1,6 +1,6 @@
 {
     "board": "pololu-a-star:avr:a-star32U4",
     "output": ".arduino/output",
-    "sketch": "MQTT_eksempel/MQTT_eksempel.ino",
+    "sketch": "BilForbruk/BilForbruk.ino",
     "port": "COM3"
 }
