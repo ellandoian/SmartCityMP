@@ -40,8 +40,9 @@ short lineSensorRead() {
 }
 
 void drivingMain() {
-  byte filler[3] = { 3, 2, 1 };
-  static byte input = 1;
+  int filler[6] = {2, 1,1,1,3,3};
+  static byte input = filler.length();
+  
 
   switch (input) {
     case 1:
@@ -75,6 +76,7 @@ void drivingMain() {
       }
       if (leftCounter >= 3) {
         leftCounter = 0;
+        input = 4;
         break;
         //yoooo her skal bytte case ting/break
       }
@@ -91,8 +93,9 @@ void drivingMain() {
         straightFlag = false;                                         //
       }
       if (straightCounter >= 2) {  //om den har pasert to linjer går den videre til neste steg
-        motors.setSpeeds(0, 0);    //her skal break eller no og "straightCounter = 0;"
-        Serial.println("stopp");
+        straightCounter = 0;
+        input = 4;
+        break;
       }
       break;
     case 3:
@@ -105,13 +108,22 @@ void drivingMain() {
         rightFlag = true;
       }
       if (millis() - rightTime >= 500 && rightFlag) {  //om bilen har fullført svingen hopper bilen til neste case
-        //input = 2;  // bytt ut dette med break eller no
+        input = 4;
         rightFlag = false;
         break;
       } else if (millis() - rightTime >= 500) lineFollowPID(lineSensorRead());  //kjører PID om ingen sving
       break;
     case 4:
-      
+      static bool switcher = true;
+      static uint32_t switcherTime = millis();
+      lineFollowPID(lineSensorRead());
+      if (swithcer) {
+        switcherTime = millis();
+        switcher = false;
+      }
+      if(millis()-switcherTime >= 2000){
+        
+      }
   }
 }
 

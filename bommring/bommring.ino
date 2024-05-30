@@ -220,10 +220,10 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
       } else io = false;
     }
     if (io == false) {
-      int length = data.length();      // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
+      int length = data.length();            // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
       char* sendArr = new char[length + 1];  // -----""-----
       strcpy(sendArr, data.c_str());         // -----""-----
-      Serial.println(data);                  
+      Serial.println(data);
       client.publish("esp32/output", sendArr);
       dataArr[j] = data;
     }
