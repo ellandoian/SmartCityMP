@@ -106,7 +106,9 @@ void receiveEvent(int howMany)
   while(0 < Wire.available()) //x loop through all but the last
   {
     int c = Wire.read(); // receive byte as an integer
-    Serial.print(c);         // print the character
+    if(c != -1) {
+      Serial.print("Hei");         // print the character
+  }
   }
 }
 
@@ -118,7 +120,9 @@ void loop() {
   Wire.endTransmission();    // stop transmitting
   courseLength = 0;
   Wire.requestFrom(1, 1);
-  if (Wire.read() != -1) Serial.println(Wire.read());
+  if (Wire.read() > 0) {
+    Serial.println(Wire.read());
+  }
   if (!client.connected()) {
     reconnect();
   }
@@ -126,7 +130,7 @@ void loop() {
 
   long now = millis();
 
-  if (now - lastMsg > 5000) {
+  /*if (now - lastMsg > 5000) {
     lastMsg = now;
     int val1 = 8;
     //Konverterer verdien fra int til char array, sender tempstring til gitt topic
@@ -145,5 +149,5 @@ void loop() {
     Serial.print("Verdi 2: ");
     Serial.println(Value_2);
     client.publish("esp32/output", Value_2);
-  }
+  }*/
 }
