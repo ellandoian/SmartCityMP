@@ -20,11 +20,11 @@ void setup() {
   Serial.begin(9600);
   lineSensors.initFiveSensors();
   buttonC.waitForPress();
-  motors.setSpeeds(100, -100);
+  motors.setSpeeds(130, -130);
   uint32_t startTime = millis();
   while (startFlag) {
     lineSensors.calibrate();
-    if (millis() - startTime >= 5500) startFlag = false;
+    if (millis() - startTime >= 4500) startFlag = false;
   }
   motors.setSpeeds(0, 0);
 }
@@ -42,22 +42,43 @@ void drivingMain() {
   switch (input) {
     case 1:
       static bool leftFlag, leftFlag2 = false;
+      static bool leftFlag3 = true;
       static byte leftCounter = 0;
       static uint32_t leftTime = millis();
-      lineFollowPID(lineSensorRead());
-      if (lineSensors.readOneSens(drip) >= 900 && leftFlag2 == false) leftFlag, leftFlag2 = true;
-      else if (lineSensors.readOneSens(drip) == 0 && leftFlag) {
+      if (leftFlag3) {
+        lineFollowPID(lineSensorRead());
+        Serial.println("pid");
+      }
+      if (lineSensors.readOneSens(drip) >= 900 && leftFlag2 == false && leftFlag3) {
+        leftFlag = true;
+        leftFlag2 = true;
+        Serial.println("first flag");
+      } else if (lineSensors.readOneSens(drip) < 100 && leftFlag) {
         leftCounter++;
+        Serial.print("leftCounter:");
+        Serial.println(leftCounter);
         leftFlag = false;
       }
-      if (lineSensors.readOneSens(drip) >= 900 && leftCounter > 0){
-        motors.setSpeeds(-100,150);
-        delay(500);
+
+      if (lineSensors.readOneSens(drip) >= 900 && leftCounter > 0) {
+        motors.setSpeeds(-150, 200);
+        Serial.println("truning");
+        leftTime = millis();
         leftCounter = 0;
         leftFlag2 = false;
+        leftFlag3 = false;
       }
-      case 2:
-        static bool straightFlag = false;
+      if(leftFlag3 == false){
+        Serial.println(millis()- leftTime);
+      }
+      if (leftFlag3 == false && millis() - leftTime >= 1000) {
+        Serial.println("turn Finish");
+        motors.setSpeeds(0, 0);
+        delay(2000000);
+        leftFlag3 = true;
+      }
+    case 2:
+      static bool straightFlag = false;
       static byte straightCounter = 0;
       if (straightCounter < 2) {  //fjern if setningen
         lineFollowPID(lineSensorRead());
@@ -99,6 +120,6 @@ void lineFollowPID(int pos) {  // tar inn posisjonen
 }
 
 void loop() {
-  Serial.println(lineSensors.readOneSens(drip));
+  //Serial.println(lineSensors.readOneSens(drip));
   drivingMain();
 }
