@@ -44,8 +44,8 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
   Serial.print(". Melding: ");
-  String messageTemp;
   int courseArray[0]={};
+  byte arrayLength;
   
   /*for (int i = 0; i < length; i++) {
     Serial.print((char)message[i]);
@@ -54,20 +54,14 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.println();*/
   for (int i = 0; i < length; i++) {
     Serial.print((char)message[i]);
-    courseArray[i] += (int)message[i];
+    courseArray[i] = (char)message[i];
+    arrayLength++;
   }
   Serial.println();
-
-
-  if (String(topic) == "esp32/output") {
-    Serial.print("Endrer output til: ");
-    if(messageTemp == "on"){
-      Serial.println("på");
-    }
-    else if(messageTemp == "off"){
-      Serial.println("av");
-    }
+  for (int i = 0; i < arrayLength; i++) {
+    Serial.println(courseArray[i]);
   }
+  Serial.println("Finished");
 }
 
 void reconnect() {
@@ -76,7 +70,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Forsøker å opprette kobling til mqtt...");
     // Attempt to connect
-    if (client.connect("Quagmire_publisher", "njaal", "3Inshallah4")) {
+    if (client.connect("ESP32client", "njaal", "3Inshallah4")) {
       Serial.println("connected");
       // Topic som det subscribes til
       client.subscribe("esp32/output");
@@ -108,7 +102,7 @@ void receiveEvent(int howMany)
 {
   while(0 < Wire.available()) //x loop through all but the last
   {
-    int c = Wire.read(); // receive byte as a character
+    int c = Wire.read(); // receive byte as an integer
     Serial.print(c);         // print the character
   }
 }
@@ -124,8 +118,7 @@ void loop() {
   }
   delay(500);
   Wire.requestFrom(1, 1);
-  Serial.println(Wire.read());
-  delay(1000);
+  if (Wire.read() != -1) Serial.println(Wire.read());
   if (!client.connected()) {
     reconnect();
   }
@@ -135,7 +128,7 @@ void loop() {
 
   if (now - lastMsg > 5000) {
     lastMsg = now;
-    int val1 = 80085;
+    int val1 = 8;
     //Konverterer verdien fra int til char array, sender tempstring til gitt topic
     char Value_1[8];
     dtostrf(val1, 1, 2, Value_1);
@@ -144,7 +137,7 @@ void loop() {
 
     client.publish("esp32/output", Value_1);
 
-    int val2 = 69;
+  int val2 = 2;
     
     // Verdien som sendes MÅ være et char array, vet ikke hva dtostrf() funksjonen gjør, men den MÅ være der
     char Value_2[8];

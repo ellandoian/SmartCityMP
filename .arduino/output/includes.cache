@@ -10,32 +10,22 @@
     "Includepath": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\leonardo"
   },
   {
-    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\ESPmaster.ino.cpp",
-    "Include": "Wire.h",
-    "Includepath": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src"
-  },
-  {
-    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\ESPmaster.ino.cpp",
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\MQTT_eksempel.ino.cpp",
     "Include": "WiFi.h",
     "Includepath": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src"
   },
   {
-    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\ESPmaster.ino.cpp",
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\MQTT_eksempel.ino.cpp",
     "Include": "PubSubClient.h",
     "Includepath": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\pubsubclient\\src"
   },
   {
-    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\ESPmaster.ino.cpp",
-    "Include": "",
-    "Includepath": null
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\MQTT_eksempel.ino.cpp",
+    "Include": "Wire.h",
+    "Includepath": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src"
   },
   {
-    "Sourcefile": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src\\Wire.cpp",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src\\utility\\twi.c",
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\MQTT_eksempel.ino.cpp",
     "Include": "",
     "Includepath": null
   },
@@ -81,6 +71,16 @@
   },
   {
     "Sourcefile": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\pubsubclient\\src\\PubSubClient.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src\\Wire.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src\\utility\\twi.c",
     "Include": "",
     "Includepath": null
   },

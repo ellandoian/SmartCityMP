@@ -7,7 +7,7 @@ const char* ssid = "NTNU-IOT";
 const char* password = "";
 
 //Broker adresse
-const char* mqtt_server = "10.25.18.138";
+const char* mqtt_server = "10.25.18.149";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -106,8 +106,9 @@ void loop() {
     Serial.println(Value_1);
 
     client.publish("esp32/output", Value_1);
+  }
 
-    int val2 = 69;
+  int val2 = 69;
     
     // Verdien som sendes MÅ være et char array, vet ikke hva dtostrf() funksjonen gjør, men den MÅ være der
     char Value_2[8];
@@ -115,5 +116,4 @@ void loop() {
     Serial.print("Verdi 2: ");
     Serial.println(Value_2);
     client.publish("esp32/output", Value_2);
-  }
 }

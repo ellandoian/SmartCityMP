@@ -62,14 +62,12 @@ void showBattery() {
 //Tolker meldinger fra ESP
 
 void Receive(int howMany) {
+  byte i = 0;
   while (0 < Wire.available())  // loop through all
   {
-    int c = Wire.read();  // receive byte as an int
-    Serial.println(c);    // print the character
-    if (c == 5) {
-      Charge();
+    courseArray[i] = Wire.read();  // receive byte as an int
+    Serial.println(courseArray[i]);    // print the character
     }
-  }
 }
 
 //Lader opp batteriet og pauser i 5 sekund

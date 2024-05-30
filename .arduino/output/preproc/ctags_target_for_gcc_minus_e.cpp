@@ -1,7 +1,7 @@
-# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
-# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
-# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
-# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
+# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino"
+# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino" 2
+# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino" 2
+# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\MQTT_eksempel\\MQTT_eksempel.ino" 2
 
 // wifi og wifipassord
 const char* ssid = "NTNU-IOT";
@@ -19,7 +19,14 @@ int value = 0;
 int variabel1 = 0;
 int variabel2 = 0;
 
-
+void setup() {
+  Serial.begin(115200);
+  Serial.println("start");
+  // mqtt settup
+  setup_wifi();
+  client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
+}
 
 void setup_wifi() {
   delay(10);
@@ -46,19 +53,12 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.print(topic);
   Serial.print(". Melding: ");
   String messageTemp;
-  int courseArray[0]={};
 
-  /*for (int i = 0; i < length; i++) {
+  for (int i = 0; i < length; i++) {
     Serial.print((char)message[i]);
     messageTemp += (char)message[i];
   }
-  Serial.println();*/
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)message[i]);
-    courseArray[i] += (int)message[i];
-  }
   Serial.println();
-
 
   if (String(topic) == "esp32/output") {
     Serial.print("Endrer output til: ");
@@ -90,50 +90,13 @@ void reconnect() {
   }
 }
 
-
-
-void setup()
-{
-  Wire.begin(); //Starter kommunikasjon som master
-  Serial.begin(115200);
-  Serial.println("start");
-  // mqtt settup
-  setup_wifi();
-  client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);
-}
-
-byte x = 0;
-
-void receiveEvent(int howMany)
-{
-  while(0 < Wire.available()) //x loop through all but the last
-  {
-    int c = Wire.read(); // receive byte as a character
-    Serial.print(c); // print the character
-  }
-}
-
 void loop() {
-  Wire.beginTransmission(1); // transmit to device #4
-  Wire.write(x); // sends one byte  
-  Wire.endTransmission(); // stop transmitting
-
-  x++;
-  if (x>=9) {
-    x = 0;
-  }
-  delay(500);
-  Wire.requestFrom(1, 1);
-  Serial.println(Wire.read());
-  delay(1000);
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
 
   long now = millis();
-
   if (now - lastMsg > 5000) {
     lastMsg = now;
     int val1 = 80085;

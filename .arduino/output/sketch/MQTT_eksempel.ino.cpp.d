@@ -1,5 +1,5 @@
-C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\sketch\ESPmaster.ino.cpp.o: \
- C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\sketch\ESPmaster.ino.cpp \
+C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\sketch\MQTT_eksempel.ino.cpp.o: \
+ C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\sketch\MQTT_eksempel.ino.cpp \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Arduino.h \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/binary.h \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/WCharacter.h \
@@ -13,8 +13,6 @@ C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\sketch\ESPmaster.in
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/USBDesc.h \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/USBCore.h \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\variants\leonardo/pins_arduino.h \
- C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\libraries\Wire\src/Wire.h \
- C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Stream.h \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src/WiFi.h \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src/utility/wl_definitions.h \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src/utility/wl_types.h \
@@ -25,4 +23,6 @@ C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\sketch\ESPmaster.in
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/IPAddress.h \
  C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src/WiFiServer.h \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Server.h \
- C:\Users\Magnus\Documents\Arduino\libraries\pubsubclient\src/PubSubClient.h
+ C:\Users\Magnus\Documents\Arduino\libraries\pubsubclient\src/PubSubClient.h \
+ C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Stream.h \
+ C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\libraries\Wire\src/Wire.h
