@@ -1,3 +1,4 @@
+bool pidFlag = true;
 #include <Wire.h>
 #include <Zumo32U4.h>
 Zumo32U4LineSensors lineSensors;
@@ -17,12 +18,13 @@ byte topSpeed = 200;
 
 void setup() {
   bool startFlag = true;
+  
   Serial.begin(9600);
   lineSensors.initFiveSensors();
   buttonC.waitForPress();
   motors.setSpeeds(130, -130);
   uint32_t startTime = millis();
-  while (startFlag) {  //kalibrerer farge sensoren
+  while (startFlag) {
     lineSensors.calibrate();
     if (millis() - startTime >= 4500) startFlag = false;
   }
@@ -47,7 +49,6 @@ void drivingMain() {
       static uint32_t leftTime = millis();
       if (leftFlag3) {
         lineFollowPID(lineSensorRead());
-        Serial.println("pid");
       }
       if (lineSensors.readOneSens(drip) >= 900 && leftFlag2 == false && leftFlag3) {
         leftFlag = true;
@@ -67,6 +68,7 @@ void drivingMain() {
         leftCounter = 0;
         leftFlag2 = false;
         leftFlag3 = false;
+        pidFlag = false;
       }
       if (leftFlag3 == false) {
         Serial.println(millis() - leftTime);
@@ -76,6 +78,7 @@ void drivingMain() {
         motors.setSpeeds(0, 0);
         delay(2000000);
         leftFlag3 = true;
+        pidFlag = true;
       }
     case 2:
       static bool straightFlag = false;
@@ -110,13 +113,16 @@ void drivingMain() {
 
 void lineFollowPID(int pos) {  // tar inn posisjonen
   static short prevPos;
-  short correction = pos / 4 + 6 * (pos - prevPos);  // kilde eksempelkode
-  prevPos = pos;
-  byte lSpeed = constrain(topSpeed + correction, 0, topSpeed);  // farten på venstre side lik topSpeed + correction
-  byte rSpeed = constrain(topSpeed - correction, 0, topSpeed);  // farten på høgre side lik topspeed - correction
-                                                                // setter slik at verdien vil alltids være mellom 200 og 0, vil forhindre for høye hastigheter, men viktigs
-                                                                // hindrer at det vil fort gå fra positiv hastighet til negativ hastighet som kan skade motorene.
-  motors.setSpeeds(lSpeed, rSpeed);
+  if (pidFlag) {
+    short correction = pos / 4 + 6 * (pos - prevPos);  // kilde eksempelkode
+    prevPos = pos;
+    Serial.println("vi pidder");
+    byte lSpeed = constrain(topSpeed + correction, 0, topSpeed);  // farten på venstre side lik topSpeed + correction
+    byte rSpeed = constrain(topSpeed - correction, 0, topSpeed);  // farten på høgre side lik topspeed - correction
+                                                                  // setter slik at verdien vil alltids være mellom 200 og 0, vil forhindre for høye hastigheter, men viktigs
+                                                                  // hindrer at det vil fort gå fra positiv hastighet til negativ hastighet som kan skade motorene.
+    motors.setSpeeds(lSpeed, rSpeed);
+  }
 }
 
 void loop() {
