@@ -14,6 +14,8 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
+char courseGlobal[]={};
+byte courseLength;
 
 int variabel1 = 0;
 int variabel2 = 0;
@@ -44,24 +46,25 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
   Serial.print(". Melding: ");
-  int courseArray[0]={};
-  byte arrayLength;
+  char courseArray[length+1]={};
   
   /*for (int i = 0; i < length; i++) {
     Serial.print((char)message[i]);
     messageTemp += (char)message[i];
   }
   Serial.println();*/
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)message[i]);
+  
+  for (int i = 0; i < length; i++) {;
     courseArray[i] = (char)message[i];
-    arrayLength++;
+    courseLength++;
+  }
+  courseArray[length] = '\0';  // Null-terminate the string
+  for (int i = 0; i < length; i++) {
+    int intValue = courseArray[i] - '0';  // Convert character to integer
+    Serial.print(intValue);
+    courseGlobal[i]=courseArray[i];
   }
   Serial.println();
-  for (int i = 0; i < arrayLength; i++) {
-    Serial.println(courseArray[i]);
-  }
-  Serial.println("Finished");
 }
 
 void reconnect() {
@@ -108,15 +111,12 @@ void receiveEvent(int howMany)
 }
 
 void loop() {
-  Wire.beginTransmission(1); // transmit to device #4
-  Wire.write(x);              // sends one byte  
+  Wire.beginTransmission(1); // transmit to device #1
+  for (int i=0; i < courseLength; i++){
+    Wire.write(courseGlobal[i]);
+    }
   Wire.endTransmission();    // stop transmitting
-
-  x++;
-  if (x>=9) {
-    x = 0;
-  }
-  delay(500);
+  courseLength = 0;
   Wire.requestFrom(1, 1);
   if (Wire.read() != -1) Serial.println(Wire.read());
   if (!client.connected()) {
