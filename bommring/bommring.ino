@@ -223,7 +223,7 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
       int length = data.length();      // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
       char* sendArr = new char[length + 1];  // -----""-----
       strcpy(sendArr, data.c_str());         // -----""-----
-      Serial.println(data);                  //putt "push" greia her
+      Serial.println(data);                  
       client.publish("esp32/output", sendArr);
       dataArr[j] = data;
     }

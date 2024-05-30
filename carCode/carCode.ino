@@ -22,7 +22,7 @@ void setup() {
   buttonC.waitForPress();
   motors.setSpeeds(130, -130);
   uint32_t startTime = millis();
-  while (startFlag) {
+  while (startFlag) {  //kalibrerer farge sensoren
     lineSensors.calibrate();
     if (millis() - startTime >= 4500) startFlag = false;
   }
