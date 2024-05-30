@@ -14,7 +14,7 @@ Zumo32U4OLED display;
 */
 static int drip[5];
 
-byte topSpeed = 200;
+byte topSpeed = 150;
 
 void setup() {
   bool startFlag = true;
@@ -23,12 +23,14 @@ void setup() {
   lineSensors.initFiveSensors();
   buttonC.waitForPress();
   motors.setSpeeds(100, -100);
+  Serial.println("calibrating");
   uint32_t startTime = millis();
   while (startFlag) {
     lineSensors.calibrate();
-    if (millis() - startTime >= 2500) startFlag = false;
+    if (millis() - startTime >= 3000) startFlag = false;
   }
   motors.setSpeeds(0, 0);
+  Serial.println("start");
 }
 
 short lineSensorRead() {
@@ -48,14 +50,18 @@ void drivingMain() {
       static byte leftCounter = 0;
       static uint32_t leftTime = millis();
       lineFollowPID(lineSensorRead());
-      if (lineSensors.readOneSens(drip) >= 900 && leftFlag2) {
+      if (lineSensors.readOneSens(drip) >= 900) {
+        //Serial.println("first Flag");
         leftFlag = true;
       } else if (lineSensors.readOneSens(drip) < 100 && leftFlag) {
         leftCounter++;
+        Serial.print("counter:");
+        Serial.println(leftCounter);
         leftFlag = false;
       }
 
       if (lineSensors.readOneSens(drip) >= 900 && leftCounter == 1) {
+        Serial.println("turning left");
         motors.setSpeeds(-100, 100);
         leftTime = millis();
         //leftCounter = 0;
@@ -64,11 +70,15 @@ void drivingMain() {
       }
       if (leftFlag2 == false && millis() - leftTime >= 500) {
         leftFlag2 = true;
+        Serial.println("turn Complete");
         pidFlag = true;
-        //motor.setSpeeds(0,0);
-        //delay(10000);
+      }
+      if (leftCounter >= 3) {
+        leftCounter = 0;
+        break;
         //yoooo her skal bytte case ting/break
       }
+      break;
     case 2:
       static bool straightFlag = false;
       static byte straightCounter = 0;
@@ -82,13 +92,16 @@ void drivingMain() {
       }
       if (straightCounter >= 2) {  //om den har pasert to linjer går den videre til neste steg
         motors.setSpeeds(0, 0);    //her skal break eller no og "straightCounter = 0;"
+        Serial.println("stopp");
       }
+      break;
     case 3:
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
       if (lineSensors.readOneSens(drip) >= 900) {  //Om bilen har kommet til et kryss vil den svinge til høyere
         rightTime = millis();
         motors.setSpeeds(150, -100);
+        Serial.println("truning Right");
         rightFlag = true;
       }
       if (millis() - rightTime >= 500 && rightFlag) {  //om bilen har fullført svingen hopper bilen til neste case
@@ -96,6 +109,9 @@ void drivingMain() {
         rightFlag = false;
         break;
       } else if (millis() - rightTime >= 500) lineFollowPID(lineSensorRead());  //kjører PID om ingen sving
+      break;
+    case 4:
+      
   }
 }
 
@@ -104,7 +120,6 @@ void lineFollowPID(int pos) {  // tar inn posisjonen
   if (pidFlag) {
     short correction = pos / 4 + 6 * (pos - prevPos);  // kilde eksempelkode
     prevPos = pos;
-    Serial.println("vi pidder");
     byte lSpeed = constrain(topSpeed + correction, 0, topSpeed);  // farten på venstre side lik topSpeed + correction
     byte rSpeed = constrain(topSpeed - correction, 0, topSpeed);  // farten på høgre side lik topspeed - correction
                                                                   // setter slik at verdien vil alltids være mellom 200 og 0, vil forhindre for høye hastigheter, men viktigs
@@ -114,6 +129,5 @@ void lineFollowPID(int pos) {  // tar inn posisjonen
 }
 
 void loop() {
-  //Serial.println(lineSensors.readOneSens(drip));
   drivingMain();
 }
