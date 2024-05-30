@@ -68,8 +68,8 @@ void drivingMain() {
         leftFlag2 = false;
         leftFlag3 = false;
       }
-      if(leftFlag3 == false){
-        Serial.println(millis()- leftTime);
+      if (leftFlag3 == false) {
+        Serial.println(millis() - leftTime);
       }
       if (leftFlag3 == false && millis() - leftTime >= 1000) {
         Serial.println("turn Finish");
@@ -83,28 +83,28 @@ void drivingMain() {
       if (straightCounter < 2) {  //fjern if setningen
         lineFollowPID(lineSensorRead());
       }
-      if (lineSensors.readOneSens(drip) >= 900) straightFlag = true;
-      else if (lineSensors.readOneSens(drip) == 0 && straightFlag) {
-        straightCounter++;
-        straightFlag = false;
+      if (lineSensors.readOneSens(drip) >= 900) straightFlag = true;  //merker at den har kommet på en svart linje på venstre side av bilen
+      else if (lineSensors.readOneSens(drip) == 0 && straightFlag) {  //teller + 1 etter bilen har pasert linja
+        straightCounter++;                                            //
+        straightFlag = false;                                         //
       }
-      if (straightCounter >= 2) {
-        motors.setSpeeds(0, 0);  //her skal break eller no og "straightCounter = 0;"
+      if (straightCounter >= 2) {  //om den har pasert to linjer går den videre til neste steg
+        motors.setSpeeds(0, 0);    //her skal break eller no og "straightCounter = 0;"
       }
 
     case 3:
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
-      if (lineSensors.readOneSens(drip) >= 900) {
+      if (lineSensors.readOneSens(drip) >= 900) {  //Om bilen har kommet til et kryss vil den svinge til høyere
         rightTime = millis();
         motors.setSpeeds(150, -100);
         rightFlag = true;
       }
-      if (millis() - rightTime >= 500 && rightFlag) {
+      if (millis() - rightTime >= 500 && rightFlag) {  //om bilen har fullført svingen hopper bilen til neste case
         //input = 2;  // bytt ut dette med break eller no
         rightFlag = false;
         break;
-      } else if (millis() - rightTime >= 500) lineFollowPID(lineSensorRead());
+      } else if (millis() - rightTime >= 500) lineFollowPID(lineSensorRead());  //kjører PID om ingen sving
   }
 }
 
