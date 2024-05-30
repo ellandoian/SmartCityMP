@@ -18,15 +18,15 @@ byte topSpeed = 200;
 
 void setup() {
   bool startFlag = true;
-  
+
   Serial.begin(9600);
   lineSensors.initFiveSensors();
   buttonC.waitForPress();
-  motors.setSpeeds(130, -130);
+  motors.setSpeeds(100, -100);
   uint32_t startTime = millis();
   while (startFlag) {
     lineSensors.calibrate();
-    if (millis() - startTime >= 4500) startFlag = false;
+    if (millis() - startTime >= 2500) startFlag = false;
   }
   motors.setSpeeds(0, 0);
 }
@@ -43,42 +43,31 @@ void drivingMain() {
 
   switch (input) {
     case 1:
-      static bool leftFlag, leftFlag2 = false;
-      static bool leftFlag3 = true;
+      static bool leftFlag = false;
+      static bool leftFlag2 = true;
       static byte leftCounter = 0;
       static uint32_t leftTime = millis();
-      if (leftFlag3) {
-        lineFollowPID(lineSensorRead());
-      }
-      if (lineSensors.readOneSens(drip) >= 900 && leftFlag2 == false && leftFlag3) {
+      lineFollowPID(lineSensorRead());
+      if (lineSensors.readOneSens(drip) >= 900 && leftFlag2) {
         leftFlag = true;
-        leftFlag2 = true;
-        Serial.println("first flag");
       } else if (lineSensors.readOneSens(drip) < 100 && leftFlag) {
         leftCounter++;
-        Serial.print("leftCounter:");
-        Serial.println(leftCounter);
         leftFlag = false;
       }
 
-      if (lineSensors.readOneSens(drip) >= 900 && leftCounter > 0) {
-        motors.setSpeeds(-150, 200);
-        Serial.println("truning");
+      if (lineSensors.readOneSens(drip) >= 900 && leftCounter == 1) {
+        motors.setSpeeds(-100, 100);
         leftTime = millis();
-        leftCounter = 0;
+        //leftCounter = 0;
         leftFlag2 = false;
-        leftFlag3 = false;
         pidFlag = false;
       }
-      if (leftFlag3 == false) {
-        Serial.println(millis() - leftTime);
-      }
-      if (leftFlag3 == false && millis() - leftTime >= 1000) {
-        Serial.println("turn Finish");
-        motors.setSpeeds(0, 0);
-        delay(2000000);
-        leftFlag3 = true;
+      if (leftFlag2 == false && millis() - leftTime >= 500) {
+        leftFlag2 = true;
         pidFlag = true;
+        //motor.setSpeeds(0,0);
+        //delay(10000);
+        //yoooo her skal bytte case ting/break
       }
     case 2:
       static bool straightFlag = false;
@@ -94,7 +83,6 @@ void drivingMain() {
       if (straightCounter >= 2) {  //om den har pasert to linjer går den videre til neste steg
         motors.setSpeeds(0, 0);    //her skal break eller no og "straightCounter = 0;"
       }
-
     case 3:
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
