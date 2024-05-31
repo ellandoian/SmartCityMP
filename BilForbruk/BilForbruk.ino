@@ -205,7 +205,6 @@ void drivingMain() {
     case 5:
       Charge();
       break;
-    default:
   }
 }
 
