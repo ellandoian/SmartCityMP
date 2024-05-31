@@ -88,13 +88,11 @@ void showBattery() {
 //Tolker meldinger fra ESP
 
 void Receive(int howMany) {
-  byte i = 0;
   while (0 < Wire.available()) // loop through all
   {
     byte receivedByte = Wire.read();
-    courseArray[i] = receivedByte - '0'; // Convert from ASCII to integer
-    Serial.println(courseArray[i]);
-    i++;
+    courseArray[courseArrlength] = receivedByte - '0'; // Convert from ASCII to integer
+    //Serial.println(courseArray[i]);
     courseArrlength++;
     input = courseArray[0];
   }
@@ -107,7 +105,6 @@ void Charge() {
   display.println("CHARGING");
   sendChargeDist = true; //Flagg som gjør at bilen sender distansen til ESP32
   motors.setSpeeds(0, 0);
-  delay(1000); //Skal bort senere
 }
 
 //Sende distanse kjørt til ESP, kjøres når bilen lader
@@ -165,13 +162,14 @@ void drivingMain() {
         leftTime = millis();
         leftFlag2 = false;
         pidFlag = false; //skrur av PID kjøring
+        leftCounter++;
       }
       if (leftFlag2 == false && millis() - leftTime >= 500) { //avsluttersvingen og skrur på PID kjøring
         leftFlag2 = true;
         Serial.println("turn Complete");
         pidFlag = true;
       }
-      if (leftCounter >= 3) { //tar å resetter counter og fullfører denne svingen etter bilen er ute av kryset
+      if (leftCounter >= 4) { //tar å resetter counter og fullfører denne svingen etter bilen er ute av kryset
         leftCounter = 0;
         input = 4;
         break;
@@ -226,6 +224,7 @@ void drivingMain() {
       break;
     case 5:
       Charge();
+      input = 0;
       break;
     default:
     motors.setSpeeds(0,0);
@@ -276,16 +275,6 @@ void loop() {
 
     tid = millis();
 
-  }
-
-  int size = sizeof(courseArray);
-
-  Serial.print("Size: ");
-
-  Serial.print(size);
-
-  Serial.print("  ");
-
-  Serial.println(courseArray[2]);*/
-# 266 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+  }*/
+# 260 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 }

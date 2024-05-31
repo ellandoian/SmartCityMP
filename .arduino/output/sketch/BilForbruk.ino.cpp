@@ -39,21 +39,21 @@ int batteryDrain(byte battery);
 void showBattery();
 #line 74 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void Receive(int howMany);
-#line 89 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 87 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void Charge();
-#line 99 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 96 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void sendDistance();
-#line 111 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 108 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 short lineSensorRead();
-#line 117 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 114 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void lineFollowPID(int pos);
-#line 130 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 127 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void drivingMain();
-#line 220 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 219 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void pidSetup();
-#line 235 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 234 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void setup();
-#line 250 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 249 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void loop();
 #line 32 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 float distMeasure() {
@@ -99,13 +99,11 @@ void showBattery() {
 //Tolker meldinger fra ESP
 
 void Receive(int howMany) {
-  byte i = 0;
   while (0 < Wire.available())  // loop through all
   {
     byte receivedByte = Wire.read();
-    courseArray[i] = receivedByte - '0';  // Convert from ASCII to integer
-    Serial.println(courseArray[i]);
-    i++;
+    courseArray[courseArrlength] = receivedByte - '0';  // Convert from ASCII to integer
+    //Serial.println(courseArray[i]);
     courseArrlength++;
     input = courseArray[0];
   }
@@ -118,7 +116,6 @@ void Charge() {
   display.println("CHARGING");
   sendChargeDist = true;  //Flagg som gjør at bilen sender distansen til ESP32
   motors.setSpeeds(0, 0);
-  delay(1000);  //Skal bort senere
 }
 
 //Sende distanse kjørt til ESP, kjøres når bilen lader
@@ -176,13 +173,14 @@ void drivingMain() {
         leftTime = millis();
         leftFlag2 = false;
         pidFlag = false;  //skrur av PID kjøring
+        leftCounter++;
       }
       if (leftFlag2 == false && millis() - leftTime >= 500) {  //avsluttersvingen og skrur på PID kjøring
         leftFlag2 = true;
         Serial.println("turn Complete");
         pidFlag = true;
       }
-      if (leftCounter >= 3) {  //tar å resetter counter og fullfører denne svingen etter bilen er ute av kryset
+      if (leftCounter >= 4) {  //tar å resetter counter og fullfører denne svingen etter bilen er ute av kryset
         leftCounter = 0;
         input = 4;
         break;
@@ -237,6 +235,7 @@ void drivingMain() {
       break;
     case 5:
       Charge();
+      input = 0;
       break;
     default:
     motors.setSpeeds(0,0);
@@ -284,10 +283,5 @@ void loop() {
   /*if (millis() - tid >= 5000) {  //if-setningen skal bort
     Charge();
     tid = millis();
-  }
-  int size = sizeof(courseArray);
-  Serial.print("Size: ");
-  Serial.print(size);
-  Serial.print("  ");
-  Serial.println(courseArray[2]);*/
+  }*/
 }

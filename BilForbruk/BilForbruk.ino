@@ -72,13 +72,11 @@ void showBattery() {
 //Tolker meldinger fra ESP
 
 void Receive(int howMany) {
-  byte i = 0;
   while (0 < Wire.available())  // loop through all
   {
     byte receivedByte = Wire.read();
-    courseArray[i] = receivedByte - '0';  // Convert from ASCII to integer
-    Serial.println(courseArray[i]);
-    i++;
+    courseArray[courseArrlength] = receivedByte - '0';  // Convert from ASCII to integer
+    //Serial.println(courseArray[i]);
     courseArrlength++;
     input = courseArray[0];
   }
@@ -91,7 +89,6 @@ void Charge() {
   display.println("CHARGING");
   sendChargeDist = true;  //Flagg som gjør at bilen sender distansen til ESP32
   motors.setSpeeds(0, 0);
-  delay(1000);  //Skal bort senere
 }
 
 //Sende distanse kjørt til ESP, kjøres når bilen lader
@@ -211,6 +208,7 @@ void drivingMain() {
       break;
     case 5:
       Charge();
+      input = 0;
       break;
     default:
     motors.setSpeeds(0,0);
@@ -258,10 +256,5 @@ void loop() {
   /*if (millis() - tid >= 5000) {  //if-setningen skal bort
     Charge();
     tid = millis();
-  }
-  int size = sizeof(courseArray);
-  Serial.print("Size: ");
-  Serial.print(size);
-  Serial.print("  ");
-  Serial.println(courseArray[2]);*/
+  }*/
 }
