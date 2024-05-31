@@ -67,10 +67,10 @@ void Receive(int howMany) {
   while (0 < Wire.available())  // loop through all
   {
     byte receivedByte = Wire.read();
-    courseArray[i] = receivedByte - '0';
-    Serial.print(courseArray[i]);    // print the character
+    courseArray[i] = receivedByte - '0'; // Convert from ASCII to integer
+    Serial.println(courseArray[i]); // Print the digit
     i++;
-    }
+  }
 }
 
 //Lader opp batteriet og pauser i 5 sekund
@@ -78,20 +78,20 @@ void Receive(int howMany) {
 void Charge() {
   display.clear();
   display.println("CHARGING");
-  sendChargeDist = true;
+  sendChargeDist = true; //Flagg som gjør at bilen sender distansen til ESP32
   motors.setSpeeds(0, 0);
-  delay(1000);
+  delay(1000); //Skal bort senere
 }
 
-//Sende distanse kjørt til ESP
+//Sende distanse kjørt til ESP, kjøres når bilen lader
 
 void sendDistance() {
   if (sendChargeDist == true) {
-    Serial.println(totalDistance);
+    Serial.println(totalDistance); //Skal bort senere
     Wire.write(totalDistance);
     sendChargeDist = false;
     distMultiplier = 0;
-    partDisGlobal = 0;
+    partDisGlobal = 0; //Resetter avstanden etter den er sendt
   }
 }
 
@@ -152,7 +152,6 @@ void setup() {
   Wire.onRequest(sendDistance);
   Wire.onReceive(Receive);
   display.setLayout21x8();
-  delay(100);
   EEPROM.write(0, 80);
   EEPROM.write(1, 0);
   EEPROM.write(2, 0);
@@ -163,13 +162,13 @@ void setup() {
 }
 
 void loop() {
-  motors.setSpeeds(100,100);
-  static long tid;
+  motors.setSpeeds(100,100); //skal bort
+  static long tid; //skal bort
   partDisGlobal = distMeasure();
   totalDistance = partDisGlobal + (distMultiplier * 255);
   power = batteryDrain(power);
   showBattery();
-  if (millis()-tid >= 5000) {
+  if (millis()-tid >= 5000) { //if-setningen skal bort
     Charge();
     tid = millis();
   }
