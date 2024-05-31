@@ -21,7 +21,8 @@ bool pidFlag = true;  //for å kunne tvinge PID av
 byte power, distMultiplier, input;
 unsigned long totalDistance;
 float partDisGlobal;
-int courseArray[] = {};
+int courseArray[10] = {};
+byte courseArrlength = 0;
 bool sendChargeDist = false;
 static int drip[5];  //trengs for å kunne lese av spesfik sensor
 
@@ -78,6 +79,7 @@ void Receive(int howMany) {
     courseArray[i] = receivedByte - '0';  // Convert from ASCII to integer
     Serial.println(courseArray[i]);
     i++;
+    courseArrLength++;
   }
 }
 
@@ -126,6 +128,7 @@ void lineFollowPID(int pos) {  // tar inn posisjonen
 
 void drivingMain() {
   int filler[3] = { 3, 2, 1 };
+  static byte trunCount = 0;
   switch (input) {
     case 1:
       static bool leftFlag = false;
@@ -190,21 +193,26 @@ void drivingMain() {
       } else if (millis() - rightTime >= 500) lineFollowPID(lineSensorRead());  //kjører PID om ingen sving
       break;
     case 4:
-      delay(1000);
-      motors.setSpeeds(0, 0);
-      /*static bool switcher = true;
+      static bool switcher = true;
       static uint32_t switcherTime = millis();
       lineFollowPID(lineSensorRead());
       if (swithcer) {
         switcherTime = millis();
         switcher = false;
       }
-      if(millis()-switcherTime >= 2000){
-        
-      }*/
+      if (millis() - switcherTime >= 2000) {
+        turnCount++;
+        switcher = true;
+        input = courseArray[turnCount];
+        break;
+      }
+      break;
     case 5:
       Charge();
       break;
+    default:
+    motors.setSpeeds(0,0);
+    Serial.println("uaiuaiuh");
   }
 }
 
