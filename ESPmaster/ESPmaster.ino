@@ -120,7 +120,7 @@ void loop() {
   Wire.endTransmission();    // stop transmitting
   courseLength = 0;
   Wire.requestFrom(1, 1);
-  if(Wire.read() > 0) {
+  for(Wire.available() > 0) {
     Serial.println(Wire.read());
   }
   if (!client.connected()) {

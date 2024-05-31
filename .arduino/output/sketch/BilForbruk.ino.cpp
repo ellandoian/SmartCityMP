@@ -34,17 +34,17 @@ void Receive(int howMany);
 void Charge();
 #line 88 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void sendDistance();
-#line 98 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 100 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 short lineSensorRead();
-#line 104 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 106 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void lineFollowPID(int pos);
-#line 116 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 118 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void pidSetup();
-#line 129 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 131 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void drivingMain();
-#line 149 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 151 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void setup();
-#line 164 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 166 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void loop();
 #line 23 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 float distMeasure() {
@@ -115,7 +115,9 @@ void Charge() {
 void sendDistance() {
   if (sendChargeDist == true) {
     //Serial.println(totalDistance); //Skal bort senere
-    Wire.write(totalDistance);
+    int partDis = static_cast<int>(partDisGlobal);
+    Wire.write(partDis);
+    Wire.write(distMultiplier);
     sendChargeDist = false;
     distMultiplier = 0;
     partDisGlobal = 0; //Resetter avstanden etter den er sendt
@@ -181,7 +183,7 @@ void setup() {
   display.setLayout21x8();
   EEPROM.write(0, 80);
   EEPROM.write(1, 0);
-  EEPROM.write(2, 0);
+  EEPROM.write(2, 1);
   power = EEPROM.read(0);
   partDisGlobal = EEPROM.read(1);
   distMultiplier = EEPROM.read(2);

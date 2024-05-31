@@ -97,7 +97,9 @@ void Charge() {
 void sendDistance() {
   if (sendChargeDist == true) {
     //Serial.println(totalDistance); //Skal bort senere
-    Wire.write(totalDistance);
+    int partDis = static_cast<int>(partDisGlobal);
+    Wire.write(partDis);
+    Wire.write(distMultiplier);
     sendChargeDist = false;
     distMultiplier = 0;
     partDisGlobal = 0; //Resetter avstanden etter den er sendt
@@ -163,7 +165,7 @@ void setup() {
   display.setLayout21x8();
   EEPROM.write(0, 80);
   EEPROM.write(1, 0);
-  EEPROM.write(2, 0);
+  EEPROM.write(2, 1);
   power = EEPROM.read(0);
   partDisGlobal = EEPROM.read(1);
   distMultiplier = EEPROM.read(2);
