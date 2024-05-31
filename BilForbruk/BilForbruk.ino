@@ -68,9 +68,10 @@ void Receive(int howMany) {
   {
     byte receivedByte = Wire.read();
     courseArray[i] = receivedByte - '0'; // Convert from ASCII to integer
-    Serial.println(courseArray[i]); // Print the digit
+    Serial.println(courseArray[i]);
     i++;
   }
+  Serial.println("Array ferdig");
 }
 
 //Lader opp batteriet og pauser i 5 sekund
@@ -87,7 +88,7 @@ void Charge() {
 
 void sendDistance() {
   if (sendChargeDist == true) {
-    Serial.println(totalDistance); //Skal bort senere
+    //Serial.println(totalDistance); //Skal bort senere
     Wire.write(totalDistance);
     sendChargeDist = false;
     distMultiplier = 0;
