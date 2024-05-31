@@ -80,6 +80,7 @@ void Receive(int howMany) {
     Serial.println(courseArray[i]);
     i++;
     courseArrlength++;
+    input = courseArray[0];
   }
 }
 
