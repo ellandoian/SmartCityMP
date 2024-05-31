@@ -149,13 +149,14 @@ void drivingMain() {
         leftTime = millis();
         leftFlag2 = false;
         pidFlag = false;  //skrur av PID kjøring
+        leftCounter++;
       }
       if (leftFlag2 == false && millis() - leftTime >= 500) {  //avsluttersvingen og skrur på PID kjøring
         leftFlag2 = true;
         Serial.println("turn Complete");
         pidFlag = true;
       }
-      if (leftCounter >= 3) {  //tar å resetter counter og fullfører denne svingen etter bilen er ute av kryset
+      if (leftCounter >= 4) {  //tar å resetter counter og fullfører denne svingen etter bilen er ute av kryset
         leftCounter = 0;
         input = 4;
         break;
