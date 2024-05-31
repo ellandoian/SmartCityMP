@@ -253,6 +253,7 @@ void loop() {
   totalDistance = partDisGlobal + (distMultiplier * 255);
   power = batteryDrain(power);
   showBattery();
+  drivingMain();
   /*if (millis() - tid >= 5000) {  //if-setningen skal bort
     Charge();
     tid = millis();

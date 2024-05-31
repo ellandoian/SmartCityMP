@@ -96,6 +96,7 @@ void Receive(int howMany) {
     Serial.println(courseArray[i]);
     i++;
     courseArrlength++;
+    input = courseArray[0];
   }
 }
 
@@ -268,6 +269,7 @@ void loop() {
   totalDistance = partDisGlobal + (distMultiplier * 255);
   power = batteryDrain(power);
   showBattery();
+  drivingMain();
   /*if (millis() - tid >= 5000) {  //if-setningen skal bort
 
     Charge();
@@ -285,5 +287,5 @@ void loop() {
   Serial.print("  ");
 
   Serial.println(courseArray[2]);*/
-# 264 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+# 266 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 }
