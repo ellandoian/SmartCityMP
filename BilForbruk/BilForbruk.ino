@@ -79,7 +79,7 @@ void Receive(int howMany) {
     courseArray[i] = receivedByte - '0';  // Convert from ASCII to integer
     Serial.println(courseArray[i]);
     i++;
-    courseArrLength++;
+    courseArrlength++;
   }
 }
 
@@ -128,7 +128,7 @@ void lineFollowPID(int pos) {  // tar inn posisjonen
 
 void drivingMain() {
   int filler[3] = { 3, 2, 1 };
-  static byte trunCount = 0;
+  static byte turnCount = 0;
   switch (input) {
     case 1:
       static bool leftFlag = false;
@@ -196,7 +196,7 @@ void drivingMain() {
       static bool switcher = true;
       static uint32_t switcherTime = millis();
       lineFollowPID(lineSensorRead());
-      if (swithcer) {
+      if (switcher) {
         switcherTime = millis();
         switcher = false;
       }
@@ -239,21 +239,20 @@ void setup() {
   display.setLayout21x8();
   EEPROM.write(0, 80);
   EEPROM.write(1, 0);
-  EEPROM.write(2, 1);
+  EEPROM.write(2, 0);
   power = EEPROM.read(0);
   partDisGlobal = EEPROM.read(1);
   distMultiplier = EEPROM.read(2);
-  //pidSetup();
+  pidSetup();
 }
 
 void loop() {
-  motors.setSpeeds(100, 100);  //skal bort
   static long tid;             //skal bort
   partDisGlobal = distMeasure();
   totalDistance = partDisGlobal + (distMultiplier * 255);
   power = batteryDrain(power);
   showBattery();
-  if (millis() - tid >= 5000) {  //if-setningen skal bort
+  /*if (millis() - tid >= 5000) {  //if-setningen skal bort
     Charge();
     tid = millis();
   }
@@ -261,5 +260,5 @@ void loop() {
   Serial.print("Size: ");
   Serial.print(size);
   Serial.print("  ");
-  Serial.println(courseArray[2]);
+  Serial.println(courseArray[2]);*/
 }
