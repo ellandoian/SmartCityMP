@@ -1,5 +1,6 @@
 # SmartCityMP
 for å kjøre carCode og BilForbruk kreves et litt modifisert versjon av biblioteket til zumo 32U4
+pathen til filene er mest sansynlig "documents/arduino/library/zumo32U4/src
 
 i "QTRSensors.cpp" må følgende legges til:
 "int QTRSensors::readOneSens(unsigned int *sensor_values, 
@@ -10,5 +11,5 @@ i "QTRSensors.cpp" må følgende legges til:
     return oneSensValue;
 }"
 
-i "QTRSensors.h" unner class "QTRSensors" trengs:
+i "QTRSensors.h" under class "QTRSensors" trengs:
 "int readOneSens(unsigned int* sensor_values, unsigned char readMode = QTR_EMITTERS_ON);"
