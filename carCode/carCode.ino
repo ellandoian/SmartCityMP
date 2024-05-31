@@ -1,4 +1,3 @@
-bool pidFlag = true;
 #include <Wire.h>
 #include <Zumo32U4.h>
 Zumo32U4LineSensors lineSensors;
@@ -13,6 +12,7 @@ Zumo32U4OLED display;
 ******************************************************************************************************************
 */
 static int drip[5];
+lineFollowPID(lineSensorRead());
 
 byte topSpeed = 150;
 
@@ -40,45 +40,39 @@ short lineSensorRead() {
 }
 
 void drivingMain() {
-  int filler[6] = {2, 1,1,1,3,3};
+  int filler[6] = {2,1,1,1,3,3};
   static byte input = filler.length();
   
 
   switch (input) {
-    case 1:
+    case 1: //svinger til venstre
       static bool leftFlag = false;
       static bool leftFlag2 = true;
       static byte leftCounter = 0;
       static uint32_t leftTime = millis();
       lineFollowPID(lineSensorRead());
-      if (lineSensors.readOneSens(drip) >= 900) {
-        //Serial.println("first Flag");
-        leftFlag = true;
-      } else if (lineSensors.readOneSens(drip) < 100 && leftFlag) {
+      if (lineSensors.readOneSens(drip) >= 900) {                    //merker at den rører en linje og setter av et flag
+        leftFlag = true;                                               
+      } else if (lineSensors.readOneSens(drip) < 100 && leftFlag) {  //når bilen har gått av linjen flippes flaget tilbake og counter går +1
         leftCounter++;
-        Serial.print("counter:");
-        Serial.println(leftCounter);
         leftFlag = false;
       }
 
-      if (lineSensors.readOneSens(drip) >= 900 && leftCounter == 1) {
-        Serial.println("turning left");
-        motors.setSpeeds(-100, 100);
-        leftTime = millis();
-        //leftCounter = 0;
-        leftFlag2 = false;
-        pidFlag = false;
+      if (lineSensors.readOneSens(drip) >= 900 && leftCounter == 1) { //når bilen kommer til en linje etter å ha pasert en vil den svinge til venstre
+        motors.setSpeeds(-100, 100);                                    
+        leftTime = millis();                                            
+        leftFlag2 = false;                                            
+        pidFlag = false;                                              //skrur av PID kjøring
       }
-      if (leftFlag2 == false && millis() - leftTime >= 500) {
+      if (leftFlag2 == false && millis() - leftTime >= 500) {         //avsluttersvingen og skrur på PID kjøring
         leftFlag2 = true;
         Serial.println("turn Complete");
         pidFlag = true;
       }
-      if (leftCounter >= 3) {
+      if (leftCounter >= 3) {                                         //tar å resetter counter og fullfører denne svingen etter bilen er ute av kryset
         leftCounter = 0;
         input = 4;
         break;
-        //yoooo her skal bytte case ting/break
       }
       break;
     case 2:
