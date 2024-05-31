@@ -7,7 +7,7 @@ const char* ssid = "NTNU-IOT";
 const char* password = "";
 
 //Broker adresse
-const char* mqtt_server = "10.25.18.149";
+const char* mqtt_server = "10.25.18.138";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -120,8 +120,11 @@ void loop() {
   Wire.endTransmission();    // stop transmitting
   courseLength = 0;
   Wire.requestFrom(1, 1);
-  for(Wire.available() > 0) {
-    Serial.println(Wire.read());
+  while(Wire.available() > 0) {
+    int c = Wire.read();
+    if (c > 0) {
+      Serial.println(c);
+    }
   }
   if (!client.connected()) {
     reconnect();
