@@ -77,7 +77,7 @@ void Receive(int howMany) {
   {
     byte receivedByte = Wire.read();
     courseArray[i] = receivedByte - '0'; // Convert from ASCII to integer
-    Serial.println(courseArray[i]); // Print the digit
+    Serial.println(courseArray[i]);
     i++;
   }
 }
@@ -96,7 +96,7 @@ void Charge() {
 
 void sendDistance() {
   if (sendChargeDist == true) {
-    Serial.println(totalDistance); //Skal bort senere
+    //Serial.println(totalDistance); //Skal bort senere
     Wire.write(totalDistance);
     sendChargeDist = false;
     distMultiplier = 0;
@@ -181,4 +181,9 @@ void loop() {
     Charge();
     tid = millis();
   }
+  int size = sizeof(courseArray);
+  Serial.print("Size: ");
+  Serial.print(size);
+  Serial.print("  ");
+  Serial.println(courseArray[2]);
 }

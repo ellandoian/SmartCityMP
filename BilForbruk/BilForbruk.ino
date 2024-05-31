@@ -71,7 +71,6 @@ void Receive(int howMany) {
     Serial.println(courseArray[i]);
     i++;
   }
-  Serial.println("Array ferdig");
 }
 
 //Lader opp batteriet og pauser i 5 sekund
@@ -173,4 +172,9 @@ void loop() {
     Charge();
     tid = millis();
   }
+  int size = sizeof(courseArray);
+  Serial.print("Size: ");
+  Serial.print(size);
+  Serial.print("  ");
+  Serial.println(courseArray[2]);
 }
