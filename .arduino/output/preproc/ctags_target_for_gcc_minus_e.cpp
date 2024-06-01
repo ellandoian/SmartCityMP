@@ -24,7 +24,6 @@ Zumo32U4LineSensors lineSensors;
 Zumo32U4OLED display;
 Zumo32U4Encoders encoder;
 
-byte topSpeed = 200;
 bool pidFlag = true; //for å kunne tvinge PID av
 byte power, distMultiplier, input;
 unsigned long totalDistance;
@@ -33,6 +32,14 @@ int courseArray[10] = {};
 byte courseArrlength = 0;
 bool sendChargeDist = false;
 static int drip[5]; //trengs for å kunne lese av spesfik sensor
+
+int rightSpeed = 200;
+int leftSpeed = 200;
+int previousError;
+float output;
+double integral;
+double derivative;
+unsigned int lineSensorValues[5];
 
 //Avstand kjørt, 1m kjøring er 10km simulert kjøring.
 //Etter 255km kjørt simulert, deles totaldistansen opp i et multiplum av 255 og en rest, slik at EEprom kan lagre hele distansen.
@@ -68,13 +75,13 @@ int batteryDrain(byte battery) {
 void showBattery() {
   display.gotoXY(0, 0);
   display.print((reinterpret_cast<const __FlashStringHelper *>(
-# 62 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
+# 69 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
                (__extension__({static const char __c[] __attribute__((__progmem__)) = (
-# 62 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+# 69 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
                "Power:  "
-# 62 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
+# 69 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 3
                ); &__c[0];}))
-# 62 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+# 69 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
                )));
   display.gotoXY(0, 1);
   display.print(power);
@@ -121,22 +128,16 @@ void sendDistance() {
   }
 }
 
-short lineSensorRead() {
-  static unsigned short lineSensorVal[5]; // lager en variable med like mange indekser som det er sensorer
-  short error = map(lineSensors.readLine(lineSensorVal), 0, 4000, -2000, 2000);
-  return error;
-}
-
-void lineFollowPID(int pos) { // tar inn posisjonen
+void lineFollowPID() { // tar inn posisjonen
   static short prevPos;
   if (pidFlag) {
-    short correction = pos / 4 + 6 * (pos - prevPos); // kilde eksempelkode
-    prevPos = pos;
-    byte lSpeed = ((topSpeed + correction)<(0)?(0):((topSpeed + correction)>(topSpeed)?(topSpeed):(topSpeed + correction))); // farten på venstre side lik topSpeed + correction
-    byte rSpeed = ((topSpeed - correction)<(0)?(0):((topSpeed - correction)>(topSpeed)?(topSpeed):(topSpeed - correction))); // farten på høgre side lik topspeed - correction
-                                                                  // setter slik at verdien vil alltids være mellom 200 og 0, vil forhindre for høye hastigheter, men viktigs
-                                                                  // hindrer at det vil fort gå fra positiv hastighet til negativ hastighet som kan skade motorene.
-    motors.setSpeeds(lSpeed, rSpeed);
+    int posisjon = lineSensors.readLine(lineSensorValues);
+    int error = (posisjon - 2000) / 5;
+    integral += error;
+    derivative = error - previousError;
+    previousError = error;
+    output = error + 0.0001 * integral + 4 * derivative;
+    motors.setSpeeds(leftSpeed + output, rightSpeed - output);
   }
 }
 
@@ -149,7 +150,7 @@ void drivingMain() {
       static bool leftFlag2 = true;
       static byte leftCounter = 0;
       static uint32_t leftTime = millis();
-      lineFollowPID(lineSensorRead());
+      lineFollowPID();
       if (lineSensors.readOneSens(drip) >= 900) { //merker at den rører en linje og setter av et flag
         leftFlag = true;
       } else if (lineSensors.readOneSens(drip) < 100 && leftFlag) { //når bilen har gått av linjen flippes flaget tilbake og counter går +1
@@ -179,7 +180,7 @@ void drivingMain() {
       static bool straightFlag = false;
       static byte straightCounter = 0;
       if (straightCounter < 2) { //fjern if setningen
-        lineFollowPID(lineSensorRead());
+        lineFollowPID();
       }
       if (lineSensors.readOneSens(drip) >= 900) straightFlag = true; //merker at den har kommet på en svart linje på venstre side av bilen
       else if (lineSensors.readOneSens(drip) == 0 && straightFlag) { //teller + 1 etter bilen har pasert linja
@@ -205,12 +206,12 @@ void drivingMain() {
         input = 4;
         rightFlag = false;
         break;
-      } else if (millis() - rightTime >= 500) lineFollowPID(lineSensorRead()); //kjører PID om ingen sving
+      } else if (millis() - rightTime >= 500) lineFollowPID(); //kjører PID om ingen sving
       break;
     case 4:
       static bool switcher = true;
       static uint32_t switcherTime = millis();
-      lineFollowPID(lineSensorRead());
+      lineFollowPID();
       if (switcher) {
         switcherTime = millis();
         switcher = false;
@@ -227,8 +228,9 @@ void drivingMain() {
       input = 0;
       break;
     default:
-    motors.setSpeeds(0,0);
-    Serial.println("uaiuaiuh");
+      motors.setSpeeds(0, 0);
+      //    Serial.println("uaiuaiuh");
+      break;
   }
 }
 
@@ -276,5 +278,5 @@ void loop() {
     tid = millis();
 
   }*/
-# 260 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+# 262 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 }
