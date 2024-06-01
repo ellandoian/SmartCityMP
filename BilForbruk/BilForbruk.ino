@@ -25,8 +25,8 @@ byte courseArrlength = 0;
 bool sendChargeDist = false;
 static int drip[5];  //trengs for å kunne lese av spesfik sensor
 
-int rightSpeed = 200;
-int leftSpeed = 200;
+int rightSpeed = 150;
+int leftSpeed = 150;
 int previousError;
 float output;
 double integral;
@@ -214,7 +214,7 @@ void drivingMain() {
       Serial.println(courseArrlength);
       Serial.println(turnCount);
       motors.setSpeeds(0, 0);
-      if (turnCount != courseArrlength && chargeEndFlag) {
+      if ((turnCount + 1) != courseArrlength && chargeEndFlag) {
         chargeEndFlag = false;
         chargeEndTime = millis();
       }
