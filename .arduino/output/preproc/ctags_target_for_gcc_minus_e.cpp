@@ -202,11 +202,11 @@ void drivingMain() {
         Serial.println("truning Right");
         rightFlag = true;
       }
-      if (millis() - rightTime >= 500 && rightFlag) { //om bilen har fullført svingen hopper bilen til neste case
+      if (millis() - rightTime >= 250 && rightFlag) { //om bilen har fullført svingen hopper bilen til neste case
         input = 4;
         rightFlag = false;
         break;
-      } else if (millis() - rightTime >= 500) lineFollowPID(); //kjører PID om ingen sving
+      } else if (millis() - rightTime >= 250) lineFollowPID(); //kjører PID om ingen sving
       break;
     case 4:
       static bool switcher = true;
@@ -216,7 +216,7 @@ void drivingMain() {
         switcherTime = millis();
         switcher = false;
       }
-      if (millis() - switcherTime >= 750) {
+      if (millis() - switcherTime >= 300) {
         turnCount++;
         switcher = true;
         input = courseArray[turnCount];
@@ -227,16 +227,14 @@ void drivingMain() {
       static uint32_t chargeEndTime = millis();
       static bool chargeEndFlag = true;
       Charge();
-      Serial.println(courseArrlength);
-      Serial.println(turnCount);
       motors.setSpeeds(0, 0);
-      if (turnCount != courseArrlength && chargeEndFlag) {
+      if ((turnCount + 1) != courseArrlength && chargeEndFlag) {
         chargeEndFlag = false;
         chargeEndTime = millis();
       }
       if (chargeEndFlag == false) {
         lineFollowPID();
-        if (millis()-chargeEndTime>= 6000){
+        if (millis()-chargeEndTime>= 3000){
           chargeEndFlag = true;
           input = 4;
           break;
@@ -314,5 +312,5 @@ void loop() {
     tid = millis();
 
   }*/
-# 288 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+# 286 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 }
