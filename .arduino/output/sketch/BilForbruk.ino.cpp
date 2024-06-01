@@ -54,11 +54,11 @@ void sendDistance();
 void lineFollowPID();
 #line 128 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void drivingMain();
-#line 235 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 237 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void pidSetup();
-#line 250 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 252 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void setup();
-#line 265 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 267 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void loop();
 #line 39 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 float distMeasure() {
@@ -160,14 +160,14 @@ void drivingMain() {
       static byte leftCounter = 0;
       static uint32_t leftTime = millis();
       lineFollowPID();
-      if (lineSensors.readOneSens(drip) >= 900) {  //merker at den rører en linje og setter av et flag
+      if (lineSensors.readOneSens(drip) >= 600) {  //merker at den rører en linje og setter av et flag
         leftFlag = true;
       } else if (lineSensors.readOneSens(drip) < 100 && leftFlag) {  //når bilen har gått av linjen flippes flaget tilbake og counter går +1
         leftCounter++;
         leftFlag = false;
       }
 
-      if (lineSensors.readOneSens(drip) >= 800 && leftCounter == 1) {  //når bilen kommer til en linje etter å ha pasert en vil den svinge til venstre
+      if (lineSensors.readOneSens(drip) >= 600 && leftCounter == 1) {  //når bilen kommer til en linje etter å ha pasert en vil den svinge til venstre
         motors.setSpeeds(-100, 100);
         leftTime = millis();
         leftFlag2 = false;
@@ -191,7 +191,7 @@ void drivingMain() {
       if (straightCounter < 2) {  //fjern if setningen
         lineFollowPID();
       }
-      if (lineSensors.readOneSens(drip) >= 900) straightFlag = true;  //merker at den har kommet på en svart linje på venstre side av bilen
+      if (lineSensors.readOneSens(drip) >= 600) straightFlag = true;  //merker at den har kommet på en svart linje på venstre side av bilen
       else if (lineSensors.readOneSens(drip) == 0 && straightFlag) {  //teller + 1 etter bilen har pasert linja
         straightCounter++;                                            //
         straightFlag = false;                                         //
@@ -205,17 +205,17 @@ void drivingMain() {
     case 3:
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
-      if (lineSensors.readOneSens(drip) >= 900) {  //Om bilen har kommet til et kryss vil den svinge til høyere
+      if (lineSensors.readOneSens(drip) >= 600) {  //Om bilen har kommet til et kryss vil den svinge til høyere
         rightTime = millis();
         motors.setSpeeds(150, -100);
         Serial.println("truning Right");
         rightFlag = true;
       }
-      if (millis() - rightTime >= 250 && rightFlag) {  //om bilen har fullført svingen hopper bilen til neste case
+      if (millis() - rightTime >= 350 && rightFlag) {  //om bilen har fullført svingen hopper bilen til neste case
         input = 4;
         rightFlag = false;
         break;
-      } else if (millis() - rightTime >= 250) lineFollowPID();  //kjører PID om ingen sving
+      } else if (millis() - rightTime >= 350) lineFollowPID();  //kjører PID om ingen sving
       break;
     case 4:
       static bool switcher = true;
@@ -231,6 +231,8 @@ void drivingMain() {
         input = courseArray[turnCount];
         break;
       }
+      display.gotoXY(1, 10);
+      display.print(turnCount);
       break;
     case 5:
       static uint32_t chargeEndTime = millis();
