@@ -216,7 +216,7 @@ void drivingMain() {
         switcherTime = millis();
         switcher = false;
       }
-      if (millis() - switcherTime >= 2000) {
+      if (millis() - switcherTime >= 750) {
         turnCount++;
         switcher = true;
         input = courseArray[turnCount];
@@ -224,8 +224,24 @@ void drivingMain() {
       }
       break;
     case 5:
+      static uint32_t chargeEndTime = millis();
+      static bool chargeEndFlag = true;
       Charge();
-      motors.setSpeeds(0,0);
+      Serial.println(courseArrlength);
+      Serial.println(turnCount);
+      motors.setSpeeds(0, 0);
+      if (turnCount != courseArrlength && chargeEndFlag) {
+        chargeEndFlag = false;
+        chargeEndTime = millis();
+      }
+      if (chargeEndFlag == false) {
+        lineFollowPID();
+        if (millis()-chargeEndTime>= 6000){
+          chargeEndFlag = true;
+          input = 4;
+          break;
+        }
+      }
       break;
     default:
       motors.setSpeeds(0, 0);
@@ -265,34 +281,38 @@ void setup() {
 }
 
 void loop() {
-  /*static long tid;  //skal bort
-
+  static long tid; //skal bort
   partDisGlobal = distMeasure();
-
   totalDistance = partDisGlobal + (distMultiplier * 255);
-
   power = batteryDrain(power);
-
   showBattery();
-
   drivingMain();
-
   /*if (millis() - tid >= 5000) {  //if-setningen skal bort
 
     Charge();
 
     tid = millis();
 
-  }*/
-# 262 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
-  static long tid= millis();
-  if (millis()-tid>=3000) {
-    for (int i=0; i < 10; i++) {
-      Serial.print(courseArray[i]);
-    }
-    Serial.println();
-    Serial.print(courseArrlength);
-    Serial.println();
-    tid = millis();
   }
+
+  static long tid = millis();
+
+  if (millis() - tid >= 3000) {
+
+    for (int i = 0; i < 10; i++) {
+
+      Serial.print(courseArray[i]);
+
+    }
+
+    Serial.println();
+
+    Serial.print(courseArrlength);
+
+    Serial.println();
+
+    tid = millis();
+
+  }*/
+# 288 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 }

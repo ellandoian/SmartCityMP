@@ -211,8 +211,10 @@ void drivingMain() {
       static uint32_t chargeEndTime = millis();
       static bool chargeEndFlag = true;
       Charge();
+      Serial.println(courseArrlength);
+      Serial.println(turnCount);
       motors.setSpeeds(0, 0);
-      if (turnCount != courseArrayLength && chargeEndFlag) {
+      if (turnCount != courseArrlength && chargeEndFlag) {
         chargeEndFlag = false;
         chargeEndTime = millis();
       }
@@ -263,7 +265,7 @@ void setup() {
 }
 
 void loop() {
-  /*static long tid;  //skal bort
+  static long tid;  //skal bort
   partDisGlobal = distMeasure();
   totalDistance = partDisGlobal + (distMultiplier * 255);
   power = batteryDrain(power);
@@ -272,7 +274,7 @@ void loop() {
   /*if (millis() - tid >= 5000) {  //if-setningen skal bort
     Charge();
     tid = millis();
-  }*/
+  }
   static long tid = millis();
   if (millis() - tid >= 3000) {
     for (int i = 0; i < 10; i++) {
@@ -282,5 +284,5 @@ void loop() {
     Serial.print(courseArrlength);
     Serial.println();
     tid = millis();
-  }
+  }*/
 }
