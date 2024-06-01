@@ -209,7 +209,7 @@ void drivingMain() {
       break;
     case 5:
       Charge();
-      input = 0;
+      motors.setSpeeds(0,0);
       break;
     default:
       motors.setSpeeds(0, 0);
@@ -249,7 +249,7 @@ void setup() {
 }
 
 void loop() {
-  static long tid;  //skal bort
+  /*static long tid;  //skal bort
   partDisGlobal = distMeasure();
   totalDistance = partDisGlobal + (distMultiplier * 255);
   power = batteryDrain(power);
@@ -259,4 +259,14 @@ void loop() {
     Charge();
     tid = millis();
   }*/
+  static long tid= millis();
+  if (millis()-tid>=3000) {
+    for (int i=0; i < 10; i++) {
+      Serial.print(courseArray[i]);
+    }
+    Serial.println();
+    Serial.print(courseArrlength);
+    Serial.println();
+    tid = millis();
+  }
 }

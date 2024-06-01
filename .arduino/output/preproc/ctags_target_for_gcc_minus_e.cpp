@@ -225,7 +225,7 @@ void drivingMain() {
       break;
     case 5:
       Charge();
-      input = 0;
+      motors.setSpeeds(0,0);
       break;
     default:
       motors.setSpeeds(0, 0);
@@ -265,12 +265,18 @@ void setup() {
 }
 
 void loop() {
-  static long tid; //skal bort
+  /*static long tid;  //skal bort
+
   partDisGlobal = distMeasure();
+
   totalDistance = partDisGlobal + (distMultiplier * 255);
+
   power = batteryDrain(power);
+
   showBattery();
+
   drivingMain();
+
   /*if (millis() - tid >= 5000) {  //if-setningen skal bort
 
     Charge();
@@ -279,4 +285,14 @@ void loop() {
 
   }*/
 # 262 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+  static long tid= millis();
+  if (millis()-tid>=3000) {
+    for (int i=0; i < 10; i++) {
+      Serial.print(courseArray[i]);
+    }
+    Serial.println();
+    Serial.print(courseArrlength);
+    Serial.println();
+    tid = millis();
+  }
 }
