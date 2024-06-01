@@ -208,8 +208,22 @@ void drivingMain() {
       }
       break;
     case 5:
+      static uint32_t chargeEndTime = millis();
+      static bool chargeEndFlag = true;
       Charge();
-      motors.setSpeeds(0,0);
+      motors.setSpeeds(0, 0);
+      if (turnCount != courseArrayLength && chargeEndFlag) {
+        chargeEndFlag = false;
+        chargeEndTime = millis();
+      }
+      if (chargeEndFlag == false) {
+        lineFollowPID();
+        if (millis()-chargeEndTime>= 6000){
+          chargeEndFlag = true;
+          input = 4;
+          break;
+        }
+      }
       break;
     default:
       motors.setSpeeds(0, 0);
@@ -259,9 +273,9 @@ void loop() {
     Charge();
     tid = millis();
   }*/
-  static long tid= millis();
-  if (millis()-tid>=3000) {
-    for (int i=0; i < 10; i++) {
+  static long tid = millis();
+  if (millis() - tid >= 3000) {
+    for (int i = 0; i < 10; i++) {
       Serial.print(courseArray[i]);
     }
     Serial.println();
