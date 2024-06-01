@@ -200,7 +200,7 @@ void drivingMain() {
         switcherTime = millis();
         switcher = false;
       }
-      if (millis() - switcherTime >= 2000) {
+      if (millis() - switcherTime >= 750) {
         turnCount++;
         switcher = true;
         input = courseArray[turnCount];
