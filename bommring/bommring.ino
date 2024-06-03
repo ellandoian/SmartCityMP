@@ -163,13 +163,15 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
   static uint32_t colCalTime = millis();
   static short count;
   static int base[3], prevBase[3];
-  if (button(1200, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
+
+  if (button(1300, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
     int* read;
     read = colorRead();
     for (short i; i <= 2; i++) {
       base[i] = base[i] + read[i];
     }
     count++;
+    Serial.printf("count: %d\n", count);
     colCalTime = millis();
   }
   if (count == 10) {  // etter 10 målinger vil gjennomsnittet bli lagret
@@ -195,7 +197,6 @@ String IDcheck() {  //funksjonen som skal identisere fargene
     ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 20));
     ID += ",";
   }
-  //Serial.println(ID);
   ID += String(carCount60s());
   return ID;
 }
@@ -212,7 +213,6 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
   }
   if (prevInput != IDcheck()) {
     String data = IDcheck();
-    //Serial.println(IDcheck());
     for (int i; i <= 50; i++) {
       if (data == dataArr[i]) {
         io = true;
