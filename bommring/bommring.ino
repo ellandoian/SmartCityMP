@@ -119,6 +119,7 @@ short proxRead() {
 short carCount(short proxy) {  //teller hvor mange biler som har kjørt forbi bommen, tar inn proximity dataen
   static short cCounter = -1;  //vil autmatisk telle +1 når koden kjøres første gang, verdi på -1 gjør at den starter på 0
   static bool countState = false;
+  Serial.println(proxy);
   if (proxy < 150) countState = true;    //veien ligger på runt 220, registerer når noe har kommet til bommen
   else if (proxy > 150 && countState) {  //når bilen har kjørt helt gjennom bommen, vil bilen bli telt
     cCounter++;
