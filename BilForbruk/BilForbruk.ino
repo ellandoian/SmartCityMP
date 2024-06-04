@@ -97,9 +97,9 @@ void Receive(int howMany) {
 //Lader opp batteriet og pauser i 5 sekund
 
 void Charge() {
+  motors.setSpeeds(0, 0);
   display.clear();
   display.println("CHARGING");
-  motors.setSpeeds(0, 0);
 }
 
 //Sende distanse kjørt til ESP, kjøres når bilen lader
@@ -163,6 +163,8 @@ void drivingMain() {
       }
       break;
     case 2:
+      Serial.println(input);
+
       static bool straightFlag = false;
       static byte straightCounter = 0;
       lineFollowPID();
@@ -182,6 +184,8 @@ void drivingMain() {
       }
       break;
     case 3:
+      Serial.println(input);
+
       showBattery();
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
@@ -195,9 +199,10 @@ void drivingMain() {
         input = 4;
         rightFlag = false;
         break;
-      } else  if (millis() - rightTime >= 350)lineFollowPID();  //kjører PID om ingen sving
+      } else if (millis() - rightTime >= 350) lineFollowPID();  //kjører PID om ingen sving
       break;
     case 4:
+      Serial.println(input);
       static bool switcher = true;
       static uint32_t switcherTime = millis();
       lineFollowPID();
@@ -216,12 +221,11 @@ void drivingMain() {
       display.print(turnCount);
       break;
     case 5:
+      Serial.println(input);
+
       static uint32_t chargeEndTime = millis();
-      static bool chargeEndFlag, chargeStartFlag, chargeSendFlag = true;
+      static bool chargeEndFlag, chargeSendFlag = true;
       if (lineSensors.readOneSens(drip) >= 700) {
-        chargeStartFlag = false;
-      }
-      if (chargeStartFlag == false && chargeEndFlag == true) {
         Charge();
         if (chargeSendFlag == true) {
           sendDistance();
@@ -235,16 +239,15 @@ void drivingMain() {
         chargeEndFlag = false;
         chargeEndTime = millis();
       }
-      if (chargeEndFlag == false) {
-        if (millis() - chargeEndTime >= 3000) {
-          chargeEndFlag = true;
-          input = 4;
-          chargeSendFlag = true;
-          break;
-        }
+      if (millis() - chargeEndTime >= 3000 && chargeEndFlag == false) {
+        chargeEndFlag = true;
+        input = 4;
+        chargeSendFlag = true;
+        break;
       }
       break;
     default:
+    Serial.println("default");
       showBattery();
       motors.setSpeeds(0, 0);
       break;
