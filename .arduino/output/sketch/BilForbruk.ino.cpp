@@ -48,17 +48,17 @@ void showBattery();
 void Receive(int howMany);
 #line 99 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void Charge();
-#line 108 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 107 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void sendDistance();
-#line 120 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 116 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void lineFollowPID();
-#line 133 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 129 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void drivingMain();
-#line 259 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 261 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void pidSetup();
-#line 274 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 276 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void setup();
-#line 289 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 291 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void loop();
 #line 39 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 float distMeasure() {
@@ -122,24 +122,20 @@ void Receive(int howMany) {
 //Lader opp batteriet og pauser i 5 sekund
 
 void Charge() {
+  motors.setSpeeds(0, 0);
   display.clear();
   display.println("CHARGING");
-  sendChargeDist = true;  //Flagg som gjør at bilen sender distansen til ESP32
-  motors.setSpeeds(0, 0);
 }
 
 //Sende distanse kjørt til ESP, kjøres når bilen lader
 
 void sendDistance() {
-  if (sendChargeDist == true) {
-    //Serial.println(totalDistance); //Skal bort senere
-    int partDis = static_cast<int>(partDisGlobal);
-    Wire.write(partDis);
-    Wire.write(distMultiplier);
-    sendChargeDist = false;
-    distMultiplier = 0;
-    partDisGlobal = 0;  //Resetter avstanden etter den er sendt
-  }
+  int partDis = static_cast<int>(partDisGlobal);
+  Wire.write(partDis);
+  Wire.write(distMultiplier);
+  sendChargeDist = false;
+  distMultiplier = 0;
+  partDisGlobal = 0;  //Resetter avstanden etter den er sendt
 }
 
 void lineFollowPID() {  // tar inn posisjonen
@@ -192,6 +188,8 @@ void drivingMain() {
       }
       break;
     case 2:
+      //Serial.println(input);
+
       static bool straightFlag = false;
       static byte straightCounter = 0;
       lineFollowPID();
@@ -211,6 +209,8 @@ void drivingMain() {
       }
       break;
     case 3:
+      //Serial.println(input);
+
       showBattery();
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
@@ -224,9 +224,10 @@ void drivingMain() {
         input = 4;
         rightFlag = false;
         break;
-      } else  if (millis() - rightTime >= 350)lineFollowPID();  //kjører PID om ingen sving
+      } else if (millis() - rightTime >= 350) lineFollowPID();  //kjører PID om ingen sving
       break;
     case 4:
+      //Serial.println(input);
       static bool switcher = true;
       static uint32_t switcherTime = millis();
       lineFollowPID();
@@ -245,36 +246,37 @@ void drivingMain() {
       display.print(turnCount);
       break;
     case 5:
+      /*Serial.println(input);
+      Serial.print(courseArrlength);
+      Serial.print("      ");
+      Serial.println(turnCount);*/
       static uint32_t chargeEndTime = millis();
-      static bool chargeEndFlag, chargeStartFlag, chargeSendFlag = true;
+      static bool chargeEndFlag, chargeSendFlag = true;
       if (lineSensors.readOneSens(drip) >= 700) {
-        chargeStartFlag = false;
-      }
-      if (chargeStartFlag == false && chargeEndFlag == true) {
         Charge();
         if (chargeSendFlag == true) {
           sendDistance();
           chargeSendFlag = false;
         }
-      }
-      else {
+      } else {
         lineFollowPID();
         showBattery();
       }
       if ((turnCount + 1) != courseArrlength && chargeEndFlag) {
         chargeEndFlag = false;
         chargeEndTime = millis();
+        Serial.println("WHY???");
       }
-      if (chargeEndFlag == false) {
-        if (millis() - chargeEndTime >= 3000) {
-          chargeEndFlag = true;
-          input = 4;
-          chargeSendFlag = true;
-          break;
-        }
+      if (millis() - chargeEndTime >= 3000 && chargeEndFlag == false) {
+        Serial.println("Hvorfor???");
+        chargeEndFlag = true;
+        input = 4;
+        chargeSendFlag = true;
+        break;
       }
       break;
     default:
+    //Serial.println("default");
       showBattery();
       motors.setSpeeds(0, 0);
       break;
