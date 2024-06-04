@@ -99,22 +99,18 @@ void Receive(int howMany) {
 void Charge() {
   display.clear();
   display.println("CHARGING");
-  sendChargeDist = true;  //Flagg som gjør at bilen sender distansen til ESP32
   motors.setSpeeds(0, 0);
 }
 
 //Sende distanse kjørt til ESP, kjøres når bilen lader
 
 void sendDistance() {
-  if (sendChargeDist == true) {
-    //Serial.println(totalDistance); //Skal bort senere
-    int partDis = static_cast<int>(partDisGlobal);
-    Wire.write(partDis);
-    Wire.write(distMultiplier);
-    sendChargeDist = false;
-    distMultiplier = 0;
-    partDisGlobal = 0;  //Resetter avstanden etter den er sendt
-  }
+  int partDis = static_cast<int>(partDisGlobal);
+  Wire.write(partDis);
+  Wire.write(distMultiplier);
+  sendChargeDist = false;
+  distMultiplier = 0;
+  partDisGlobal = 0;  //Resetter avstanden etter den er sendt
 }
 
 void lineFollowPID() {  // tar inn posisjonen
