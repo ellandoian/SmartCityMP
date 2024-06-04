@@ -157,14 +157,14 @@ void drivingMain() {
       static uint32_t leftTime = millis();
       showBattery();
       lineFollowPID();
-      if (lineSensors.readOneSens(drip) >= 600) { //merker at den rører en linje og setter av et flag
+      if (lineSensors.readOneSens(drip) >= 700) { //merker at den rører en linje og setter av et flag
         leftFlag = true;
       } else if (lineSensors.readOneSens(drip) < 100 && leftFlag) { //når bilen har gått av linjen flippes flaget tilbake og counter går +1
         leftCounter++;
         leftFlag = false;
       }
 
-      if (lineSensors.readOneSens(drip) >= 600 && leftCounter == 1) { //når bilen kommer til en linje etter å ha pasert en vil den svinge til venstre
+      if (lineSensors.readOneSens(drip) >= 700 && leftCounter == 1) { //når bilen kommer til en linje etter å ha pasert en vil den svinge til venstre
         motors.setSpeeds(-100, 100);
         leftTime = millis();
         leftFlag2 = false;
@@ -187,7 +187,7 @@ void drivingMain() {
       static byte straightCounter = 0;
       lineFollowPID();
       showBattery();
-      if (lineSensors.readOneSens(drip) >= 600) straightFlag = true; //merker at den har kommet på en svart linje på venstre side av bilen
+      if (lineSensors.readOneSens(drip) >= 700) straightFlag = true; //merker at den har kommet på en svart linje på venstre side av bilen
       else if (lineSensors.readOneSens(drip) <= 150 && straightFlag) { //teller + 1 etter bilen har pasert linja
         straightCounter++;
         Serial.println("onLine");
@@ -205,7 +205,7 @@ void drivingMain() {
       showBattery();
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
-      if (lineSensors.readOneSens(drip) >= 600) { //Om bilen har kommet til et kryss vil den svinge til høyere
+      if (lineSensors.readOneSens(drip) >= 700) { //Om bilen har kommet til et kryss vil den svinge til høyere
         rightTime = millis();
         motors.setSpeeds(150, -100);
         Serial.println("truning Right");
@@ -215,7 +215,7 @@ void drivingMain() {
         input = 4;
         rightFlag = false;
         break;
-      } else if (millis() - rightTime >= 350) lineFollowPID(); //kjører PID om ingen sving
+      } else if (millis() - rightTime >= 350)lineFollowPID(); //kjører PID om ingen sving
       break;
     case 4:
       static bool switcher = true;
@@ -238,7 +238,7 @@ void drivingMain() {
     case 5:
       static uint32_t chargeEndTime = millis();
       static bool chargeEndFlag, chargeStartFlag, chargeSendFlag = true;
-      if (lineSensors.readOneSens(drip) >= 600) {
+      if (lineSensors.readOneSens(drip) >= 700) {
         chargeStartFlag = false;
       }
       if (chargeStartFlag == false && chargeEndFlag == true) {
