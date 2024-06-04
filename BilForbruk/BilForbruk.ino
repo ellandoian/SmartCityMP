@@ -84,13 +84,11 @@ void Receive(int howMany) {
   {
     byte receivedByte = Wire.read();
     courseArray[courseArrlength] = receivedByte - '0';  // Convert from ASCII to integer
-    //Serial.println(courseArray[i]);
     courseArrlength++;
     if (startRouteFlag) {
       input = courseArray[0];
       startRouteFlag = false;
     }
-    //input = courseArray[0];
   }
 }
 
@@ -163,8 +161,6 @@ void drivingMain() {
       }
       break;
     case 2:
-      //Serial.println(input);
-
       static bool straightFlag = false;
       static byte straightCounter = 0;
       lineFollowPID();
@@ -172,9 +168,6 @@ void drivingMain() {
       if (lineSensors.readOneSens(drip) >= 700) straightFlag = true;    //merker at den har kommet på en svart linje på venstre side av bilen
       else if (lineSensors.readOneSens(drip) <= 150 && straightFlag) {  //teller + 1 etter bilen har pasert linja
         straightCounter++;
-        Serial.println("onLine");
-        Serial.print("count");
-        Serial.println(straightCounter);
         straightFlag = false;
       }
       if (straightCounter >= 2) {  //om den har pasert to linjer går den videre til neste steg
@@ -184,15 +177,12 @@ void drivingMain() {
       }
       break;
     case 3:
-      //Serial.println(input);
-
       showBattery();
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
       if (lineSensors.readOneSens(drip) >= 700) {  //Om bilen har kommet til et kryss vil den svinge til høyere
         rightTime = millis();
         motors.setSpeeds(150, -100);
-        Serial.println("truning Right");
         rightFlag = true;
       }
       if (millis() - rightTime >= 350 && rightFlag) {  //om bilen har fullført svingen hopper bilen til neste case
@@ -202,7 +192,6 @@ void drivingMain() {
       } else if (millis() - rightTime >= 350) lineFollowPID();  //kjører PID om ingen sving
       break;
     case 4:
-      //Serial.println(input);
       static bool switcher = true;
       static uint32_t switcherTime = millis();
       lineFollowPID();
@@ -221,10 +210,6 @@ void drivingMain() {
       display.print(turnCount);
       break;
     case 5:
-      /*Serial.println(input);
-      Serial.print(courseArrlength);
-      Serial.print("      ");
-      Serial.println(turnCount);*/
       static uint32_t chargeEndTime = millis();
       static bool chargeEndFlag, chargeSendFlag = true;
       if (lineSensors.readOneSens(drip) >= 700) {
@@ -250,7 +235,6 @@ void drivingMain() {
       }
       break;
     default:
-      //Serial.println("default");
       showBattery();
       motors.setSpeeds(0, 0);
       break;
