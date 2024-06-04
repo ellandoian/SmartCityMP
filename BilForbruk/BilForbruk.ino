@@ -128,6 +128,38 @@ void drivingMain() {
   int filler[3] = { 3, 2, 1 };
   static byte turnCount = 0;
   switch (input) {
+    case 1:
+      showBattery();
+      static bool rightFlag = false;
+      static uint32_t rightTime = millis();
+      if (lineSensors.readOneSens(drip) >= 700) {  //Om bilen har kommet til et kryss vil den svinge til høyere
+        rightTime = millis();
+        motors.setSpeeds(150, -100);
+        rightFlag = true;
+      }
+      if (millis() - rightTime >= 350 && rightFlag) {  //om bilen har fullført svingen hopper bilen til neste case
+        input = 4;
+        rightFlag = false;
+        break;
+      } else if (millis() - rightTime >= 350) lineFollowPID();  //kjører PID om ingen sving
+      break;
+
+    case 2:
+      static bool straightFlag = false;
+      static byte straightCounter = 0;
+      lineFollowPID();
+      showBattery();
+      if (lineSensors.readOneSens(drip) >= 700) straightFlag = true;    //merker at den har kommet på en svart linje på venstre side av bilen
+      else if (lineSensors.readOneSens(drip) <= 150 && straightFlag) {  //teller + 1 etter bilen har pasert linja
+        straightCounter++;
+        straightFlag = false;
+      }
+      if (straightCounter >= 2) {  //om den har pasert to linjer går den videre til neste steg
+        straightCounter = 0;
+        input = 4;
+        break;
+      }
+      break;
     case 3:
       static bool leftFlag = false;
       static bool leftFlag2 = true;
@@ -159,37 +191,6 @@ void drivingMain() {
         input = 4;
         break;
       }
-      break;
-    case 2:
-      static bool straightFlag = false;
-      static byte straightCounter = 0;
-      lineFollowPID();
-      showBattery();
-      if (lineSensors.readOneSens(drip) >= 700) straightFlag = true;    //merker at den har kommet på en svart linje på venstre side av bilen
-      else if (lineSensors.readOneSens(drip) <= 150 && straightFlag) {  //teller + 1 etter bilen har pasert linja
-        straightCounter++;
-        straightFlag = false;
-      }
-      if (straightCounter >= 2) {  //om den har pasert to linjer går den videre til neste steg
-        straightCounter = 0;
-        input = 4;
-        break;
-      }
-      break;
-    case 1:
-      showBattery();
-      static bool rightFlag = false;
-      static uint32_t rightTime = millis();
-      if (lineSensors.readOneSens(drip) >= 700) {  //Om bilen har kommet til et kryss vil den svinge til høyere
-        rightTime = millis();
-        motors.setSpeeds(150, -100);
-        rightFlag = true;
-      }
-      if (millis() - rightTime >= 350 && rightFlag) {  //om bilen har fullført svingen hopper bilen til neste case
-        input = 4;
-        rightFlag = false;
-        break;
-      } else if (millis() - rightTime >= 350) lineFollowPID();  //kjører PID om ingen sving
       break;
     case 4:
       static bool switcher = true;
