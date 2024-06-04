@@ -162,11 +162,11 @@
    "-IC:\\Users\\Magnus\\Documents\\Arduino\\libraries\\PololuHD44780",
    "-IC:\\Users\\Magnus\\Documents\\Arduino\\libraries\\PololuOLED\\src",
    "-IC:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\EEPROM\\src",
-   "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4Motors.cpp",
+   "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4IRPulses.cpp",
    "-o",
-   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\libraries\\Zumo32U4\\Zumo32U4Motors.cpp.o"
+   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\libraries\\Zumo32U4\\Zumo32U4IRPulses.cpp.o"
   ],
-  "file": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4Motors.cpp"
+  "file": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4IRPulses.cpp"
  },
  {
   "directory": "c:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP",
@@ -205,11 +205,11 @@
    "-IC:\\Users\\Magnus\\Documents\\Arduino\\libraries\\PololuHD44780",
    "-IC:\\Users\\Magnus\\Documents\\Arduino\\libraries\\PololuOLED\\src",
    "-IC:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\EEPROM\\src",
-   "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4IRPulses.cpp",
+   "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4Motors.cpp",
    "-o",
-   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\libraries\\Zumo32U4\\Zumo32U4IRPulses.cpp.o"
+   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\libraries\\Zumo32U4\\Zumo32U4Motors.cpp.o"
   ],
-  "file": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4IRPulses.cpp"
+  "file": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4Motors.cpp"
  },
  {
   "directory": "c:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP",
@@ -334,11 +334,11 @@
    "-IC:\\Users\\Magnus\\Documents\\Arduino\\libraries\\PololuHD44780",
    "-IC:\\Users\\Magnus\\Documents\\Arduino\\libraries\\PololuOLED\\src",
    "-IC:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\EEPROM\\src",
-   "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4Encoders.cpp",
+   "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4ProximitySensors.cpp",
    "-o",
-   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\libraries\\Zumo32U4\\Zumo32U4Encoders.cpp.o"
+   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\libraries\\Zumo32U4\\Zumo32U4ProximitySensors.cpp.o"
   ],
-  "file": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4Encoders.cpp"
+  "file": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4ProximitySensors.cpp"
  },
  {
   "directory": "c:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP",
@@ -377,11 +377,11 @@
    "-IC:\\Users\\Magnus\\Documents\\Arduino\\libraries\\PololuHD44780",
    "-IC:\\Users\\Magnus\\Documents\\Arduino\\libraries\\PololuOLED\\src",
    "-IC:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\EEPROM\\src",
-   "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4ProximitySensors.cpp",
+   "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4Encoders.cpp",
    "-o",
-   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\libraries\\Zumo32U4\\Zumo32U4ProximitySensors.cpp.o"
+   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\libraries\\Zumo32U4\\Zumo32U4Encoders.cpp.o"
   ],
-  "file": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4ProximitySensors.cpp"
+  "file": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Zumo32U4\\src\\Zumo32U4Encoders.cpp"
  },
  {
   "directory": "c:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP",
