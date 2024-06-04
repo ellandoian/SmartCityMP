@@ -3,6 +3,11 @@
 #include <PubSubClient.h>
 #include <Wire.h>
 
+//skal bruke prox sensor til å vite når den skal lese av, trenger kun å lese mens det er en bil under sensoren
+//
+//
+
+
 // wifi og wifipassord
 const char* ssid = "NTNU-IOT";
 const char* password = "";
@@ -129,7 +134,7 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
   static uint32_t colCalTime = millis();
   static short count;
   static int base[3], prevBase[3];
-  if (button(1200, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
+  if (button(1300, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
     int* read;
     read = colorRead();
     for (short i; i <= 2; i++) {
@@ -148,7 +153,7 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
   return base;
 }
 
-String IDcheck() {  
+String IDcheck() {
   String ID;
   int* baseColor;
   baseColor = calibrateCol();
@@ -157,9 +162,8 @@ String IDcheck() {
   static int colorCheck[3];
   for (short i; i <= 2; i++) {
     ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 20));
-    ID += ",";
+    if (i - 1 <= 0) ID += ",";
   }
-  //Serial.println(ID);
   return ID;
 }
 
