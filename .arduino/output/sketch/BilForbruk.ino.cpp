@@ -54,11 +54,11 @@ void sendDistance();
 void lineFollowPID();
 #line 133 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void drivingMain();
-#line 247 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 246 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void pidSetup();
-#line 262 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 261 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void setup();
-#line 277 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 276 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void loop();
 #line 39 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 float distMeasure() {
@@ -243,12 +243,11 @@ void drivingMain() {
       break;
     case 5:
       static uint32_t chargeEndTime = millis();
-      static bool chargeEndFlag = true;
-      lineFollowPID();
+      static bool chargeEndFlag, chargeStartFlag = true;
       if (lineSensors.readOneSens(drip) >= 600) {
-        Charge();
+          Charge();
       }
-      else lineFollowPID();
+      else lineFollowPID;
       if ((turnCount + 1) != courseArrlength && chargeEndFlag) {
         chargeEndFlag = false;
         chargeEndTime = millis();

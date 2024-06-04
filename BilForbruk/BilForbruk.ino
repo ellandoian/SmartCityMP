@@ -218,12 +218,11 @@ void drivingMain() {
       break;
     case 5:
       static uint32_t chargeEndTime = millis();
-      static bool chargeEndFlag = true;
-      lineFollowPID();
+      static bool chargeEndFlag, chargeStartFlag = true;
       if (lineSensors.readOneSens(drip) >= 600) {
-        Charge();
+          Charge();
       }
-      else lineFollowPID();
+      else lineFollowPID;
       if ((turnCount + 1) != courseArrlength && chargeEndFlag) {
         chargeEndFlag = false;
         chargeEndTime = millis();
