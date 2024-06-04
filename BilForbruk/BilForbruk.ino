@@ -237,21 +237,20 @@ void drivingMain() {
         lineFollowPID();
         showBattery();
       }
-      if ((turnCount + 1) != courseArrlength && chargeEndFlag) {
-        chargeEndFlag = false;
-        chargeEndTime = millis();
-        Serial.println("WHY???");
-      }
-      if ((millis() - chargeEndTime >= 3000) && (chargeEndFlag == false)) {
-        Serial.println("Hvorfor???");
-        chargeEndFlag = true;
-        input = 4;
-        chargeSendFlag = true;
-        break;
+      if ((turnCount + 1) != courseArrlength) {
+        if (chargeEndFlag) {
+          chargeEndTime = millis();
+          chargeEndFlag = false;
+        } else if (millis() - chargeEndTime >= 3000) {
+          chargeEndFlag = true;
+          chargeSendFlag = true;
+          input = 4;
+          break;
+        }
       }
       break;
     default:
-    //Serial.println("default");
+      //Serial.println("default");
       showBattery();
       motors.setSpeeds(0, 0);
       break;
