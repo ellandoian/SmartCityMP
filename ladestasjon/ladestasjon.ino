@@ -199,9 +199,11 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
   }
 }
 void loop() {
-  if (!client.connected()) {
-    reconnect();
+  if (proxRead() <= 150) {
+    if (!client.connected()) {
+      reconnect();
+    }
+    client.loop();
+    printOnce();
   }
-  client.loop();
-  printOnce();
 }
