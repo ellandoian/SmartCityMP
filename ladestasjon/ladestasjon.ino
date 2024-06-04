@@ -116,8 +116,13 @@ bool button(int trueTime, bool pulldown) {
 short proxRead() {
   static short proximity;
   if (APDS.proximityAvailable()) proximity = APDS.readProximity();
-  Serial.println(proximity);
   return proximity;
+}
+
+byte taken() {
+  if (proxRead() <= 150) {
+    return 1;
+  } else return 0;
 }
 
 int* colorRead() {
@@ -161,8 +166,9 @@ String IDcheck() {
   static int colorCheck[3];
   for (short i; i <= 2; i++) {
     ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 20));
-    if (i - 1 <= 0) ID += ",";
+    ID += ",";
   }
+  ID += String(taken());
   return ID;
 }
 
@@ -197,11 +203,9 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
   }
 }
 void loop() {
-  if (proxRead() <= 150) {
-    if (!client.connected()) {
-      reconnect();
-    }
-    client.loop();
-    printOnce();
+  if (!client.connected()) {
+    reconnect();
   }
+  client.loop();
+  printOnce();
 }
