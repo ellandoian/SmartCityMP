@@ -128,7 +128,7 @@ void drivingMain() {
   int filler[3] = { 3, 2, 1 };
   static byte turnCount = 0;
   switch (input) {
-    case 1:
+    case 3:
       static bool leftFlag = false;
       static bool leftFlag2 = true;
       static byte leftCounter = 0;
@@ -176,7 +176,7 @@ void drivingMain() {
         break;
       }
       break;
-    case 3:
+    case 1:
       showBattery();
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
@@ -239,7 +239,7 @@ void drivingMain() {
       motors.setSpeeds(0, 0);
       Serial.println(turnCount);
       Serial.println(courseArrlength);
-      if(turnCount != courseArrlength){
+      if (turnCount != courseArrlength) {
         input = 4;
         break;
       }
