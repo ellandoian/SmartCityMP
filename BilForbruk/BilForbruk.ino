@@ -231,8 +231,7 @@ void drivingMain() {
           sendDistance();
           chargeSendFlag = false;
         }
-      }
-      else {
+      } else {
         lineFollowPID();
         showBattery();
       }
