@@ -197,6 +197,7 @@ String IDcheck() {  //funksjonen som skal identisere fargene
     ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 20));
     ID += ",";
   }
+  Serial.println(ID);
   ID += String(carCount60s());
   return ID;
 }
