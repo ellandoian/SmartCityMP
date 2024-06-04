@@ -1,5 +1,4 @@
 #include <Zumo32U4.h>
-
 /*
 ******************************************************************************************************************
 ***************************************************|----------|***************************************************
@@ -7,20 +6,14 @@
 ***************************************************|----------|***************************************************
 ******************************************************************************************************************
 */
-
 Zumo32U4Motors motors;
 Zumo32U4ButtonC buttonC;
 Zumo32U4LineSensors lineSensors;
-Zumo32U4OLED display;
-Zumo32U4Encoders encoder;
 
 bool pidFlag = true;  //for å kunne tvinge PID av
-byte power, distMultiplier, input;
-unsigned long totalDistance;
-float partDisGlobal;
-int courseArray[30] = {};
+byte input;
+int courseArray[8] = { 1, 1, 1, 1, 3, 3, 3, 3 };
 byte courseArrlength = 0;
-bool sendChargeDist = false;
 static int drip[5];  //trengs for å kunne lese av spesfik sensor
 
 int rightSpeed = 200;
@@ -45,7 +38,7 @@ void lineFollowPID() {  // tar inn posisjonen
 void drivingMain() {
   static byte turnCount = 0;
   switch (input) {
-    case 1:
+    case 1:  //høyere
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
       if (lineSensors.readOneSens(drip) >= 700) {  //Om bilen har kommet til et kryss vil den svinge til høyere
@@ -59,23 +52,7 @@ void drivingMain() {
         break;
       } else if (millis() - rightTime >= 350) lineFollowPID();  //kjører PID om ingen sving
       break;
-
-    case 2:
-      static bool straightFlag = false;
-      static byte straightCounter = 0;
-      lineFollowPID();
-      if (lineSensors.readOneSens(drip) >= 700) straightFlag = true;    //merker at den har kommet på en svart linje på venstre side av bilen
-      else if (lineSensors.readOneSens(drip) <= 150 && straightFlag) {  //teller + 1 etter bilen har pasert linja
-        straightCounter++;
-        straightFlag = false;
-      }
-      if (straightCounter >= 2) {  //om den har pasert to linjer går den videre til neste steg
-        straightCounter = 0;
-        input = 4;
-        break;
-      }
-      break;
-    case 3:
+    case 3:  //venstre
       static bool leftFlag = false;
       static bool leftFlag2 = true;
       static byte leftCounter = 0;
@@ -105,26 +82,29 @@ void drivingMain() {
         break;
       }
       break;
-    case 4:
+    case 4:  //iterer
       static bool switcher = true;
       static uint32_t switcherTime = millis();
       lineFollowPID();
-      if (switcher) {
-        switcherTime = millis();
-        switcher = false;
-      }
-      if (millis() - switcherTime >= 300) {
-        turnCount++;
-        switcher = true;
+      if (turnCount >= 7) {
+        turnCount = 0;
         input = courseArray[turnCount];
         break;
+      } else {
+        if (switcher) {
+          switcherTime = millis();
+          switcher = false;
+        }
+        if (millis() - switcherTime >= 300) {
+          turnCount++;
+          switcher = true;
+          input = courseArray[turnCount];
+          break;
+        }
       }
       break;
     default:
-      motors.setSpeeds(0, 0);
-      if (turnCount != courseArrlength) {
-        input = courseArray[turnCount];
-      }
+      input = courseArray[turnCount];
       break;
   }
 }

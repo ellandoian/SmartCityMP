@@ -127,7 +127,7 @@ void lineFollowPID() {  // tar inn posisjonen
 void drivingMain() {
   static byte turnCount = 0;
   switch (input) {
-    case 1:
+    case 1://høyere
       showBattery();
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
@@ -143,7 +143,7 @@ void drivingMain() {
       } else if (millis() - rightTime >= 350) lineFollowPID();  //kjører PID om ingen sving
       break;
 
-    case 2:
+    case 2://rettfrem
       static bool straightFlag = false;
       static byte straightCounter = 0;
       lineFollowPID();
@@ -159,7 +159,7 @@ void drivingMain() {
         break;
       }
       break;
-    case 3:
+    case 3://venstre
       static bool leftFlag = false;
       static bool leftFlag2 = true;
       static byte leftCounter = 0;
@@ -190,7 +190,7 @@ void drivingMain() {
         break;
       }
       break;
-    case 4:
+    case 4://iterer
       static bool switcher = true;
       static uint32_t switcherTime = millis();
       lineFollowPID();
@@ -206,7 +206,7 @@ void drivingMain() {
         break;
       }
       break;
-    case 5:
+    case 5://lading
       static uint32_t chargeEndTime = millis();
       static bool chargeEndFlag, chargeSendFlag = true;
       if (lineSensors.readOneSens(drip) >= 700) {
