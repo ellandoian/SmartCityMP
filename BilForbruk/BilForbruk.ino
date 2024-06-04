@@ -125,7 +125,6 @@ void lineFollowPID() {  // tar inn posisjonen
 }
 
 void drivingMain() {
-  int filler[3] = { 3, 2, 1 };
   static byte turnCount = 0;
   switch (input) {
     case 1:
@@ -183,7 +182,6 @@ void drivingMain() {
       }
       if (leftFlag2 == false && millis() - leftTime >= 500) {  //avsluttersvingen og skrur på PID kjøring
         leftFlag2 = true;
-        Serial.println("turn Complete");
         pidFlag = true;
       }
       if (leftCounter >= 4) {  //tar å resetter counter og fullfører denne svingen etter bilen er ute av kryset
@@ -207,8 +205,6 @@ void drivingMain() {
         input = courseArray[turnCount];
         break;
       }
-      display.gotoXY(1, 10);
-      display.print(turnCount);
       break;
     case 5:
       static uint32_t chargeEndTime = millis();
@@ -238,8 +234,6 @@ void drivingMain() {
     default:
       showBattery();
       motors.setSpeeds(0, 0);
-      Serial.println(turnCount);
-      Serial.println(courseArrlength);
       if (turnCount != courseArrlength) {
         input = courseArray[turnCount];
       }
@@ -278,7 +272,6 @@ void setup() {
 }
 
 void loop() {
-  static long tid;  //skal bort
   partDisGlobal = distMeasure();
   totalDistance = partDisGlobal + (distMultiplier * 255);
   power = batteryDrain(power);
