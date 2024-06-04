@@ -1,3 +1,5 @@
+#include <Arduino.h>
+#line 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
 #include <Arduino_APDS9960.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
@@ -22,6 +24,29 @@ char msg[50];
 
 int pushButton = 25;
 
+#line 25 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void setup();
+#line 36 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void setup_wifi();
+#line 56 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void callback(char* topic, byte* message, unsigned int length);
+#line 78 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void reconnect();
+#line 98 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+bool button(int trueTime, bool pulldown);
+#line 118 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+short proxRead();
+#line 125 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+int * colorRead();
+#line 134 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+int * calibrateCol();
+#line 157 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+String IDcheck();
+#line 171 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void printOnce();
+#line 201 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void loop();
+#line 25 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
 void setup() {
   Serial.begin(115200);
   APDS.begin();
@@ -205,3 +230,4 @@ void loop() {
   client.loop();
   printOnce();
 }
+
