@@ -4,8 +4,6 @@
 #include <Wire.h>
 
 //skal bruke prox sensor til å vite når den skal lese av, trenger kun å lese mens det er en bil under sensoren
-//
-//
 
 
 // wifi og wifipassord
