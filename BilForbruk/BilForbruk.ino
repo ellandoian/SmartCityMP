@@ -222,7 +222,6 @@ void drivingMain() {
       break;
     case 5:
       Serial.println(input);
-
       static uint32_t chargeEndTime = millis();
       static bool chargeEndFlag, chargeSendFlag = true;
       if (lineSensors.readOneSens(drip) >= 700) {
