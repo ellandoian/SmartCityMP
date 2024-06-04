@@ -83,7 +83,7 @@ void callback(char* topic, byte* message, unsigned int length) {
 }
 
 void reconnect() {
-  client.subscribe("esp32/output");
+  client.subscribe("web2Zumo");
   // Looper til en kobling er opprettet 
   while (!client.connected()) {
     Serial.print("Forsøker å opprette kobling til mqtt...");
@@ -91,7 +91,7 @@ void reconnect() {
     if (client.connect("ESP32client", "njaal", "3Inshallah4")) {
       Serial.println("connected");
       // Topic som det subscribes til
-      client.subscribe("esp32/output");
+      client.subscribe("web2Zumo");
     } else {
       Serial.print("mislykket kobling, rc=");
       Serial.print(client.state());
