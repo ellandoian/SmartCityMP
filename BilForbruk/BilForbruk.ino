@@ -242,7 +242,7 @@ void drivingMain() {
         chargeEndTime = millis();
         Serial.println("WHY???");
       }
-      if (millis() - chargeEndTime >= 3000 && chargeEndFlag == false) {
+      if ((millis() - chargeEndTime >= 3000) && (chargeEndFlag == false)) {
         Serial.println("Hvorfor???");
         chargeEndFlag = true;
         input = 4;
