@@ -1,6 +1,5 @@
-C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\libraries\Zumo32U4\QTRSensors.cpp.o: \
- C:\Users\Magnus\Documents\Arduino\libraries\Zumo32U4\src\QTRSensors.cpp \
- C:\Users\Magnus\Documents\Arduino\libraries\Zumo32U4\src\QTRSensors.h \
+C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\libraries\WiFi-1.2.7\utility\spi_drv.cpp.o: \
+ C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src\utility\spi_drv.cpp \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Arduino.h \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/binary.h \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/WCharacter.h \
@@ -13,4 +12,9 @@ C:\Users\Magnus\Documents\GitHub\SmartCityMP\.arduino\output\libraries\Zumo32U4\
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Arduino.h \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/USBDesc.h \
  C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/USBCore.h \
- C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\variants\leonardo/pins_arduino.h
+ C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\variants\leonardo/pins_arduino.h \
+ C:\Users\Magnus\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\libraries\SPI\src/SPI.h \
+ C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src/utility/spi_drv.h \
+ C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src/utility/wifi_spi.h \
+ C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src/utility/wl_definitions.h \
+ C:\Users\Magnus\Documents\Arduino\libraries\WiFi-1.2.7\src/utility/debug.h

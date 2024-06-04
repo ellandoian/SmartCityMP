@@ -1,7 +1,8 @@
-# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
-# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
-# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
-# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
+#include <Arduino.h>
+#line 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+#include <Wire.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
 
 // wifi og wifipassord
 const char* ssid = "NTNU-IOT";
@@ -23,6 +24,19 @@ int variabel2 = 0;
 
 
 
+#line 25 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void setup_wifi();
+#line 45 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void callback(char* topic, byte* message, unsigned int length);
+#line 70 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void reconnect();
+#line 91 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void setup();
+#line 104 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void receiveEvent(int howMany);
+#line 115 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void loop();
+#line 25 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
 void setup_wifi() {
   delay(10);
   // Kobler til wifi:
@@ -48,20 +62,20 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.print(topic);
   Serial.print(". Melding: ");
   char courseArray[length+1]={};
-
+  
   /*for (int i = 0; i < length; i++) {
     Serial.print((char)message[i]);
     messageTemp += (char)message[i];
   }
   Serial.println();*/
-
+  
   for (int i = 0; i < length; i++) {;
     courseArray[i] = (char)message[i];
     courseLength++;
   }
-  courseArray[length] = '\0'; // Null-terminate the string
+  courseArray[length] = '\0';  // Null-terminate the string
   for (int i = 0; i < length; i++) {
-    int intValue = courseArray[i] - '0'; // Convert character to integer
+    int intValue = courseArray[i] - '0';  // Convert character to integer
     Serial.print(intValue);
     courseGlobal[i]=courseArray[i];
   }
@@ -97,7 +111,7 @@ void setup()
   // mqtt settup
   setup_wifi();
   client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);
+  client.setCallback(callback); 
 }
 
 byte x = 0;
@@ -108,7 +122,7 @@ void receiveEvent(int howMany)
   {
     int c = Wire.read(); // receive byte as an integer
     if(c != -1) {
-      Serial.print("Hei"); // print the character
+      Serial.print("Hei");         // print the character
   }
   }
 }
@@ -118,7 +132,7 @@ void loop() {
   for (int i=0; i < courseLength; i++){
     Wire.write(courseGlobal[i]);
     }
-  Wire.endTransmission(); // stop transmitting
+  Wire.endTransmission();    // stop transmitting
   courseLength = 0;
   Wire.requestFrom(1, 1);
   while(Wire.available() > 0) {
