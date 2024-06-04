@@ -240,13 +240,12 @@ void drivingMain() {
       Serial.println(turnCount);
       Serial.println(courseArrlength);
       if (turnCount != courseArrlength) {
-        if (turnCount == 0){
-          input = courseArray[0];
-        }else input = 4;
-        break;
+        input = courseArray[turnCount];
       }
       break;
   }
+  break;
+}
 }
 
 void pidSetup() {
