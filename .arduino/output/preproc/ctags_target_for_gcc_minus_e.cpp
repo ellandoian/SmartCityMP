@@ -28,7 +28,7 @@ bool pidFlag = true; //for å kunne tvinge PID av
 byte power, distMultiplier, input;
 unsigned long totalDistance;
 float partDisGlobal;
-int courseArray[10] = {};
+int courseArray[30] = {};
 byte courseArrlength = 0;
 bool sendChargeDist = false;
 static int drip[5]; //trengs for å kunne lese av spesfik sensor
@@ -95,13 +95,18 @@ void showBattery() {
 //Tolker meldinger fra ESP
 
 void Receive(int howMany) {
+  static bool startRouteFlag = true;
   while (0 < Wire.available()) // loop through all
   {
     byte receivedByte = Wire.read();
     courseArray[courseArrlength] = receivedByte - '0'; // Convert from ASCII to integer
     //Serial.println(courseArray[i]);
     courseArrlength++;
-    input = courseArray[0];
+    if (startRouteFlag) {
+      input = courseArray[0];
+      startRouteFlag = false;
+    }
+    //input = courseArray[0];
   }
 }
 
@@ -179,13 +184,15 @@ void drivingMain() {
     case 2:
       static bool straightFlag = false;
       static byte straightCounter = 0;
-      if (straightCounter < 2) { //fjern if setningen
-        lineFollowPID();
-      }
+      lineFollowPID();
+
       if (lineSensors.readOneSens(drip) >= 600) straightFlag = true; //merker at den har kommet på en svart linje på venstre side av bilen
-      else if (lineSensors.readOneSens(drip) == 0 && straightFlag) { //teller + 1 etter bilen har pasert linja
-        straightCounter++; //
-        straightFlag = false; //
+      else if (lineSensors.readOneSens(drip) <= 150 && straightFlag) { //teller + 1 etter bilen har pasert linja
+        straightCounter++;
+        Serial.println("onLine");
+        Serial.print("count");
+        Serial.println(straightCounter);
+        straightFlag = false;
       }
       if (straightCounter >= 2) { //om den har pasert to linjer går den videre til neste steg
         straightCounter = 0;
@@ -228,15 +235,18 @@ void drivingMain() {
     case 5:
       static uint32_t chargeEndTime = millis();
       static bool chargeEndFlag = true;
-      Charge();
-      motors.setSpeeds(0, 0);
+      lineFollowPID();
+      if (lineSensors.readOneSens(drip) >= 600) {
+        Charge();
+      }
+      else lineFollowPID();
       if ((turnCount + 1) != courseArrlength && chargeEndFlag) {
         chargeEndFlag = false;
         chargeEndTime = millis();
       }
       if (chargeEndFlag == false) {
         lineFollowPID();
-        if (millis()-chargeEndTime>= 3000){
+        if (millis() - chargeEndTime >= 3000) {
           chargeEndFlag = true;
           input = 4;
           break;
@@ -287,6 +297,7 @@ void loop() {
   power = batteryDrain(power);
   showBattery();
   drivingMain();
+  //Serial.println(lineSensors.readOneSens(drip));
   /*if (millis() - tid >= 5000) {  //if-setningen skal bort
 
     Charge();
@@ -314,5 +325,5 @@ void loop() {
     tid = millis();
 
   }*/
-# 288 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+# 299 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 }
