@@ -237,6 +237,12 @@ void drivingMain() {
     default:
       showBattery();
       motors.setSpeeds(0, 0);
+      Serial.println(turnCount);
+      Serial.println(courseArrlength);
+      if((turnCount + 1)!= courseArrlength){
+        input = 4;
+        break;
+      }
       break;
   }
 }
