@@ -98,7 +98,7 @@ void Charge() {
 
 void sendDistance() {
   if (distSend == true) {
-    int partDis = disGlobal; //static_cast<int>(disGlobal);
+    int partDis = disGlobal;  //static_cast<int>(disGlobal);
     Serial.print(partDis);
     Wire.write(partDis);
     disGlobal = 0;  //Resetter avstanden etter den er sendt
@@ -124,7 +124,7 @@ void lineFollowPID() {  // tar inn posisjonen
 void drivingMain() {
   static byte turnCount = 0;
   switch (input) {
-    case 1://høyere
+    case 1:  //høyere
       showBattery();
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
@@ -140,7 +140,7 @@ void drivingMain() {
       } else if (millis() - rightTime >= 350) lineFollowPID();  //kjører PID om ingen sving
       break;
 
-    case 2://rettfrem
+    case 2:  //rettfrem
       static bool straightFlag = false;
       static byte straightCounter = 0;
       lineFollowPID();
@@ -156,7 +156,7 @@ void drivingMain() {
         break;
       }
       break;
-    case 3://venstre
+    case 3:  //venstre
       static bool leftFlag = false;
       static bool leftFlag2 = true;
       static byte leftCounter = 0;
@@ -177,7 +177,7 @@ void drivingMain() {
         pidFlag = false;  //skrur av PID kjøring
         leftCounter++;
       }
-      if (leftFlag2 == false && millis() - leftTime >= 500) {  //avsluttersvingen og skrur på PID kjøring
+      if (leftFlag2 == false && millis() - leftTime >= 400) {  //avsluttersvingen og skrur på PID kjøring
         leftFlag2 = true;
         pidFlag = true;
       }
@@ -187,7 +187,7 @@ void drivingMain() {
         break;
       }
       break;
-    case 4://iterer
+    case 4:  //iterer
       static bool switcher = true;
       static uint32_t switcherTime = millis();
       lineFollowPID();
@@ -203,7 +203,7 @@ void drivingMain() {
         break;
       }
       break;
-    case 5://lading
+    case 5:  //lading
       static uint32_t chargeEndTime = millis();
       static bool chargeEndFlag, chargeSendFlag = true;
       if (lineSensors.readOneSens(drip) >= 700) {
@@ -228,6 +228,8 @@ void drivingMain() {
         }
       }
       break;
+    case 6:
+    break;
     default:
       showBattery();
       motors.setSpeeds(0, 0);
