@@ -228,8 +228,10 @@ void drivingMain() {
         }
       }
       break;
-    case 6:
-    break;
+    case 6: //parker
+      if (lineSensors.readOneSens(drip) >= 700) input = 0;
+      else lineFollowPID();
+      break;
     default:
       showBattery();
       motors.setSpeeds(0, 0);
