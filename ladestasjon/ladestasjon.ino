@@ -63,7 +63,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   }
   Serial.println();
 
-  if (String(topic) == "pytophp/output") {
+  if (String(topic) == "car2Charge") {
     Serial.print("Endrer output til: ");
     if (messageTemp == "on") {
       Serial.println("på");

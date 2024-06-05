@@ -1,8 +1,9 @@
-# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
-# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 5 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
+#include <Arduino.h>
+#line 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+#include <Arduino_APDS9960.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <Wire.h>
 
 //skal bruke prox sensor til å vite når den skal lese av, trenger kun å lese mens det er en bil under sensoren
 
@@ -21,10 +22,35 @@ char msg[50];
 
 int pushButton = 25;
 
+#line 23 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void setup();
+#line 34 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void setup_wifi();
+#line 54 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void callback(char* topic, byte* message, unsigned int length);
+#line 76 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void reconnect();
+#line 96 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+bool button(int trueTime, bool pulldown);
+#line 116 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+short proxRead();
+#line 122 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+byte taken();
+#line 128 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+int * colorRead();
+#line 137 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+int * calibrateCol();
+#line 160 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+String IDcheck();
+#line 175 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void printOnce();
+#line 205 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void loop();
+#line 23 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
 void setup() {
   Serial.begin(115200);
   APDS.begin();
-  pinMode(pushButton, 0x0);
+  pinMode(pushButton, INPUT);
   Serial.println("start");
   // mqtt settup
   setup_wifi();
@@ -100,10 +126,10 @@ bool button(int trueTime, bool pulldown) {
   static bool val, buttonVar, lastButtonState = false;
   static uint32_t timer;
   if (digitalRead(pushButton) == pulldown) {
-    buttonVar = true; // setter buttonVar til true mens knappen er klikket ned
+    buttonVar = true;  // setter buttonVar til true mens knappen er klikket ned
     timer = millis();
   }
-  if ((digitalRead(pushButton) != pulldown) && (buttonVar == true)) // vil kjøre når knappen slippes og endrer retur variablen
+  if ((digitalRead(pushButton) != pulldown) && (buttonVar == true))  // vil kjøre når knappen slippes og endrer retur variablen
   {
     val = true;
     if (millis() - timer > trueTime) {
@@ -135,11 +161,11 @@ int* colorRead() {
   return rgb;
 }
 
-int* calibrateCol() { //tar 10 målinger over 1,2 sekunder og finner gjennomsnittet
+int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsnittet
   static uint32_t colCalTime = millis();
   static short count;
   static int base[3], prevBase[3];
-  if (button(1300, true) && millis() - colCalTime >= 100) { //hvert 100 millisekund tar den en måling,
+  if (button(1300, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
     int* read;
     read = colorRead();
     for (short i; i <= 2; i++) {
@@ -148,7 +174,7 @@ int* calibrateCol() { //tar 10 målinger over 1,2 sekunder og finner gjennomsnit
     count++;
     colCalTime = millis();
   }
-  if (count == 10) { // etter 10 målinger vil gjennomsnittet bli lagret
+  if (count == 10) {  // etter 10 målinger vil gjennomsnittet bli lagret
     for (short i; i <= 2; i++) {
       base[i] = (base[i] - prevBase[i]) / 10;
       prevBase[i] = base[i];
@@ -173,7 +199,7 @@ String IDcheck() {
   return ID;
 }
 
-void printOnce() { //printer kun når det er ny informasjon, og om den lagra informasjonen har hendt de siste 50 nye avlesningene vil det heller ikke bli printet
+void printOnce() {  //printer kun når det er ny informasjon, og om den lagra informasjonen har hendt de siste 50 nye avlesningene vil det heller ikke bli printet
   static String prevInput = IDcheck();
   static String dataArr[50] = { String(0) };
   static uint32_t dataTime[50] = { millis() };
@@ -193,9 +219,9 @@ void printOnce() { //printer kun når det er ny informasjon, og om den lagra inf
       } else io = false;
     }
     if (io == false) {
-      int length = data.length(); // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
-      char* sendArr = new char[length + 1]; // -----""-----
-      strcpy(sendArr, data.c_str()); // -----""-----
+      int length = data.length();            // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
+      char* sendArr = new char[length + 1];  // -----""-----
+      strcpy(sendArr, data.c_str());         // -----""-----
       Serial.println(data);
       client.publish("pytophp/output", sendArr);
       dataArr[j] = data;
@@ -210,3 +236,4 @@ void loop() {
   client.loop();
   printOnce();
 }
+

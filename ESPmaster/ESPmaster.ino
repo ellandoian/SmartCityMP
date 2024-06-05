@@ -49,12 +49,6 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.print(". Melding: ");
   char courseArray[length+1]={};
   
-  /*for (int i = 0; i < length; i++) {
-    Serial.print((char)message[i]);
-    messageTemp += (char)message[i];
-  }
-  Serial.println();*/
-  
   for (int i = 0; i < length; i++) {;
     courseArray[i] = (char)message[i];
     courseLength++;
@@ -145,15 +139,4 @@ void loop() {
     client.publish("car2Charge", sendString);
     send = 0;
   }
-  /*if (now - lastMsg > 5000) {
-    lastMsg = now;
-    int val1 = 8;
-    //Konverterer verdien fra i
-    int til char array, sender tempstring til gitt topic
-    char Value_1[8];
-    dtostrf(val1, 1, 2, Value_1);
-    Serial.print("Verdi 1: ");
-    Serial.println(Value_1);
-
-    client.publish("esp32/output", Value_1);*/
 }
