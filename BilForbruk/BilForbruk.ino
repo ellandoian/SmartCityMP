@@ -272,8 +272,17 @@ void setup() {
 }
 
 void loop() {
+  //skal bort
+  static long time = millis();
+  motors.setSpeeds(100,100);
+  showBattery();
+  if (millis()-time >= 5000) {
+    Serial.print("Distanse");
+    Serial.print(totalDistance);
+    sendChargeDist;
+  } //skal 
   partDisGlobal = distMeasure();
   totalDistance = partDisGlobal + (distMultiplier * 255);
   power = batteryDrain(power);
-  drivingMain();
+  //drivingMain();
 }
