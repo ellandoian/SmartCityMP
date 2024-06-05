@@ -155,7 +155,7 @@ String IDcheck() {
   curColor = colorRead();
   static int colorCheck[3];
   for (short i; i <= 2; i++) {
-    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 20));
+    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24));
     ID += ",";
   }
   ID += String(taken());
