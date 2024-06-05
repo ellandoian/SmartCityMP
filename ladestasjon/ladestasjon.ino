@@ -17,7 +17,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
-int wattsCharged;
+int kwattsCharged;
 
 int pushButton = 25;
 
@@ -110,12 +110,6 @@ short proxRead() {
   return proximity;
 }
 
-byte taken() {
-  if (proxRead() <= 150) {
-    return 1;
-  } else return 0;
-}
-
 int* colorRead() {
   static int rgb[3];
   while (!APDS.colorAvailable()) {
@@ -159,7 +153,7 @@ String IDcheck() {
     ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24));
     ID += ",";
   }
-  ID += String(taken());
+  ID += String(kwattsCharged);
   return ID;
 }
 

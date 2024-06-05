@@ -98,9 +98,9 @@ void Charge() {
 
 void sendDistance() {
   if (distSend == true) {
-    int partDis = disGlobal;  //static_cast<int>(disGlobal);
-    Serial.print(partDis);
-    Wire.write(partDis);
+    int kWhCharged = 0.2 * disGlobal;  //static_cast<int>(disGlobal);
+    Serial.print(kWhCharged);
+    Wire.write(kWhCharged);
     disGlobal = 0;  //Resetter avstanden etter den er sendt
     Serial.print("Sender melding   ");
     Serial.println(disGlobal);
@@ -283,7 +283,6 @@ void loop() {
   disGlobal = distMeasure();
   //Serial.println(disGlobal);
   power = batteryDrain(power);
-  //showBattery();
 
   drivingMain();
 }
