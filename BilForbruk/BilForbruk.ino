@@ -171,13 +171,13 @@ void drivingMain() {
       }
 
       if (lineSensors.readOneSens(drip) >= 700 && leftCounter == 1) {  //når bilen kommer til en linje etter å ha pasert en vil den svinge til venstre
-        motors.setSpeeds(-100, 100);
+        motors.setSpeeds(-100, 150);
         leftTime = millis();
         leftFlag2 = false;
         pidFlag = false;  //skrur av PID kjøring
         leftCounter++;
       }
-      if (leftFlag2 == false && millis() - leftTime >= 400) {  //avsluttersvingen og skrur på PID kjøring
+      if (leftFlag2 == false && millis() - leftTime >= 700) {  //avsluttersvingen og skrur på PID kjøring
         leftFlag2 = true;
         pidFlag = true;
       }
