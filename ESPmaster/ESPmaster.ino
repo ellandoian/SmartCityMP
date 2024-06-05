@@ -16,6 +16,7 @@ char msg[50];
 int value = 0;
 char courseGlobal[]={};
 byte courseLength;
+int send, lastSent;
 
 int variabel1 = 0;
 int variabel2 = 0;
@@ -113,7 +114,6 @@ void receiveEvent(int howMany)
 }
 
 void loop() {
-  int send;
   Wire.beginTransmission(1); // transmit to device #1
   for (int i=0; i < courseLength; i++){
     Wire.write(courseGlobal[i]);
@@ -122,8 +122,8 @@ void loop() {
   courseLength = 0;
   Wire.requestFrom(1, 1);
   while(Wire.available() > 0) {
-    byte c = Wire.read();
-    if (c > 0) {
+    int c = Wire.read();
+    if ((c > 0) && c != lastSent) {
       Serial.println(c);
       send=c;
     }
@@ -136,9 +136,9 @@ void loop() {
   long now = millis();
 
   if (send>0) {
+    lastSent = send;
     char sendString[8];
-    Serial.print(send);
-    dtostrf(send, 1, 2, sendString);
+    itoa(send, sendString, 10);
     Serial.print("Verdi som blir sendt:  ");
     Serial.println(sendString);
 
