@@ -5,8 +5,8 @@ bom_verdi =  [2, 1, 4, 5, 2, 4, 8, 9, 2, 5, 3, 3, 5, 7]
 punkter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 ekstremalpunkter = ['G', 'H']
 
-start = 'H'
-stopp = 'G'
+start = 'G'
+stopp = 'H'
 
 kart1 = []
 
@@ -150,6 +150,10 @@ def f():
                     dirKart.append(1)
                 else:
                     dirKart.append(2)
+    if(stopp == 'G'):
+        dirKart.append(1)
+        dirKart.append(5)
+    
     return dirKart
 
 print(f())
