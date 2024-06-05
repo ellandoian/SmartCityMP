@@ -137,6 +137,7 @@ void loop() {
 
   if (send>0) {
     char sendString[8];
+    Serial.print(send);
     dtostrf(send, 1, 2, sendString);
     Serial.print("Verdi som blir sendt:  ");
     Serial.println(sendString);

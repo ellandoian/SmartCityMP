@@ -1,3 +1,5 @@
+#include <Arduino.h>
+#line 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 //Antatt forbruk 0.2kWh per km, 400 km rekkevidde. Maks batteri er 80 kWh.
 
 #include <Wire.h>
@@ -36,6 +38,29 @@ unsigned int lineSensorValues[5];
 //Avstand kjørt, 1m kjøring er 10km simulert kjøring.
 //Etter 255km kjørt simulert, deles totaldistansen opp i et multiplum av 255 og en rest, slik at EEprom kan lagre hele distansen.
 
+#line 39 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+float distMeasure();
+#line 56 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+int batteryDrain(byte battery);
+#line 67 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+void showBattery();
+#line 81 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+void Receive(int howMany);
+#line 97 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+void Charge();
+#line 105 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+void sendDistance();
+#line 116 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+void lineFollowPID();
+#line 129 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+void drivingMain();
+#line 246 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+void pidSetup();
+#line 261 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+void setup();
+#line 276 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+void loop();
+#line 39 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 float distMeasure() {
   if (partDisGlobal >= 255) {
     distMultiplier += 1;
