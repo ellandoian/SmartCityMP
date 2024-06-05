@@ -164,7 +164,7 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
   static short count;
   static int base[3], prevBase[3];
 
-  if (button(1300, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
+  if (button(1200, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
     int* read;
     read = colorRead();
     for (short i; i <= 2; i++) {
