@@ -137,7 +137,7 @@ void drivingMain() {
         input = 4;
         rightFlag = false;
         break;
-      } else if (millis() - rightTime >= 350) lineFollowPID();  //kjører PID om ingen sving
+      } else if (!rightFlag) lineFollowPID();  //kjører PID om ingen sving
       break;
 
     case 2:  //rettfrem
