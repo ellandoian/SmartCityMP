@@ -57,7 +57,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.print(topic);
   Serial.print(". Melding: ");
   char charMessage;
-  for(int i=0; i<length; i++) {
+  for (int i = 0; i < length; i++) {
     charMessage += (char)message[i];
   }
   int intValue = charMessage - '0';
@@ -169,26 +169,29 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
   static uint32_t dataTime[50] = { millis() };
   static int j;
   static bool io = false;
-  j++;
-  if (j < 50) {
+  if (j <= 10) {
     j = 0;
   }
   if (prevInput != IDcheck()) {
     String data = IDcheck();
     //Serial.println(IDcheck());
-    for (int i; i <= 50; i++) {
+    for (int i; i < 10; i++) {
       if (data == dataArr[i]) {
         io = true;
         break;
-      } else io = false;
+      } else {
+        io = false;
+        Serial.println("ji");
+      }
     }
-    if (io == false) {
+    if (!io) {
       int length = data.length();            // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
       char* sendArr = new char[length + 1];  // -----""-----
       strcpy(sendArr, data.c_str());         // -----""-----
       Serial.println(data);
       client.publish("esp32/output", sendArr);
       dataArr[j] = data;
+      j++;
     }
     prevInput = IDcheck();
   }
