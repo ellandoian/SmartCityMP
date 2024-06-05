@@ -127,8 +127,6 @@ void loop() {
   }
   client.loop();
 
-  long now = millis();
-
   if (send>0) {
     lastSent = send;
     char sendString[8];

@@ -1,212 +1,302 @@
-# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
-# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 5 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
+# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+//Antatt forbruk 0.2kWh per km, 400 km rekkevidde. Maks batteri er 80 kWh.
 
-//skal bruke prox sensor til å vite når den skal lese av, trenger kun å lese mens det er en bil under sensoren
+# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 2
+# 5 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 2
+# 6 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino" 2
+/*
 
+******************************************************************************************************************
 
-// wifi og wifipassord
-const char* ssid = "NTNU-IOT";
-const char* password = "";
+***************************************************|----------|***************************************************
 
-//Broker adresse
-const char* mqtt_server = "10.25.18.138";
+***************************************************|LES README|***************************************************
 
-WiFiClient espClient;
-PubSubClient client(espClient);
-long lastMsg = 0;
-char msg[50];
+***************************************************|----------|***************************************************
 
-int pushButton = 25;
+******************************************************************************************************************
+
+*/
+# 13 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+Zumo32U4Motors motors;
+Zumo32U4ButtonC buttonC;
+Zumo32U4LineSensors lineSensors;
+Zumo32U4OLED display;
+Zumo32U4Encoders encoder;
+
+bool pidFlag = true; //for å kunne tvinge PID av
+byte power, input;
+float disGlobal;
+unsigned long distance;
+int courseArray[30] = {};
+byte courseArrlength = 0;
+bool distSend = false;
+static int drip[5]; //trengs for å kunne lese av spesfik sensor
+
+int rightSpeed = 200;
+int leftSpeed = 200;
+int previousError;
+float output;
+double integral;
+double derivative;
+unsigned int lineSensorValues[5];
+
+//Avstand kjørt, 1m kjøring er 10km simulert kjøring.
+
+float distMeasure() {
+  int currRotLeft = encoder.getCountsAndResetLeft();
+  int currRotRight = encoder.getCountsAndResetRight();
+  float leftDist = ((((currRotLeft)>0?(currRotLeft):-(currRotLeft))) * 3.1415 * 0.039) / 910;
+  float rightDist = ((((currRotRight)>0?(currRotRight):-(currRotRight))) * 3.1415 * 0.039) / 910;
+  float distPart = disGlobal + (10 * (leftDist + rightDist) / 2);
+  EEPROM.write(1, disGlobal);
+  return distPart;
+}
+
+//Genererer batterinivået, mellom 0 og 80
+
+int batteryDrain(byte battery) {
+  battery = 80 - (disGlobal / 5);
+  if (battery < 0) {
+    battery = 0;
+  }
+  EEPROM.write(0, battery);
+  return battery;
+}
+
+//Viser batteriet og avstand kjørt på displayet
+
+void showBattery() {
+  display.gotoXY(0, 0);
+  display.print("Power:  ");
+  display.gotoXY(0, 1);
+  display.print(power);
+  display.gotoXY(0, 3);
+  display.println("Distance drove; ");
+  display.gotoXY(0, 4);
+  display.print(disGlobal);
+  display.print("km ");
+}
+
+//Tolker meldinger fra ESP
+
+void Receive(int howMany) {
+  static bool startRouteFlag = true;
+  while (0 < Wire.available()) // loop through all
+  {
+    byte receivedByte = Wire.read();
+    courseArray[courseArrlength] = receivedByte - '0'; // Convert from ASCII to integer
+    courseArrlength++;
+    if (startRouteFlag) {
+      input = courseArray[0];
+      startRouteFlag = false;
+    }
+  }
+}
+
+//Lader opp batteriet og pauser i 5 sekund
+
+void Charge() {
+  motors.setSpeeds(0, 0);
+  display.clear();
+  display.println("CHARGING");
+}
+
+//Sende distanse kjørt til ESP, kjøres når bilen lader
+
+void sendDistance() {
+  if (distSend == true) {
+    int partDis = disGlobal; //static_cast<int>(disGlobal);
+    Serial.print(partDis);
+    Wire.write(partDis);
+    disGlobal = 0; //Resetter avstanden etter den er sendt
+    Serial.print("Sender melding   ");
+    Serial.println(disGlobal);
+    distSend = false;
+  }
+}
+
+void lineFollowPID() { // tar inn posisjonen
+  static short prevPos;
+  if (pidFlag) {
+    int posisjon = lineSensors.readLine(lineSensorValues);
+    int error = (posisjon - 2000) / 5;
+    integral += error;
+    derivative = error - previousError;
+    previousError = error;
+    output = error + 0.0001 * integral + 4 * derivative;
+    motors.setSpeeds(leftSpeed + output, rightSpeed - output);
+  }
+}
+
+void drivingMain() {
+  static byte turnCount = 0;
+  switch (input) {
+    case 1://høyere
+      showBattery();
+      static bool rightFlag = false;
+      static uint32_t rightTime = millis();
+      if (lineSensors.readOneSens(drip) >= 700) { //Om bilen har kommet til et kryss vil den svinge til høyere
+        rightTime = millis();
+        motors.setSpeeds(150, -100);
+        rightFlag = true;
+      }
+      if (millis() - rightTime >= 350 && rightFlag) { //om bilen har fullført svingen hopper bilen til neste case
+        input = 4;
+        rightFlag = false;
+        break;
+      } else if (millis() - rightTime >= 350) lineFollowPID(); //kjører PID om ingen sving
+      break;
+
+    case 2://rettfrem
+      static bool straightFlag = false;
+      static byte straightCounter = 0;
+      lineFollowPID();
+      showBattery();
+      if (lineSensors.readOneSens(drip) >= 700) straightFlag = true; //merker at den har kommet på en svart linje på venstre side av bilen
+      else if (lineSensors.readOneSens(drip) <= 150 && straightFlag) { //teller + 1 etter bilen har pasert linja
+        straightCounter++;
+        straightFlag = false;
+      }
+      if (straightCounter >= 2) { //om den har pasert to linjer går den videre til neste steg
+        straightCounter = 0;
+        input = 4;
+        break;
+      }
+      break;
+    case 3://venstre
+      static bool leftFlag = false;
+      static bool leftFlag2 = true;
+      static byte leftCounter = 0;
+      static uint32_t leftTime = millis();
+      showBattery();
+      lineFollowPID();
+      if (lineSensors.readOneSens(drip) >= 700) { //merker at den rører en linje og setter av et flag
+        leftFlag = true;
+      } else if (lineSensors.readOneSens(drip) < 100 && leftFlag) { //når bilen har gått av linjen flippes flaget tilbake og counter går +1
+        leftCounter++;
+        leftFlag = false;
+      }
+
+      if (lineSensors.readOneSens(drip) >= 700 && leftCounter == 1) { //når bilen kommer til en linje etter å ha pasert en vil den svinge til venstre
+        motors.setSpeeds(-100, 100);
+        leftTime = millis();
+        leftFlag2 = false;
+        pidFlag = false; //skrur av PID kjøring
+        leftCounter++;
+      }
+      if (leftFlag2 == false && millis() - leftTime >= 500) { //avsluttersvingen og skrur på PID kjøring
+        leftFlag2 = true;
+        pidFlag = true;
+      }
+      if (leftCounter >= 4) { //tar å resetter counter og fullfører denne svingen etter bilen er ute av kryset
+        leftCounter = 0;
+        input = 4;
+        break;
+      }
+      break;
+    case 4://iterer
+      static bool switcher = true;
+      static uint32_t switcherTime = millis();
+      lineFollowPID();
+      showBattery();
+      if (switcher) {
+        switcherTime = millis();
+        switcher = false;
+      }
+      if (millis() - switcherTime >= 300) {
+        turnCount++;
+        switcher = true;
+        input = courseArray[turnCount];
+        break;
+      }
+      break;
+    case 5://lading
+      static uint32_t chargeEndTime = millis();
+      static bool chargeEndFlag, chargeSendFlag = true;
+      if (lineSensors.readOneSens(drip) >= 700) {
+        Charge();
+        if (chargeSendFlag == true) {
+          distSend = true;
+          chargeSendFlag = false;
+        }
+      } else {
+        lineFollowPID();
+        showBattery();
+      }
+      if ((turnCount + 1) != courseArrlength) {
+        if (chargeEndFlag) {
+          chargeEndTime = millis();
+          chargeEndFlag = false;
+        } else if (millis() - chargeEndTime >= 3000) {
+          chargeEndFlag = true;
+          chargeSendFlag = true;
+          input = 4;
+          break;
+        }
+      }
+      break;
+    default:
+      showBattery();
+      motors.setSpeeds(0, 0);
+      if (turnCount != courseArrlength) {
+        input = courseArray[turnCount];
+      }
+      break;
+  }
+}
+
+void pidSetup() {
+  lineSensors.initFiveSensors();
+  bool startFlag = true;
+  buttonC.waitForPress();
+  motors.setSpeeds(100, -100);
+  uint32_t startTime = millis();
+  while (startFlag) {
+    lineSensors.calibrate();
+    if (millis() - startTime >= 4000) startFlag = false;
+  }
+  motors.setSpeeds(0, 0);
+}
+
+//Main
 
 void setup() {
+  Wire.begin(1);
   Serial.begin(115200);
-  APDS.begin();
-  pinMode(pushButton, 0x0);
-  Serial.println("start");
-  // mqtt settup
-  setup_wifi();
-  client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);
+  Wire.onRequest(sendDistance);
+  Wire.onReceive(Receive);
+  display.setLayout21x8();
+  EEPROM.write(0, 80);
+  EEPROM.write(1, 0);
+  power = EEPROM.read(0);
+  disGlobal = EEPROM.read(1);
+  pidSetup();
 }
 
-void setup_wifi() {
-  delay(10);
-  // Kobler til wifi:
-  Serial.println();
-  Serial.print("Kobler til: ");
-  Serial.println(ssid);
-
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("");
-  Serial.println("WiFi kobling opprettet");
-  Serial.println("IP addresse: ");
-  Serial.println(WiFi.localIP());
-}
-
-void callback(char* topic, byte* message, unsigned int length) {
-  Serial.print("Melding ankommet topic: ");
-  Serial.print(topic);
-  Serial.print(". Melding: ");
-  String messageTemp;
-
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)message[i]);
-    messageTemp += (char)message[i];
-  }
-  Serial.println();
-
-  if (String(topic) == "car2Charge") {
-    Serial.print("Endrer output til: ");
-    if (messageTemp == "on") {
-      Serial.println("på");
-    } else if (messageTemp == "off") {
-      Serial.println("av");
-    }
-  }
-}
-
-void reconnect() {
-  client.subscribe("pytophp/output");
-  // Looper til en kobling er opprettet
-  while (!client.connected()) {
-    Serial.print("Forsøker å opprette kobling til mqtt...");
-    // Attempt to connect
-    if (client.connect("Quagmire_publisher", "njaal", "3Inshallah4")) {
-      Serial.println("connected");
-      // Topic som det subscribes til
-      client.subscribe("pytophp/output");
-    } else {
-      Serial.print("mislykket kobling, rc=");
-      Serial.print(client.state());
-      Serial.println(" Prøver igjen om 5 sekund");
-      delay(5000);
-    }
-  }
-}
-
-//kilde, ellandoian/filedump
-bool button(int trueTime, bool pulldown) {
-  //trueTime is how long you want the button to return "true", input "true" if using a pulldown system or "false" if pullup
-  //"pushButton" is the physical button, change name accordingly
-  static bool val, buttonVar, lastButtonState = false;
-  static uint32_t timer;
-  if (digitalRead(pushButton) == pulldown) {
-    buttonVar = true; // setter buttonVar til true mens knappen er klikket ned
-    timer = millis();
-  }
-  if ((digitalRead(pushButton) != pulldown) && (buttonVar == true)) // vil kjøre når knappen slippes og endrer retur variablen
-  {
-    val = true;
-    if (millis() - timer > trueTime) {
-      val = false;
-      buttonVar = false;
-    }
-  }
-  return val;
-}
-
-short proxRead() {
-  static short proximity;
-  if (APDS.proximityAvailable()) proximity = APDS.readProximity();
-  return proximity;
-}
-
-byte taken() {
-  if (proxRead() <= 150) {
-    return 1;
-  } else return 0;
-}
-
-int* colorRead() {
-  static int rgb[3];
-  while (!APDS.colorAvailable()) {
-    delay(5);
-  }
-  APDS.readColor(rgb[0], rgb[1], rgb[2]);
-  return rgb;
-}
-
-int* calibrateCol() { //tar 10 målinger over 1,2 sekunder og finner gjennomsnittet
-  static uint32_t colCalTime = millis();
-  static short count;
-  static int base[3], prevBase[3];
-  if (button(1300, true) && millis() - colCalTime >= 100) { //hvert 100 millisekund tar den en måling,
-    int* read;
-    read = colorRead();
-    for (short i; i <= 2; i++) {
-      base[i] = base[i] + read[i];
-    }
-    count++;
-    colCalTime = millis();
-  }
-  if (count == 10) { // etter 10 målinger vil gjennomsnittet bli lagret
-    for (short i; i <= 2; i++) {
-      base[i] = (base[i] - prevBase[i]) / 10;
-      prevBase[i] = base[i];
-    }
-    count = 0;
-  }
-  return base;
-}
-
-String IDcheck() {
-  String ID;
-  int* baseColor;
-  baseColor = calibrateCol();
-  int* curColor;
-  curColor = colorRead();
-  static int colorCheck[3];
-  for (short i; i <= 2; i++) {
-    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 20));
-    ID += ",";
-  }
-  ID += String(taken());
-  return ID;
-}
-
-void printOnce() { //printer kun når det er ny informasjon, og om den lagra informasjonen har hendt de siste 50 nye avlesningene vil det heller ikke bli printet
-  static String prevInput = IDcheck();
-  static String dataArr[50] = { String(0) };
-  static uint32_t dataTime[50] = { millis() };
-  static int j;
-  static bool io = false;
-  j++;
-  if (j < 50) {
-    j = 0;
-  }
-  if (prevInput != IDcheck()) {
-    String data = IDcheck();
-    //Serial.println(IDcheck());
-    for (int i; i <= 50; i++) {
-      if (data == dataArr[i]) {
-        io = true;
-        break;
-      } else io = false;
-    }
-    if (io == false) {
-      int length = data.length(); // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
-      char* sendArr = new char[length + 1]; // -----""-----
-      strcpy(sendArr, data.c_str()); // -----""-----
-      Serial.println(data);
-      client.publish("pytophp/output", sendArr);
-      dataArr[j] = data;
-    }
-    prevInput = IDcheck();
-  }
-}
 void loop() {
-  if (!client.connected()) {
-    reconnect();
-  }
-  client.loop();
-  printOnce();
+  /*skal bort
+
+  static long time = millis();
+
+  motors.setSpeeds(100,100);
+
+  if (millis()-time >= 5000) {
+
+    Serial.print("Distanse  ");
+
+    Serial.println(disGlobal);
+
+    distSend = true;
+
+    time = millis();
+
+  } //skal bort*/
+# 279 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+  disGlobal = distMeasure();
+  //Serial.println(disGlobal);
+  power = batteryDrain(power);
+  //showBattery();
+
+  drivingMain();
 }

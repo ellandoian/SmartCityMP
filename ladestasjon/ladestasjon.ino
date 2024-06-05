@@ -55,34 +55,24 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
   Serial.print(". Melding: ");
-  String messageTemp;
-
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)message[i]);
-    messageTemp += (char)message[i];
+  char charMessage;
+  for(int i=0; i<length; i++) {
+    charMessage += (char)message[i];
   }
-  Serial.println();
-
-  if (String(topic) == "car2Charge") {
-    Serial.print("Endrer output til: ");
-    if (messageTemp == "on") {
-      Serial.println("på");
-    } else if (messageTemp == "off") {
-      Serial.println("av");
-    }
-  }
+  int intValue = charMessage - '0';
+  Serial.println(intValue);
 }
 
 void reconnect() {
-  client.subscribe("pytophp/output");
+  client.subscribe("car2Charge");
   // Looper til en kobling er opprettet
   while (!client.connected()) {
     Serial.print("Forsøker å opprette kobling til mqtt...");
     // Attempt to connect
-    if (client.connect("Quagmire_publisher", "njaal", "3Inshallah4")) {
+    if (client.connect("ESP32client", "njaal", "3Inshallah4")) {
       Serial.println("connected");
       // Topic som det subscribes til
-      client.subscribe("pytophp/output");
+      client.subscribe("car2Charge");
     } else {
       Serial.print("mislykket kobling, rc=");
       Serial.print(client.state());
@@ -196,7 +186,7 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
       char* sendArr = new char[length + 1];  // -----""-----
       strcpy(sendArr, data.c_str());         // -----""-----
       Serial.println(data);
-      client.publish("pytophp/output", sendArr);
+      client.publish("esp32/output", sendArr);
       dataArr[j] = data;
     }
     prevInput = IDcheck();
