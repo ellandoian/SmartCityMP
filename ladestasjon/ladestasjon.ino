@@ -17,6 +17,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
+int wattsCharged;
 
 int pushButton = 25;
 
@@ -69,7 +70,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Forsøker å opprette kobling til mqtt...");
     // Attempt to connect
-    if (client.connect("ESP32client", "njaal", "3Inshallah4")) {
+    if (client.connect("ESP32Charge", "njaal", "3Inshallah4")) {
       Serial.println("connected");
       // Topic som det subscribes til
       client.subscribe("car2Charge");
