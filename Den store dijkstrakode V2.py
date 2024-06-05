@@ -96,46 +96,67 @@ def dijkstra(punkter, linjer, start, stopp):
                 
     kart1 = kart[::-1]           
     return kart1, total_lengde
+
+
+def f():
+    intKart = []
+    dirKart = []
+
+    for i in dijkstra(punkter, linjer, start, stopp)[0]:
+        if(i == 'A' or i == 'F'):
+            intKart.append(2)
+        if(i == 'B' or i == 'E'):
+            intKart.append(3)
+        if(i == 'C' or i == 'D'):
+            intKart.append(1)
+        if(i == 'G' or i == 'H'):
+            intKart.append(4)
+
+    for i in range(len(intKart)-2):
+        if(intKart[i] == 4):
+            if(intKart[i+2] == 1):
+                dirKart.append(2)
+            else:
+                dirKart.append(3)
+        elif(intKart[i] == 3):
+            if(intKart[i+1] == 1):
+                if(intKart[i+2] == 1):
+                    dirKart.append(3)
+                else:
+                    dirKart.append(2)
+            else:
+                dirKart.append(1)
+        elif(intKart[i] == 2):
+            if(intKart[i+1] == 1):
+                if(intKart[i+2] == 1):
+                    dirKart.append(1)
+                else:
+                    dirKart.append(2)
+            else:
+                if(intKart[i+2] == 4):
+                    dirKart.append(1)
+                else:
+                    dirKart.append(3)
+        else:
+            if(intKart[i+1] == 1):
+                if(intKart[i+2] == 2):
+                    dirKart.append(3)
+                else:
+                    dirKart.append(1)
+            elif(intKart[i+1] == 2):
+                dirKart.append(3)
+            else:
+                if(intKart[i+2] == 2):
+                    dirKart.append(1)
+                else:
+                    dirKart.append(2)
+    if(stopp == 'G'):
+        dirKart.append(1)
+        dirKart.append(5)
     
-intKart = []
-dirKart = []
+    return dirKart
 
-for i in dijkstra(punkter, linjer, start, stopp)[0]:
-    if(i == 'A' or i == 'F'):
-        intKart.append(2)
-    if(i == 'B' or i == 'E'):
-        intKart.append(3)
-    if(i == 'C' or i == 'D'):
-        intKart.append(1)
-    if(i == 'G' or i == 'H'):
-        intKart.append(4)
-
-dirKart.append(intKart[1] - intKart[2])
-if(intKart[3] == 1 and intKart[2] != 1):
-    dirKart.append(3)
-    if(intKart[4] == 3):
-        dirKart.append(2)
-        dirKart.append(2)
-    else:
-        dirKart.append(3)
-        dirKart.append(1)
-        dirKart.append(1)
-        dirKart.append(3)
-
-else:
-    dirKart.append(intKart[3])
-    if(intKart[3] == 2):
-        dirKart.append(1)
-        dirKart.append(3)
-    else:
-        dirKart.append(3)
-        dirKart.append(2)
-        
-print(dirKart)
-print(dijkstra(punkter, linjer, start, stopp)[1])
-
-
-
+print(f())
 
 
 
