@@ -119,8 +119,8 @@ short proxRead() {
 short carCount(short proxy) {  //teller hvor mange biler som har kjørt forbi bommen, tar inn proximity dataen
   static short cCounter = -1;  //vil autmatisk telle +1 når koden kjøres første gang, verdi på -1 gjør at den starter på 0
   static bool countState = false;
-  if (proxy < 200) countState = true;//veien ligger på runt 220, registerer når noe har kommet til bommen
-  if (proxy > 200 && countState) {  //når bilen har kjørt helt gjennom bommen, vil bilen bli telt
+  if (proxy < 200) countState = true;  //veien ligger på runt 220, registerer når noe har kommet til bommen
+  if (proxy > 200 && countState) {     //når bilen har kjørt helt gjennom bommen, vil bilen bli telt
     cCounter++;
     countState = false;
   }
@@ -194,7 +194,10 @@ String IDcheck() {  //funksjonen som skal identisere fargene
   curColor = colorRead();
   static int colorCheck[3];
   for (short i; i <= 2; i++) {
-    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 30));
+    if (i == 2) {
+      curColor[i]++;
+    }
+    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24));
     ID += ",";
   }
   //Serial.println(ID);
@@ -208,25 +211,26 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
   static uint32_t dataTime[50] = { millis() };
   static int j;
   static bool io = false;
-  j++;
-  if (j < 50) {
+  if (j < 10) {
     j = 0;
   }
   if (prevInput != IDcheck()) {
     String data = IDcheck();
-    for (int i; i <= 50; i++) {
+    for (int i; i <= j0; i++) {
       if (data == dataArr[i]) {
         io = true;
         break;
       } else io = false;
+      Serial.println("ji");//tf2 kokosnøtt
     }
-    if (io == false) {
+    if (!io) {
       int length = data.length();            // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
       char* sendArr = new char[length + 1];  // -----""-----
       strcpy(sendArr, data.c_str());         // -----""-----
       Serial.println(data);
       client.publish("esp32/output", sendArr);
       dataArr[j] = data;
+      j++;
     }
     prevInput = IDcheck();
   }
