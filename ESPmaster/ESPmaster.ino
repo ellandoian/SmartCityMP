@@ -122,7 +122,7 @@ void loop() {
   courseLength = 0;
   Wire.requestFrom(1, 1);
   while(Wire.available() > 0) {
-    int c = Wire.read();
+    byte c = Wire.read();
     if (c > 0) {
       Serial.println(c);
       send=c;
@@ -143,6 +143,7 @@ void loop() {
     Serial.println(sendString);
 
     client.publish("car2Charge", sendString);
+    send = 0;
   }
   /*if (now - lastMsg > 5000) {
     lastMsg = now;

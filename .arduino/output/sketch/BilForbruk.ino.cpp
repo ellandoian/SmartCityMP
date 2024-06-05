@@ -19,9 +19,9 @@ Zumo32U4OLED display;
 Zumo32U4Encoders encoder;
 
 bool pidFlag = true;  //for å kunne tvinge PID av
-byte power, distMultiplier, input;
-float partDisGlobal;
-unsigned long totalDistance;
+byte power, input;
+float disGlobal;
+unsigned long distance;
 int courseArray[30] = {};
 byte courseArrlength = 0;
 bool distSend = false;
@@ -36,50 +36,44 @@ double derivative;
 unsigned int lineSensorValues[5];
 
 //Avstand kjørt, 1m kjøring er 10km simulert kjøring.
-//Etter 255km kjørt simulert, deles totaldistansen opp i et multiplum av 255 og en rest, slik at EEprom kan lagre hele distansen.
 
-#line 39 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 38 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 float distMeasure();
-#line 56 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 50 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 int batteryDrain(byte battery);
-#line 67 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 61 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void showBattery();
-#line 81 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 75 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void Receive(int howMany);
-#line 97 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 91 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void Charge();
-#line 105 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 99 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void sendDistance();
-#line 116 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 111 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void lineFollowPID();
-#line 129 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 124 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void drivingMain();
-#line 246 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 241 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void pidSetup();
-#line 261 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 256 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void setup();
-#line 276 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 269 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 void loop();
-#line 39 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
+#line 38 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
 float distMeasure() {
-  if (partDisGlobal >= 255) {
-    distMultiplier += 1;
-    partDisGlobal -= 255;
-  }
   int currRotLeft = encoder.getCountsAndResetLeft();
   int currRotRight = encoder.getCountsAndResetRight();
   float leftDist = ((abs(currRotLeft)) * 3.1415 * 0.039) / 910;
   float rightDist = ((abs(currRotRight)) * 3.1415 * 0.039) / 910;
-  float distPart = partDisGlobal + (10 * (leftDist + rightDist) / 2);
-  EEPROM.write(1, partDisGlobal);
-  EEPROM.write(2, distMultiplier);
+  float distPart = disGlobal + (10 * (leftDist + rightDist) / 2);
+  EEPROM.write(1, disGlobal);
   return distPart;
 }
 
 //Genererer batterinivået, mellom 0 og 80
 
 int batteryDrain(byte battery) {
-  battery = 80 - (totalDistance / 5);
+  battery = 80 - (disGlobal / 5);
   if (battery < 0) {
     battery = 0;
   }
@@ -97,7 +91,7 @@ void showBattery() {
   display.gotoXY(0, 3);
   display.println("Distance drove; ");
   display.gotoXY(0, 4);
-  display.print(totalDistance);
+  display.print(disGlobal);
   display.print("km ");
 }
 
@@ -129,11 +123,12 @@ void Charge() {
 
 void sendDistance() {
   if (distSend == true) {
-    int partDis = partDisGlobal;//static_cast<int>(partDisGlobal);
+    int partDis = disGlobal; //static_cast<int>(disGlobal);
+    Serial.print(partDis);
     Wire.write(partDis);
-    Wire.write(distMultiplier);
-    distMultiplier = 0;
-    partDisGlobal = 0;  //Resetter avstanden etter den er sendt
+    disGlobal = 0;  //Resetter avstanden etter den er sendt
+    Serial.print("Sender melding   ");
+    Serial.println(disGlobal);
     distSend = false;
   }
 }
@@ -291,10 +286,8 @@ void setup() {
   display.setLayout21x8();
   EEPROM.write(0, 80);
   EEPROM.write(1, 0);
-  EEPROM.write(2, 0);
   power = EEPROM.read(0);
-  partDisGlobal = EEPROM.read(1);
-  distMultiplier = EEPROM.read(2);
+  disGlobal = EEPROM.read(1);
   //pidSetup();
 }
 
@@ -304,14 +297,14 @@ void loop() {
   motors.setSpeeds(100,100);
   if (millis()-time >= 5000) {
     Serial.print("Distanse  ");
-    Serial.println(totalDistance);
+    Serial.println(disGlobal);
     distSend = true;
     time = millis();
   } //skal bort
-  partDisGlobal = distMeasure();
-  totalDistance = partDisGlobal + (distMultiplier * 255);
-  Serial.println(partDisGlobal);
+  disGlobal = distMeasure();
+  //Serial.println(disGlobal);
   power = batteryDrain(power);
   showBattery();
+
   //drivingMain();
 }
