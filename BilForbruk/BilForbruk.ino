@@ -33,7 +33,7 @@ double integral;
 double derivative;
 unsigned int lineSensorValues[5];
 
-//Avstand kjørt, 1m kjøring er 10km simulert kjøring.
+//Måler avstand kjørt, 1m kjørt tilsvarer 10km i simuleringen.
 
 float distMeasure() {
   int currRotLeft = encoder.getCountsAndResetLeft();
@@ -44,14 +44,13 @@ float distMeasure() {
   return distPart;
 }
 
-//Genererer batterinivået, mellom 0 og 80
+//Genererer batterinivået, som er mellom 0 og 80
 
-int batteryDrain(byte battery) {
-  battery = 80 - (disGlobal / 5);
+int batteryDrain() {
+  int battery = 80 - (disGlobal / 5);
   if (battery < 0) {
     battery = 0;
   }
-  EEPROM.write(0, battery);
   return battery;
 }
 
@@ -69,14 +68,14 @@ void showBattery() {
   display.print("km ");
 }
 
-//Tolker meldinger fra ESP
+//Tolker meldinger fra ESP og konverterer fra string til int
 
 void Receive(int howMany) {
   static bool startRouteFlag = true;
-  while (0 < Wire.available())  // loop through all
+  while (0 < Wire.available())  // looper gjennom butikken.
   {
     byte receivedByte = Wire.read();
-    courseArray[courseArrlength] = receivedByte - '0';  // Convert from ASCII to integer
+    courseArray[courseArrlength] = receivedByte - '0';  // Converterer fra string til integer
     courseArrlength++;
     if (startRouteFlag) {
       input = courseArray[0];
@@ -85,7 +84,7 @@ void Receive(int howMany) {
   }
 }
 
-//Lader opp batteriet og pauser i 5 sekund
+//Viser i displayet at bilen lader
 
 void Charge() {
   motors.setSpeeds(0, 0);
@@ -93,21 +92,20 @@ void Charge() {
   display.println("CHARGING");
 }
 
-//Sende distanse kjørt til ESP, kjøres når bilen lader
+//Sender antall kWh ladet til ESP, sendes en gang når bilen lader.
 
-void sendDistance() {
+void sendCharge() {
   if (distSend == true) {
-    int kWhCharged = 0.2 * disGlobal;  //static_cast<int>(disGlobal);
-    Serial.print(kWhCharged);
+    int kWhCharged = 0.2 * disGlobal;
     Wire.write(kWhCharged);
-    disGlobal = 0;  //Resetter avstanden etter den er sendt
-    //Serial.print("Sender melding   ");
-    //Serial.println(disGlobal);
-    distSend = false;
+    disGlobal = 0;  //Nullstiller avstand kjørt.
+    distSend = false; //Sørger for a avstanden blir kun sendt en gang hver gang den lader.
   }
 }
 
-void lineFollowPID() {  // tar inn posisjonen
+// Bilens linjefølgingskode. Vil følge en teip som representerer veien.
+
+void lineFollowPID() {  
   static short prevPos;
   if (pidFlag) {
     int posisjon = lineSensors.readLine(lineSensorValues);
@@ -120,26 +118,28 @@ void lineFollowPID() {  // tar inn posisjonen
   }
 }
 
+//Konverterer rutedata til bilens kjøremønster.
+
 void drivingMain() {
   static byte turnCount = 0;
   switch (input) {
-    case 1:  //høyere
+    case 1:  //høyresving
       showBattery();
       static bool rightFlag = false;
       static uint32_t rightTime = millis();
-      if (lineSensors.readOneSens(drip) >= 700) {  //Om bilen har kommet til et kryss vil den svinge til høyere
+      if (lineSensors.readOneSens(drip) >= 700) {  //Om bilen har kommet til et kryss vil den svinge til høyre
         rightTime = millis();
         motors.setSpeeds(150, -100);
         rightFlag = true;
       }
-      if (millis() - rightTime >= 350 && rightFlag) {  //om bilen har fullført svingen hopper bilen til neste case
+      if (millis() - rightTime >= 350 && rightFlag) {  //om bilen har fullført svingen hopper bilen til case 4
         input = 4;
         rightFlag = false;
         break;
-      } else if (!rightFlag) lineFollowPID();  //kjører PID om ingen sving
+      } else if (!rightFlag) lineFollowPID();  //kjører linjefølging om ingen sving
       break;
 
-    case 2:  //rettfrem
+    case 2:  //rett frem
       static bool straightFlag = false;
       static byte straightCounter = 0;
       lineFollowPID();
@@ -149,13 +149,13 @@ void drivingMain() {
         straightCounter++;
         straightFlag = false;
       }
-      if (straightCounter >= 2) {  //om den har pasert to linjer går den videre til neste steg
+      if (straightCounter >= 2) {  //om den har pasert to linjer går den til case 4
         straightCounter = 0;
         input = 4;
         break;
       }
       break;
-    case 3:  //venstre
+    case 3:  //venstresving
       static bool leftFlag = false;
       static bool leftFlag2 = true;
       static byte leftCounter = 0;
@@ -164,29 +164,30 @@ void drivingMain() {
       lineFollowPID();
       if (lineSensors.readOneSens(drip) >= 700) {  //merker at den rører en linje og setter av et flag
         leftFlag = true;
-      } else if (lineSensors.readOneSens(drip) < 100 && leftFlag) {  //når bilen har gått av linjen flippes flaget tilbake og counter går +1
+      }
+      else if (lineSensors.readOneSens(drip) < 100 && leftFlag) {  //når bilen har gått av linjen flippes flaget tilbake og counter går +1
         leftCounter++;
         leftFlag = false;
       }
 
-      if (lineSensors.readOneSens(drip) >= 700 && leftCounter == 1) {  //når bilen kommer til en linje etter å ha pasert en vil den svinge til venstre
+      if (lineSensors.readOneSens(drip) >= 700 && leftCounter == 1) {  //når bilen kommer til en linje etter å ha passert en vil den svinge til venstre
         motors.setSpeeds(-100, 150);
         leftTime = millis();
         leftFlag2 = false;
-        pidFlag = false;  //skrur av PID kjøring
+        pidFlag = false;  //skrur av linjefølging
         leftCounter++;
       }
-      if (leftFlag2 == false && millis() - leftTime >= 700) {  //avsluttersvingen og skrur på PID kjøring
+      if (leftFlag2 == false && millis() - leftTime >= 700) {  //avslutter svingen og skrur på linjefølging
         leftFlag2 = true;
         pidFlag = true;
       }
-      if (leftCounter >= 4) {  //tar å resetter counter og fullfører denne svingen etter bilen er ute av kryset
+      if (leftCounter >= 4) {  //resetter counter og fullfører svingen etter bilen er ute av kryset
         leftCounter = 0;
         input = 4;
         break;
       }
       break;
-    case 4:  //iterer
+    case 4:  //iterer til neste case i rutedataen
       static bool switcher = true;
       static uint32_t switcherTime = millis();
       lineFollowPID();
@@ -205,17 +206,17 @@ void drivingMain() {
     case 5:  //lading
       static uint32_t chargeEndTime = millis();
       static bool chargeEndFlag, chargeSendFlag = true;
-      if (lineSensors.readOneSens(drip) >= 700) {
+      if (lineSensors.readOneSens(drip) >= 700) { //når bilen merker teip på venstre sensor stopper den og lader.
         Charge();
-        if (chargeSendFlag == true) {
+        if (chargeSendFlag == true) { //lar sendChargefunksjonen sende strøm ladet for én gang.
           distSend = true;
           chargeSendFlag = false;
         }
-      } else {
+      } else { //om bilen ikke merker teip på venstre side kjøres vanlig linjefølging.
         lineFollowPID();
         showBattery();
       }
-      if ((turnCount + 1) != courseArrlength) {
+      if ((turnCount + 1) != courseArrlength) { //Om bilen blir sendt ny rute, vil den først kjøre ut av ladestasjonen før den iterer gjennom den nye ruta.
         if (chargeEndFlag) {
           chargeEndTime = millis();
           chargeEndFlag = false;
@@ -227,8 +228,8 @@ void drivingMain() {
         }
       }
       break;
-    case 6: //parker
-      if (lineSensors.readOneSens(drip) >= 700) motors.setSpeeds(0,0);
+    case 6: //parkere
+      if (lineSensors.readOneSens(drip) >= 700) motors.setSpeeds(0,0); //Om bilen merker teip på venstre side stopper den.
       else lineFollowPID();
       if((turnCount + 1 != courseArrlength)) input = 4;
       break;
@@ -241,6 +242,8 @@ void drivingMain() {
       break;
   }
 }
+
+//Kalibrerer bilen til å følge teipen.
 
 void pidSetup() {
   lineSensors.initFiveSensors();
@@ -258,32 +261,18 @@ void pidSetup() {
 //Main
 
 void setup() {
-  Wire.begin(1);
-  Serial.begin(115200);
-  Wire.onRequest(sendDistance);
+  Wire.begin(1); //Oppretter I2C kommunikasjon med ESP32.
+  Wire.onRequest(sendCharge);
   Wire.onReceive(Receive);
   display.setLayout21x8();
-  EEPROM.write(0, 80);
-  EEPROM.write(1, 0);
-  power = EEPROM.read(0);
+  //EEPROM.write(1, 0);  //Kan kommentere inn denne linjen om vi vil starte bilen på full lading.
   disGlobal = EEPROM.read(1);
-  pidSetup();
+  pidSetup(); //Bilen vil ikke gå ut av setup før den er kalibrert.
 }
 
 void loop() {
-  /*skal bort
-  static long time = millis();
-  motors.setSpeeds(100,100);
-  if (millis()-time >= 5000) {
-    Serial.print("Distanse  ");
-    Serial.println(disGlobal);
-    distSend = true;
-    time = millis();
-  } //skal bort*/
   disGlobal += distMeasure();
   EEPROM.write(1, disGlobal);
-  //Serial.println(disGlobal);
-  power = batteryDrain(power);
-
+  power = batteryDrain();
   drivingMain();
 }
