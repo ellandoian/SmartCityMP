@@ -18,14 +18,10 @@ char courseGlobal[]={};
 byte courseLength;
 int send, lastSent;
 
-int variabel1 = 0;
-int variabel2 = 0;
-
 
 
 void setup_wifi() { //Setter opp wifi tilkobling
   delay(10);
-  // Kobler til wifi:
   Serial.println();
   Serial.print("Kobler til: ");
   Serial.println(ssid);

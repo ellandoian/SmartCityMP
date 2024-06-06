@@ -10,22 +10,32 @@
     "Includepath": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\leonardo"
   },
   {
-    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\ESPmaster.ino.cpp",
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\bommring.ino.cpp",
+    "Include": "Arduino_APDS9960.h",
+    "Includepath": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Arduino_APDS9960\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\bommring.ino.cpp",
     "Include": "Wire.h",
     "Includepath": "C:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src"
   },
   {
-    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\ESPmaster.ino.cpp",
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\bommring.ino.cpp",
     "Include": "WiFi.h",
     "Includepath": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src"
   },
   {
-    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\ESPmaster.ino.cpp",
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\bommring.ino.cpp",
     "Include": "PubSubClient.h",
     "Includepath": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\pubsubclient\\src"
   },
   {
-    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\ESPmaster.ino.cpp",
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\bommring.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Magnus\\Documents\\Arduino\\libraries\\Arduino_APDS9960\\src\\Arduino_APDS9960.cpp",
     "Include": "",
     "Includepath": null
   },

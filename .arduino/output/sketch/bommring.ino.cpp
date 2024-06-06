@@ -1,8 +1,9 @@
-# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
-# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino" 2
-# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino" 2
-# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino" 2
-# 5 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino" 2
+#include <Arduino.h>
+#line 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+#include <Arduino_APDS9960.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <Wire.h>
 
 // wifi og wifipassord
 const char* ssid = "NTNU-IOT";
@@ -18,10 +19,37 @@ char msg[50];
 
 int pushButton = 25;
 
+#line 20 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void setup();
+#line 31 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void setup_wifi();
+#line 51 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void callback(char* topic, byte* message, unsigned int length);
+#line 73 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void reconnect();
+#line 93 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+bool button(int trueTime, bool pulldown);
+#line 113 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+short proxRead();
+#line 119 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+short carCount(short proxy);
+#line 130 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+short carCount60s();
+#line 153 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+int * colorRead();
+#line 162 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+int * calibrateCol();
+#line 187 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+String IDcheck();
+#line 208 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void printOnce();
+#line 239 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void loop();
+#line 20 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
 void setup() {
   Serial.begin(115200);
   APDS.begin();
-  pinMode(pushButton, 0x0);
+  pinMode(pushButton, INPUT);
   Serial.println("start");
   // mqtt settup
   setup_wifi();
@@ -97,10 +125,10 @@ bool button(int trueTime, bool pulldown) {
   static bool val, buttonVar, lastButtonState = false;
   static uint32_t timer;
   if (digitalRead(pushButton) == pulldown) {
-    buttonVar = true; // setter buttonVar til true mens knappen er klikket ned
+    buttonVar = true;  // setter buttonVar til true mens knappen er klikket ned
     timer = millis();
   }
-  if ((digitalRead(pushButton) != pulldown) && (buttonVar == true)) // vil kjøre når knappen slippes og endrer retur variablen
+  if ((digitalRead(pushButton) != pulldown) && (buttonVar == true))  // vil kjøre når knappen slippes og endrer retur variablen
   {
     val = true;
     if (millis() - timer > trueTime) {
@@ -117,11 +145,11 @@ short proxRead() {
   return proximity;
 }
 
-short carCount(short proxy) { //teller hvor mange biler som har kjørt forbi bommen, tar inn proximity dataen
-  static short cCounter = -1; //vil autmatisk telle +1 når koden kjøres første gang, verdi på -1 gjør at den starter på 0
+short carCount(short proxy) {  //teller hvor mange biler som har kjørt forbi bommen, tar inn proximity dataen
+  static short cCounter = -1;  //vil autmatisk telle +1 når koden kjøres første gang, verdi på -1 gjør at den starter på 0
   static bool countState = false;
-  if (proxy < 200) countState = true; //veien ligger på runt 220, registerer når noe har kommet til bommen
-  if (proxy > 200 && countState) { //når bilen har kjørt helt gjennom bommen, vil bilen bli telt
+  if (proxy < 200) countState = true;  //veien ligger på runt 220, registerer når noe har kommet til bommen
+  if (proxy > 200 && countState) {     //når bilen har kjørt helt gjennom bommen, vil bilen bli telt
     cCounter++;
     countState = false;
   }
@@ -160,12 +188,12 @@ int* colorRead() {
   return rgb;
 }
 
-int* calibrateCol() { //tar 10 målinger over 1,2 sekunder og finner gjennomsnittet
+int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsnittet
   static uint32_t colCalTime = millis();
   static short count;
   static int base[3], prevBase[3];
 
-  if (button(1200, true) && millis() - colCalTime >= 100) { //hvert 100 millisekund tar den en måling,
+  if (button(1200, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
     int* read;
     read = colorRead();
     for (short i; i <= 2; i++) {
@@ -175,7 +203,7 @@ int* calibrateCol() { //tar 10 målinger over 1,2 sekunder og finner gjennomsnit
     Serial.printf("count: %d\n", count);
     colCalTime = millis();
   }
-  if (count == 10) { // etter 10 målinger vil gjennomsnittet bli lagret
+  if (count == 10) {  // etter 10 målinger vil gjennomsnittet bli lagret
     for (short i; i <= 2; i++) {
       base[i] = (base[i] - prevBase[i]) / 10;
       prevBase[i] = base[i];
@@ -185,7 +213,7 @@ int* calibrateCol() { //tar 10 målinger over 1,2 sekunder og finner gjennomsnit
   return base;
 }
 
-String IDcheck() { //funksjonen som skal identisere fargene
+String IDcheck() {  //funksjonen som skal identisere fargene
                     //denne funksjonen bygger på gammelt design, men tanken er å ta inn data fra kalibreringa ta den dataen minus nåværende
                     //curColor for å se etter store utslag
   String ID;
@@ -206,7 +234,7 @@ String IDcheck() { //funksjonen som skal identisere fargene
   return ID;
 }
 
-void printOnce() { //printer kun når det er ny informasjon, og om den lagra informasjonen har hendt de siste 50 nye avlesningene vil det heller ikke bli printet
+void printOnce() {  //printer kun når det er ny informasjon, og om den lagra informasjonen har hendt de siste 50 nye avlesningene vil det heller ikke bli printet
   static String prevInput = IDcheck();
   static String dataArr[50] = { String(0) };
   static uint32_t dataTime[50] = { millis() };
@@ -225,9 +253,9 @@ void printOnce() { //printer kun når det er ny informasjon, og om den lagra inf
       Serial.println("ji");//tf2 kokosnøtt
     }
     if (!io) {
-      int length = data.length(); // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
-      char* sendArr = new char[length + 1]; // -----""-----
-      strcpy(sendArr, data.c_str()); // -----""-----
+      int length = data.length();            // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
+      char* sendArr = new char[length + 1];  // -----""-----
+      strcpy(sendArr, data.c_str());         // -----""-----
       Serial.println(data);
       client.publish("esp32/output", sendArr);
       dataArr[j] = data;
