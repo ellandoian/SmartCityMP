@@ -244,7 +244,7 @@ void drivingMain() {
         if (chargeEndFlag) {
           chargeEndTime = millis();
           chargeEndFlag = false;
-        } else if (millis() - chargeEndTime >= 3000) {
+        } else if (millis() - chargeEndTime >= 5000) {
           chargeEndFlag = true;
           chargeSendFlag = true;
           input = 4;
