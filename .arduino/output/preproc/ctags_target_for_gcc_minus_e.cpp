@@ -48,8 +48,7 @@ float distMeasure() {
   int currRotRight = encoder.getCountsAndResetRight();
   float leftDist = ((((currRotLeft)>0?(currRotLeft):-(currRotLeft))) * 3.1415 * 0.039) / 910;
   float rightDist = ((((currRotRight)>0?(currRotRight):-(currRotRight))) * 3.1415 * 0.039) / 910;
-  float distPart = disGlobal + (10 * (leftDist + rightDist) / 2);
-  EEPROM.write(1, disGlobal);
+  float distPart = (10 * (leftDist + rightDist) / 2);
   return distPart;
 }
 
@@ -110,8 +109,8 @@ void sendDistance() {
     Serial.print(kWhCharged);
     Wire.write(kWhCharged);
     disGlobal = 0; //Resetter avstanden etter den er sendt
-    Serial.print("Sender melding   ");
-    Serial.println(disGlobal);
+    //Serial.print("Sender melding   ");
+    //Serial.println(disGlobal);
     distSend = false;
   }
 }
@@ -145,7 +144,7 @@ void drivingMain() {
         input = 4;
         rightFlag = false;
         break;
-      } else if (millis() - rightTime >= 350) lineFollowPID(); //kjører PID om ingen sving
+      } else if (!rightFlag) lineFollowPID(); //kjører PID om ingen sving
       break;
 
     case 2: //rettfrem
@@ -237,8 +236,9 @@ void drivingMain() {
       }
       break;
     case 6: //parker
-      if (lineSensors.readOneSens(drip) >= 700) input = 0;
+      if (lineSensors.readOneSens(drip) >= 700) motors.setSpeeds(0,0);
       else lineFollowPID();
+      if((turnCount + 1 != courseArrlength)) input = 4;
       break;
     default:
       showBattery();
@@ -297,7 +297,8 @@ void loop() {
 
   } //skal bort*/
 # 283 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\BilForbruk\\BilForbruk.ino"
-  disGlobal = distMeasure();
+  disGlobal += distMeasure();
+  EEPROM.write(1, disGlobal);
   //Serial.println(disGlobal);
   power = batteryDrain(power);
 

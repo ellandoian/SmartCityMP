@@ -62,6 +62,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   }
   int intValue = charMessage - '0';
   Serial.println(intValue);
+  kwattsCharged = intValue;
 }
 
 void reconnect() {
@@ -124,6 +125,8 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
   static short count;
   static int base[3], prevBase[3];
   if (button(1300, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
+    Serial.print("Counts: ");
+    Serial.println(count);
     int* read;
     read = colorRead();
     for (short i; i <= 2; i++) {

@@ -40,8 +40,7 @@ float distMeasure() {
   int currRotRight = encoder.getCountsAndResetRight();
   float leftDist = ((abs(currRotLeft)) * 3.1415 * 0.039) / 910;
   float rightDist = ((abs(currRotRight)) * 3.1415 * 0.039) / 910;
-  float distPart = disGlobal + (10 * (leftDist + rightDist) / 2);
-  EEPROM.write(1, disGlobal);
+  float distPart = (10 * (leftDist + rightDist) / 2);
   return distPart;
 }
 
@@ -102,8 +101,8 @@ void sendDistance() {
     Serial.print(kWhCharged);
     Wire.write(kWhCharged);
     disGlobal = 0;  //Resetter avstanden etter den er sendt
-    Serial.print("Sender melding   ");
-    Serial.println(disGlobal);
+    //Serial.print("Sender melding   ");
+    //Serial.println(disGlobal);
     distSend = false;
   }
 }
@@ -229,7 +228,7 @@ void drivingMain() {
       }
       break;
     case 6: //parker
-      if (lineSensors.readOneSens(drip) >= 700) motor.setSpeeds(0,0);
+      if (lineSensors.readOneSens(drip) >= 700) motors.setSpeeds(0,0);
       else lineFollowPID();
       if((turnCount + 1 != courseArrlength)) input = 4;
       break;
@@ -281,7 +280,8 @@ void loop() {
     distSend = true;
     time = millis();
   } //skal bort*/
-  disGlobal = distMeasure();
+  disGlobal += distMeasure();
+  EEPROM.write(1, disGlobal);
   //Serial.println(disGlobal);
   power = batteryDrain(power);
 
