@@ -58,7 +58,7 @@ void callback(char* topic, byte* message, unsigned int length) { //Funksjon som 
   Serial.println();
 }
 
-void reconnect() {
+void reconnect() { //
   client.subscribe("web2Zumo");
   // Looper til en kobling er opprettet 
   while (!client.connected()) {

@@ -1,7 +1,8 @@
-# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
-# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
-# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
-# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino" 2
+#include <Arduino.h>
+#line 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+#include <Wire.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
 
 // wifi og wifipassord
 const char* ssid = "NTNU-IOT";
@@ -21,6 +22,17 @@ int send, lastSent;
 
 
 
+#line 23 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void setup_wifi();
+#line 42 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void callback(char* topic, byte* message, unsigned int length);
+#line 61 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void reconnect();
+#line 82 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void setup();
+#line 95 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void loop();
+#line 23 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
 void setup_wifi() { //Setter opp wifi tilkobling
   delay(10);
   Serial.println();
@@ -45,14 +57,14 @@ void callback(char* topic, byte* message, unsigned int length) { //Funksjon som 
   Serial.print(topic);
   Serial.print(". Melding: ");
   char courseArray[length+1]={};
-
+  
   for (int i = 0; i < length; i++) {;
     courseArray[i] = (char)message[i];
     courseLength++;
   }
   courseArray[length] = '\0';
   for (int i = 0; i < length; i++) {
-    int intValue = courseArray[i] - '0'; // Konverterer elemetene i courseArray til integers
+    int intValue = courseArray[i] - '0';  // Konverterer elemetene i courseArray til integers
     Serial.print(intValue);
     courseGlobal[i]=courseArray[i];
   }
@@ -88,7 +100,7 @@ void setup()
   // mqtt settup
   setup_wifi();
   client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);
+  client.setCallback(callback); 
 }
 
 byte x = 0;
@@ -98,10 +110,10 @@ void loop() {
   for (int i=0; i < courseLength; i++){
     Wire.write(courseGlobal[i]);
     }
-  Wire.endTransmission(); // stop transmitting
+  Wire.endTransmission();    // stop transmitting
   courseLength = 0;
   Wire.requestFrom(1, 1);
-  while(Wire.available() > 0) {
+  while(Wire.available() > 0) { 
     int c = Wire.read();
     if ((c > 0) && c != lastSent) { //Sender kun data videre om verdien ikke er 0 eller samme data den nettopp har sendt.
       Serial.println(c);

@@ -14,6 +14,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
+string bomID = "NAVN PÅ BOM" //Fyll inn med en unik ID for hver bom.
 
 int pushButton = 25;
 
@@ -76,7 +77,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Forsøker å opprette kobling til mqtt...");
     // Attempt to connect
-    if (client.connect("Quagmire_publisher", "njaal", "3Inshallah4")) {
+    if (client.connect(bomID, "njaal", "3Inshallah4")) {
       Serial.println("connected");
       // Topic som det subscribes til
       client.subscribe("esp32/output");
