@@ -1,3 +1,5 @@
+#include <Arduino.h>
+#line 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
 #include <Wire.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
@@ -23,6 +25,19 @@ int variabel2 = 0;
 
 
 
+#line 26 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void setup_wifi();
+#line 46 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void callback(char* topic, byte* message, unsigned int length);
+#line 65 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void reconnect();
+#line 86 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void setup();
+#line 99 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void receiveEvent(int howMany);
+#line 110 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
+void loop();
+#line 26 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ESPmaster\\ESPmaster.ino"
 void setup_wifi() { //
   delay(10);
   // Kobler til wifi:
