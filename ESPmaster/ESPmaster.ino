@@ -23,7 +23,7 @@ int variabel2 = 0;
 
 
 
-void setup_wifi() { //
+void setup_wifi() { //Setter opp wifi tilkobling
   delay(10);
   // Kobler til wifi:
   Serial.println();
@@ -43,7 +43,7 @@ void setup_wifi() { //
   Serial.println(WiFi.localIP());
 }
 
-void callback(char* topic, byte* message, unsigned int length) {
+void callback(char* topic, byte* message, unsigned int length) { //Funksjon som kalles på når en melding på en abonnert topic kommer inn.
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
   Serial.print(". Melding: ");
@@ -53,9 +53,9 @@ void callback(char* topic, byte* message, unsigned int length) {
     courseArray[i] = (char)message[i];
     courseLength++;
   }
-  courseArray[length] = '\0';  // Null-terminate the string
+  courseArray[length] = '\0';
   for (int i = 0; i < length; i++) {
-    int intValue = courseArray[i] - '0';  // Convert character to integer
+    int intValue = courseArray[i] - '0';  // Konverterer elemetene i courseArray til integers
     Serial.print(intValue);
     courseGlobal[i]=courseArray[i];
   }
@@ -67,12 +67,12 @@ void reconnect() {
   // Looper til en kobling er opprettet 
   while (!client.connected()) {
     Serial.print("Forsøker å opprette kobling til mqtt...");
-    // Attempt to connect
+    //Prøver å koble seg til
     if (client.connect("ESP32client", "njaal", "3Inshallah4")) {
       Serial.println("connected");
       // Topic som det subscribes til
       client.subscribe("web2Zumo");
-    } else {
+    } else { //Om tilkobling mislykkes prøves det igjen etter 5 sekunder.
       Serial.print("mislykket kobling, rc=");
       Serial.print(client.state());
       Serial.println(" Prøver igjen om 5 sekund");
@@ -85,7 +85,7 @@ void reconnect() {
 
 void setup()
 {
-  Wire.begin(); //Starter kommunikasjon som master
+  Wire.begin(); //Starter I2C kommunikasjon som master
   Serial.begin(115200);
   Serial.println("start");
   // mqtt settup
@@ -96,17 +96,6 @@ void setup()
 
 byte x = 0;
 
-void receiveEvent(int howMany)
-{
-  while(0 < Wire.available()) //x loop through all but the last
-  {
-    int c = Wire.read(); // receive byte as an integer
-    if(c != -1) {
-      Serial.print("Hei");         // print the character
-  }
-  }
-}
-
 void loop() {
   Wire.beginTransmission(1); // transmit to device #1
   for (int i=0; i < courseLength; i++){
@@ -115,9 +104,9 @@ void loop() {
   Wire.endTransmission();    // stop transmitting
   courseLength = 0;
   Wire.requestFrom(1, 1);
-  while(Wire.available() > 0) {
+  while(Wire.available() > 0) { 
     int c = Wire.read();
-    if ((c > 0) && c != lastSent) {
+    if ((c > 0) && c != lastSent) { //Sender kun data videre om verdien ikke er 0 eller samme data den nettopp har sendt.
       Serial.println(c);
       send=c;
     }
@@ -127,7 +116,7 @@ void loop() {
   }
   client.loop();
 
-  if (send>0) {
+  if (send>0) { //Konverterer meldingen til et char array og publisher på car2Charge topicen.
     lastSent = send;
     char sendString[8];
     itoa(send, sendString, 10);

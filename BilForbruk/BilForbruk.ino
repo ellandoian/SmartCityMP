@@ -33,9 +33,9 @@ double integral;
 double derivative;
 unsigned int lineSensorValues[5];
 
-//Måler avstand kjørt, 1m kjørt tilsvarer 10km i simuleringen.
 
-float distMeasure() {
+
+float distMeasure() { //Måler avstand kjørt, 1m kjørt tilsvarer 10km i simuleringen.
   int currRotLeft = encoder.getCountsAndResetLeft();
   int currRotRight = encoder.getCountsAndResetRight();
   float leftDist = ((abs(currRotLeft)) * 3.1415 * 0.039) / 910;
