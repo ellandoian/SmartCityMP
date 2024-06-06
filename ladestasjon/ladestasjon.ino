@@ -3,8 +3,6 @@
 #include <PubSubClient.h>
 #include <Wire.h>
 
-//skal bruke prox sensor til å vite når den skal lese av, trenger kun å lese mens det er en bil under sensoren
-
 
 // wifi og wifipassord
 const char* ssid = "NTNU-IOT";
@@ -18,6 +16,7 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int kwattsCharged;
+String green = "1.1.1";
 
 int pushButton = 25;
 
@@ -103,12 +102,6 @@ bool button(int trueTime, bool pulldown) {
     }
   }
   return val;
-}
-
-short proxRead() {
-  static short proximity;
-  if (APDS.proximityAvailable()) proximity = APDS.readProximity();
-  return proximity;
 }
 
 int* colorRead() {
@@ -198,5 +191,6 @@ void loop() {
     reconnect();
   }
   client.loop();
+  
   printOnce();
 }
