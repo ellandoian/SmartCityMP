@@ -14,9 +14,9 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
-string bomID = "NAVN PÅ BOM" //Fyll inn med en unik ID for hver bom.
+string bomID = "NAVN PÅ BOM"  //Fyll inn med en unik ID for hver bom.
 
-int pushButton = 25;
+  int pushButton = 25;
 
 void setup() {
   Serial.begin(115200);
@@ -49,7 +49,7 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 
-void callback(char* topic, byte* message, unsigned int length) {
+void callback(char* topic, byte* message, unsigned int length) {  //Funksjon som kalles på når en melding på en abonnert topic kommer inn.
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
   Serial.print(". Melding: ");
@@ -71,7 +71,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   }
 }
 
-void reconnect() {
+void reconnect() {  //Denne funksjonen kobler ESPen til MQTT
   client.subscribe("esp32/output");
   // Looper til en kobling er opprettet
   while (!client.connected()) {
@@ -111,7 +111,7 @@ bool button(int trueTime, bool pulldown) {
   return val;
 }
 
-short proxRead() {
+short proxRead() {  //leser av nærhetsensoren og returnerer det som en short int
   static short proximity;
   if (APDS.proximityAvailable()) proximity = APDS.readProximity();
   return proximity;
@@ -128,22 +128,22 @@ short carCount(short proxy) {  //teller hvor mange biler som har kjørt forbi bo
   return cCounter;
 }
 
-short carCount60s() {
+short carCount60s() {  //teller hvor mange biler som har passert de siste 60 sekundene
   static unsigned long carArr[100] = {};
   static short prevCount = carCount(proxRead());
   static short cc60;
   static bool flag = false;
-  if (prevCount != carCount(proxRead()) && flag) {
-    cc60++;
+  if (prevCount != carCount(proxRead()) && flag) {  //om det har passert en ny bil telles det opp en verdi
+    cc60++;                                         //og tidspunktet lagres
     carArr[cc60 - 1] = millis();
     prevCount = carCount(proxRead());
-  } else if (prevCount != carCount(proxRead())) {
+  } else if (prevCount != carCount(proxRead())) {  //uten flagget vil funksjonen telle en bil mer enn det faktisk er
     flag = true;
     prevCount = carCount(proxRead());
   }
 
-  if (carArr[0] + 60000 <= millis() && carArr[0] != 0) {
-    for (int i = 0; i < cc60; i++) {
+  if (carArr[0] + 60000 <= millis() && carArr[0] != 0) {  //etter at det har gått 60 sekunder i første indeks vil cc60 telle -1
+    for (int i = 0; i < cc60; i++) {                      //og alle tidspunkter går ned en indeks
       carArr[i] = carArr[i + 1];
     }
     cc60--;
@@ -151,7 +151,7 @@ short carCount60s() {
   return cc60;
 }
 
-int* colorRead() {
+int* colorRead() {  //leser av fargesensoren og returnerer det som ett array
   static int rgb[3];
   while (!APDS.colorAvailable()) {
     delay(5);
@@ -185,23 +185,20 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
   return base;
 }
 
-String IDcheck() {  //funksjonen som skal identisere fargene
-                    //denne funksjonen bygger på gammelt design, men tanken er å ta inn data fra kalibreringa ta den dataen minus nåværende
-                    //curColor for å se etter store utslag
+String IDcheck() {  //retunerer en komma seperert farge kode med carCount60s på slutten
   String ID;
   int* baseColor;
   baseColor = calibrateCol();
   int* curColor;
   curColor = colorRead();
   static int colorCheck[3];
-  for (short i; i <= 2; i++) {
+  for (short i; i <= 2; i++) {  //får verdiene fra bommringen til å stemme overens med verdiene på ladestasjonen
     if (i == 2) {
       curColor[i]++;
     }
-    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24));
-    ID += ",";
+    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24));  //tar kalibrerte farge dataen, mapper det til ønsket omerådet
+    ID += ",";                                                                                       //konverter til string og komma seperer de
   }
-  //Serial.println(ID);
   ID += String(carCount60s());
   return ID;
 }
@@ -217,14 +214,13 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
   }
   if (prevInput != IDcheck()) {
     String data = IDcheck();
-    for (int i; i <= j0; i++) {
+    for (int i; i <= 10; i++) {  //sjekker om nåværende datapunktet er anderledes fra de 10 siste
       if (data == dataArr[i]) {
         io = true;
         break;
       } else io = false;
-      Serial.println("ji");//tf2 kokosnøtt
     }
-    if (!io) {
+    if (!io) {                               //om ny data er anderledes, send data
       int length = data.length();            // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
       char* sendArr = new char[length + 1];  // -----""-----
       strcpy(sendArr, data.c_str());         // -----""-----

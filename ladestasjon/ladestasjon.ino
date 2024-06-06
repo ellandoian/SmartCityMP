@@ -51,7 +51,7 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 
-void callback(char* topic, byte* message, unsigned int length) {
+void callback(char* topic, byte* message, unsigned int length) {  //Funksjon som kalles på når en melding på en abonnert topic kommer inn.
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
   Serial.print(". Melding: ");
@@ -64,7 +64,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   kwattsCharged = intValue;
 }
 
-void reconnect() {
+void reconnect() {  //Denne funksjonen kobler ESPen til MQTT
   client.subscribe("car2Charge");
   // Looper til en kobling er opprettet
   while (!client.connected()) {
@@ -104,7 +104,7 @@ bool button(int trueTime, bool pulldown) {
   return val;
 }
 
-int* colorRead() {
+int* colorRead() {  //leser av fargesensoren og returnerer det som ett array
   static int rgb[3];
   while (!APDS.colorAvailable()) {
     delay(5);
@@ -138,7 +138,8 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
   return base;
 }
 
-String IDcheck() {
+String IDcheck() {  //retunerer en komma seperert farge kode med lademengden på slutten
+  String ID;
   String ID;
   int* baseColor;
   baseColor = calibrateCol();
@@ -146,8 +147,8 @@ String IDcheck() {
   curColor = colorRead();
   static int colorCheck[3];
   for (short i; i <= 2; i++) {
-    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24));
-    ID += ",";
+    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24));  //tar kalibrerte farge dataen, mapper det til ønsket omerådet
+    ID += ",";                                                                                       //konverter til string og komma seperer de
   }
   ID += String(kwattsCharged);
   return ID;
@@ -164,8 +165,7 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
   }
   if (prevInput != IDcheck()) {
     String data = IDcheck();
-    //Serial.println(IDcheck());
-    for (int i; i < 10; i++) {
+    for (int i; i < 10; i++) {  //sjekker om nåværende datapunktet er anderledes fra de 10 siste
       if (data == dataArr[i]) {
         io = true;
         break;
@@ -174,7 +174,7 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
         Serial.println("ji");
       }
     }
-    if (!io) {
+    if (!io) {                               //om ny data er anderledes, send data
       int length = data.length();            // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
       char* sendArr = new char[length + 1];  // -----""-----
       strcpy(sendArr, data.c_str());         // -----""-----
@@ -191,6 +191,6 @@ void loop() {
     reconnect();
   }
   client.loop();
-  
+
   printOnce();
 }
