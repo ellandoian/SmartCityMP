@@ -1,0 +1,113 @@
+<!doctype html>
+<!-- Her er det brukt en template for å lage layouten til forsiden:
+    KILDE: Quakit. (2024) CSS Grid Templates https://www.quackit.com/html/templates/css_grid_templates.cfm Hentet (1/6/2024)  -->
+<title>CSS Grid Template 1</title>
+<style>
+body {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "nav article ads"
+    "nav footer footer";
+  grid-template-rows: 80px 1fr 70px;
+  grid-template-columns: 20% 1fr 15%;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+  height: 100vh;
+  margin: 0;
+  }
+header, footer, article, nav, div {
+  padding: 1.2em;
+  background: Grey;
+  }
+#pageHeader {
+  grid-area: header;
+  }
+#pageFooter {
+  grid-area: footer;
+  }
+#mainArticle {
+    grid-area: article;
+  }
+#mainNav {
+  grid-area: nav;
+  }
+#siteAds {
+  grid-area: ads;
+  }
+/* Stack the layout on small devices/viewports. */
+@media all and (max-width: 575px) {
+  body {
+    grid-template-areas:
+      "header"
+      "article"
+      "ads"
+      "nav"
+      "footer";
+    grid-template-rows: 80px 1fr 70px 1fr 70px;
+    grid-template-columns: 1fr;
+ }
+}
+</style>
+<body>
+<!-- BRUKERLISTE -->
+  <header id="pageHeader">
+    <h1> SMART CITY <h1>
+  </header>
+  <article id="mainArticle">Brukere
+    <head>
+        <title>Sender til brukersiden</title>
+      </head>
+     <body>
+       <h1> Bruker 1 </h1>
+       <!-- Input boks der inputtet/passordet "Bruker 1" leder til brukersiden -->
+       <form action="bruker1.php" method="POST">
+         <input type="Bruker 1"/>
+       </form>
+     </body>
+     <body>
+       <h1> Bruker 2 </h1>
+       <!-- Input boks for bruker 2, sender brukeren til en test side -->
+       <form action="ny_test.php" method="POST">
+         <input type="Bruker 1"/>
+       </form>
+     </body>
+     <body>
+       <h1> Bruker 3 </h1>
+       <!-- Input boks for bruker 3, sender brukeren til en annen test side -->
+       <form action="brukere.php" method="POST">
+         <input type="Bruker 1"/>
+       </form>
+     </body>
+
+  </article>
+<!-- NAVIGASJON HØYRE SIDE-->
+  <nav id="mainNav">
+  <arcticle id="Navigasjon">
+    <head>
+        <title>Ruteplanlegging</title>
+  </head>
+  <body>
+       <h1> Planlegg din rute her </h1>
+       <!-- Submit knapp som leder til ruteplanleggingssiden -->
+       <form action="ruteplanlegging.php" method="POST">
+         <input type="submit"/>
+       </form>
+  </body>
+  </article>
+  </nav>
+<!-- VENSTRE SIDE -->
+  <div id="siteAds">BIELSYS 2024
+ </div>
+ <!-- FOOTER -->
+ <footer id="pageFooter">Footer <head>
+        <!-- submit knapp som leder til en annen testside -->
+        <title>Redirecting using Form Tags</title>
+      </head>
+    <body>
+     <form action="test.php" method="POST">
+       <input type="submit"/>
+     </form>
+    </body>
+  </footer>
+</body>
