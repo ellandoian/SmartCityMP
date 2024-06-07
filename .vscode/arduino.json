@@ -1,6 +1,6 @@
 {
     "board": "pololu-a-star:avr:a-star32U4",
     "output": ".arduino/output",
-    "sketch": "bommring/bommring.ino",
+    "sketch": "ESPmaster/ESPmaster.ino",
     "port": "COM3"
 }

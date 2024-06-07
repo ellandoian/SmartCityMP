@@ -1,4 +1,4 @@
-//Antatt forbruk 0.2kWh per km, 400 km rekkevidde. Maks batteri er 80 kWh.
+//Antatt forbruk 0.2kWh per km, 400 km rekkevidde. Maks batteri er 80 kWh.+
 
 #include <Wire.h>
 #include <Zumo32U4.h>

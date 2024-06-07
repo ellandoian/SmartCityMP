@@ -39,7 +39,8 @@ void setup_wifi() { //Setter opp wifi tilkobling
   Serial.println(WiFi.localIP());
 }
 
-void callback(char* topic, byte* message, unsigned int length) { //Funksjon som kalles på når en melding på en abonnert topic kommer inn.
+//
+void callback(char* topic, byte* message, unsigned int length) { //Funksjon som kalles på når en melding på en abonnert topic kommer inn. 
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
   Serial.print(". Melding: ");
