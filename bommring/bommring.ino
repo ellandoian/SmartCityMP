@@ -15,7 +15,7 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 
-  int pushButton = 25;
+int pushButton = 25;
 
 void setup() {
   Serial.begin(115200);
@@ -89,7 +89,7 @@ void reconnect() {  //Denne funksjonen kobler ESPen til MQTT
   }
 }
 
-//kilde, ellandoian/filedump
+//kilde Øian 2024
 bool button(int trueTime, bool pulldown) {
   //trueTime is how long you want the button to return "true", input "true" if using a pulldown system or "false" if pullup
   //"pushButton" is the physical button, change name accordingly
@@ -220,7 +220,7 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
       } else io = false;
     }
     if (!io) {                               //om ny data er anderledes, send data
-      int length = data.length();            // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
+      int length = data.length();            // kilde Geeks for geeks 2023
       char* sendArr = new char[length + 1];  // -----""-----
       strcpy(sendArr, data.c_str());         // -----""-----
       Serial.println(data);
