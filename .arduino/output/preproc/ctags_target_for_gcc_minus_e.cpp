@@ -1,9 +1,8 @@
-# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
-# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 5 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-
+# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino" 2
+# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino" 2
+# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino" 2
+# 5 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino" 2
 
 // wifi og wifipassord
 const char* ssid = "NTNU-IOT";
@@ -16,10 +15,9 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
-int kwattsCharged;
-String green = "1.1.1";
+string bomID = "NAVN PÅ BOM" //Fyll inn med en unik ID for hver bom.
 
-int pushButton = 25;
+  int pushButton = 25;
 
 void setup() {
   Serial.begin(115200);
@@ -56,25 +54,34 @@ void callback(char* topic, byte* message, unsigned int length) { //Funksjon som 
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
   Serial.print(". Melding: ");
-  char charMessage;
+  String messageTemp;
+
   for (int i = 0; i < length; i++) {
-    charMessage += (char)message[i];
+    Serial.print((char)message[i]);
+    messageTemp += (char)message[i];
   }
-  int intValue = charMessage - '0';
-  Serial.println(intValue);
-  kwattsCharged = intValue;
+  Serial.println();
+
+  if (String(topic) == "esp32/output") {
+    Serial.print("Endrer output til: ");
+    if (messageTemp == "on") {
+      Serial.println("på");
+    } else if (messageTemp == "off") {
+      Serial.println("av");
+    }
+  }
 }
 
 void reconnect() { //Denne funksjonen kobler ESPen til MQTT
-  client.subscribe("car2Charge");
+  client.subscribe("esp32/output");
   // Looper til en kobling er opprettet
   while (!client.connected()) {
     Serial.print("Forsøker å opprette kobling til mqtt...");
     // Attempt to connect
-    if (client.connect("ESP32Charge", "njaal", "3Inshallah4")) {
+    if (client.connect(bomID, "njaal", "3Inshallah4")) {
       Serial.println("connected");
       // Topic som det subscribes til
-      client.subscribe("car2Charge");
+      client.subscribe("esp32/output");
     } else {
       Serial.print("mislykket kobling, rc=");
       Serial.print(client.state());
@@ -84,7 +91,7 @@ void reconnect() { //Denne funksjonen kobler ESPen til MQTT
   }
 }
 
-//kilde, Øian 2024
+//kilde, ellandoian/filedump
 bool button(int trueTime, bool pulldown) {
   //trueTime is how long you want the button to return "true", input "true" if using a pulldown system or "false" if pullup
   //"pushButton" is the physical button, change name accordingly
@@ -105,6 +112,46 @@ bool button(int trueTime, bool pulldown) {
   return val;
 }
 
+short proxRead() { //leser av nærhetsensoren og returnerer det som en short int
+  static short proximity;
+  if (APDS.proximityAvailable()) proximity = APDS.readProximity();
+  return proximity;
+}
+
+short carCount(short proxy) { //teller hvor mange biler som har kjørt forbi bommen, tar inn proximity dataen
+  static short cCounter = -1; //vil autmatisk telle +1 når koden kjøres første gang, verdi på -1 gjør at den starter på 0
+  static bool countState = false;
+  if (proxy < 200) countState = true; //veien ligger på runt 220, registerer når noe har kommet til bommen
+  if (proxy > 200 && countState) { //når bilen har kjørt helt gjennom bommen, vil bilen bli telt
+    cCounter++;
+    countState = false;
+  }
+  return cCounter;
+}
+
+short carCount60s() { //teller hvor mange biler som har passert de siste 60 sekundene
+  static unsigned long carArr[100] = {};
+  static short prevCount = carCount(proxRead());
+  static short cc60;
+  static bool flag = false;
+  if (prevCount != carCount(proxRead()) && flag) { //om det har passert en ny bil telles det opp en verdi
+    cc60++; //og tidspunktet lagres
+    carArr[cc60 - 1] = millis();
+    prevCount = carCount(proxRead());
+  } else if (prevCount != carCount(proxRead())) { //uten flagget vil funksjonen telle en bil mer enn det faktisk er
+    flag = true;
+    prevCount = carCount(proxRead());
+  }
+
+  if (carArr[0] + 60000 <= millis() && carArr[0] != 0) { //etter at det har gått 60 sekunder i første indeks vil cc60 telle -1
+    for (int i = 0; i < cc60; i++) { //og alle tidspunkter går ned en indeks
+      carArr[i] = carArr[i + 1];
+    }
+    cc60--;
+  }
+  return cc60;
+}
+
 int* colorRead() { //leser av fargesensoren og returnerer det som ett array
   static int rgb[3];
   while (!APDS.colorAvailable()) {
@@ -118,15 +165,15 @@ int* calibrateCol() { //tar 10 målinger over 1,2 sekunder og finner gjennomsnit
   static uint32_t colCalTime = millis();
   static short count;
   static int base[3], prevBase[3];
-  if (button(1300, true) && millis() - colCalTime >= 100) { //hvert 100 millisekund tar den en måling,
-    Serial.print("Counts: ");
-    Serial.println(count);
+
+  if (button(1200, true) && millis() - colCalTime >= 100) { //hvert 100 millisekund tar den en måling,
     int* read;
     read = colorRead();
     for (short i; i <= 2; i++) {
       base[i] = base[i] + read[i];
     }
     count++;
+    Serial.printf("count: %d\n", count);
     colCalTime = millis();
   }
   if (count == 10) { // etter 10 målinger vil gjennomsnittet bli lagret
@@ -139,19 +186,21 @@ int* calibrateCol() { //tar 10 målinger over 1,2 sekunder og finner gjennomsnit
   return base;
 }
 
-String IDcheck() { //retunerer en komma seperert farge kode med lademengden på slutten
-  String ID;
+String IDcheck() { //retunerer en komma seperert farge kode med carCount60s på slutten
   String ID;
   int* baseColor;
   baseColor = calibrateCol();
   int* curColor;
   curColor = colorRead();
   static int colorCheck[3];
-  for (short i; i <= 2; i++) {
+  for (short i; i <= 2; i++) { //får verdiene fra bommringen til å stemme overens med verdiene på ladestasjonen
+    if (i == 2) {
+      curColor[i]++;
+    }
     ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24)); //tar kalibrerte farge dataen, mapper det til ønsket omerådet
     ID += ","; //konverter til string og komma seperer de
   }
-  ID += String(kwattsCharged);
+  ID += String(carCount60s());
   return ID;
 }
 
@@ -161,22 +210,19 @@ void printOnce() { //printer kun når det er ny informasjon, og om den lagra inf
   static uint32_t dataTime[50] = { millis() };
   static int j;
   static bool io = false;
-  if (j <= 10) {
+  if (j < 10) {
     j = 0;
   }
   if (prevInput != IDcheck()) {
     String data = IDcheck();
-    for (int i; i < 10; i++) { //sjekker om nåværende datapunktet er anderledes fra de 10 siste
+    for (int i; i <= 10; i++) { //sjekker om nåværende datapunktet er anderledes fra de 10 siste
       if (data == dataArr[i]) {
         io = true;
         break;
-      } else {
-        io = false;
-        Serial.println("ji");
-      }
+      } else io = false;
     }
     if (!io) { //om ny data er anderledes, send data
-      int length = data.length(); // kilde Geeks for geeks 2023
+      int length = data.length(); // kilde https://www.geeksforgeeks.org/convert-string-char-array-cpp/
       char* sendArr = new char[length + 1]; // -----""-----
       strcpy(sendArr, data.c_str()); // -----""-----
       Serial.println(data);
@@ -187,11 +233,11 @@ void printOnce() { //printer kun når det er ny informasjon, og om den lagra inf
     prevInput = IDcheck();
   }
 }
+
 void loop() {
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
-
   printOnce();
 }

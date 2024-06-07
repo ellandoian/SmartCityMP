@@ -32,10 +32,10 @@
    "-IC:\\Users\\Magnus\\Documents\\Arduino\\libraries\\WiFi-1.2.7\\src",
    "-IC:\\Users\\Magnus\\Documents\\Arduino\\libraries\\pubsubclient\\src",
    "-IC:\\Users\\Magnus\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\SPI\\src",
-   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\ladestasjon.ino.cpp",
+   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\bommring.ino.cpp",
    "-o",
-   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\ladestasjon.ino.cpp.o"
+   "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\bommring.ino.cpp.o"
   ],
-  "file": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\ladestasjon.ino.cpp"
+  "file": "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\.arduino\\output\\sketch\\bommring.ino.cpp"
  }
 ]
