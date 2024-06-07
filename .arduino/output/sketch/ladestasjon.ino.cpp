@@ -1,8 +1,9 @@
-# 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
-# 2 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 3 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 4 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
-# 5 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino" 2
+#include <Arduino.h>
+#line 1 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+#include <Arduino_APDS9960.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <Wire.h>
 
 
 // wifi og wifipassord
@@ -21,10 +22,31 @@ String green = "1.1.1";
 
 int pushButton = 25;
 
+#line 23 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void setup();
+#line 34 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void setup_wifi();
+#line 54 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void callback(char* topic, byte* message, unsigned int length);
+#line 67 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void reconnect();
+#line 87 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+bool button(int trueTime, bool pulldown);
+#line 107 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+int * colorRead();
+#line 116 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+int * calibrateCol();
+#line 141 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+String IDcheck();
+#line 157 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void printOnce();
+#line 189 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
+void loop();
+#line 23 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\ladestasjon\\ladestasjon.ino"
 void setup() {
   Serial.begin(115200);
   APDS.begin();
-  pinMode(pushButton, 0x0);
+  pinMode(pushButton, INPUT);
   Serial.println("start");
   // mqtt settup
   setup_wifi();
@@ -52,7 +74,7 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 
-void callback(char* topic, byte* message, unsigned int length) { //Funksjon som kalles på når en melding på en abonnert topic kommer inn.
+void callback(char* topic, byte* message, unsigned int length) {  //Funksjon som kalles på når en melding på en abonnert topic kommer inn.
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
   Serial.print(". Melding: ");
@@ -65,7 +87,7 @@ void callback(char* topic, byte* message, unsigned int length) { //Funksjon som 
   kwattsCharged = intValue;
 }
 
-void reconnect() { //Denne funksjonen kobler ESPen til MQTT
+void reconnect() {  //Denne funksjonen kobler ESPen til MQTT
   client.subscribe("car2Charge");
   // Looper til en kobling er opprettet
   while (!client.connected()) {
@@ -91,10 +113,10 @@ bool button(int trueTime, bool pulldown) {
   static bool val, buttonVar, lastButtonState = false;
   static uint32_t timer;
   if (digitalRead(pushButton) == pulldown) {
-    buttonVar = true; // setter buttonVar til true mens knappen er klikket ned
+    buttonVar = true;  // setter buttonVar til true mens knappen er klikket ned
     timer = millis();
   }
-  if ((digitalRead(pushButton) != pulldown) && (buttonVar == true)) // vil kjøre når knappen slippes og endrer retur variablen
+  if ((digitalRead(pushButton) != pulldown) && (buttonVar == true))  // vil kjøre når knappen slippes og endrer retur variablen
   {
     val = true;
     if (millis() - timer > trueTime) {
@@ -105,7 +127,7 @@ bool button(int trueTime, bool pulldown) {
   return val;
 }
 
-int* colorRead() { //leser av fargesensoren og returnerer det som ett array
+int* colorRead() {  //leser av fargesensoren og returnerer det som ett array
   static int rgb[3];
   while (!APDS.colorAvailable()) {
     delay(5);
@@ -114,11 +136,11 @@ int* colorRead() { //leser av fargesensoren og returnerer det som ett array
   return rgb;
 }
 
-int* calibrateCol() { //tar 10 målinger over 1,2 sekunder og finner gjennomsnittet
+int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsnittet
   static uint32_t colCalTime = millis();
   static short count;
   static int base[3], prevBase[3];
-  if (button(1300, true) && millis() - colCalTime >= 100) { //hvert 100 millisekund tar den en måling,
+  if (button(1300, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
     Serial.print("Counts: ");
     Serial.println(count);
     int* read;
@@ -129,7 +151,7 @@ int* calibrateCol() { //tar 10 målinger over 1,2 sekunder og finner gjennomsnit
     count++;
     colCalTime = millis();
   }
-  if (count == 10) { // etter 10 målinger vil gjennomsnittet bli lagret
+  if (count == 10) {  // etter 10 målinger vil gjennomsnittet bli lagret
     for (short i; i <= 2; i++) {
       base[i] = (base[i] - prevBase[i]) / 10;
       prevBase[i] = base[i];
@@ -139,7 +161,7 @@ int* calibrateCol() { //tar 10 målinger over 1,2 sekunder og finner gjennomsnit
   return base;
 }
 
-String IDcheck() { //retunerer en komma seperert farge kode med lademengden på slutten
+String IDcheck() {  //retunerer en komma seperert farge kode med lademengden på slutten
   String ID;
   String ID;
   int* baseColor;
@@ -148,14 +170,14 @@ String IDcheck() { //retunerer en komma seperert farge kode med lademengden på 
   curColor = colorRead();
   static int colorCheck[3];
   for (short i; i <= 2; i++) {
-    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24)); //tar kalibrerte farge dataen, mapper det til ønsket omerådet
-    ID += ","; //konverter til string og komma seperer de
+    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24));  //tar kalibrerte farge dataen, mapper det til ønsket omerådet
+    ID += ",";                                                                                       //konverter til string og komma seperer de
   }
   ID += String(kwattsCharged);
   return ID;
 }
 
-void printOnce() { //printer kun når det er ny informasjon, og om den lagra informasjonen har hendt de siste 50 nye avlesningene vil det heller ikke bli printet
+void printOnce() {  //printer kun når det er ny informasjon, og om den lagra informasjonen har hendt de siste 50 nye avlesningene vil det heller ikke bli printet
   static String prevInput = IDcheck();
   static String dataArr[50] = { String(0) };
   static uint32_t dataTime[50] = { millis() };
@@ -166,7 +188,7 @@ void printOnce() { //printer kun når det er ny informasjon, og om den lagra inf
   }
   if (prevInput != IDcheck()) {
     String data = IDcheck();
-    for (int i; i < 10; i++) { //sjekker om nåværende datapunktet er anderledes fra de 10 siste
+    for (int i; i < 10; i++) {  //sjekker om nåværende datapunktet er anderledes fra de 10 siste
       if (data == dataArr[i]) {
         io = true;
         break;
@@ -175,10 +197,10 @@ void printOnce() { //printer kun når det er ny informasjon, og om den lagra inf
         Serial.println("ji");
       }
     }
-    if (!io) { //om ny data er anderledes, send data
-      int length = data.length(); // kilde Geeks for geeks 2023
-      char* sendArr = new char[length + 1]; // -----""-----
-      strcpy(sendArr, data.c_str()); // -----""-----
+    if (!io) {                               //om ny data er anderledes, send data
+      int length = data.length();            // kilde Geeks for geeks 2023
+      char* sendArr = new char[length + 1];  // -----""-----
+      strcpy(sendArr, data.c_str());         // -----""-----
       Serial.println(data);
       client.publish("esp32/output", sendArr);
       dataArr[j] = data;
@@ -195,3 +217,4 @@ void loop() {
 
   printOnce();
 }
+

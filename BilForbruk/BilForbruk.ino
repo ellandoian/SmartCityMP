@@ -18,14 +18,14 @@ Zumo32U4Encoders encoder;
 
 bool pidFlag = true;  //For å kunne tvinge linjefølging av
 byte power, input, courseArrlength;
-float disGlobal, output;
+float disGlobal;
 unsigned long distance;
 int courseArray[30] = {};
 bool distSend = false;
 static int drip[5];  //Trengs for å kunne lese av spesifik sensor
 
-int rightSpeed = 250;
-int leftSpeed = 250;
+int rightSpeed = 200;
+int leftSpeed = 200;
 int previousError;
 float output;
 double integral;

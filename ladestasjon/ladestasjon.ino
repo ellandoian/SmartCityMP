@@ -140,7 +140,6 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
 
 String IDcheck() {  //retunerer en komma seperert farge kode med lademengden på slutten
   String ID;
-  String ID;
   int* baseColor;
   baseColor = calibrateCol();
   int* curColor;
