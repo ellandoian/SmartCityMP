@@ -62,6 +62,7 @@ bom_verdi =  [Val1, 1, Val2, 5, Val3, int(innhold[0]), Val3, 9, int(innhold[2]),
 punkter = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 ekstremalpunkter = ['G', 'H']
 
+#Bruker OS funksjon for å hente start og sluttpunkt fra nettsiden
 with open('/var/www/html/data.txt', 'r') as file:
     # Les fil og split
     contents = file.read()
@@ -72,6 +73,10 @@ with open('/var/www/html/data.txt', 'r') as file:
 start = contents[0]
 stopp = contents[2]
 
+#Kilde brukt for å forstå og lage dijkstras algoritme, tilpasset vårt system:
+#kilde: https://medium.com/@azkardm/dijkstras-algorithm-in-python-finding-the-shortest-path-bcb3bcd4a4ea
+
+#Lager en liste som inneholder lister med alle veiene mellom de forskjellige nodene, inkludert tetthetsdataen.
 linjer = [
     ['A', 'B', bom_verdi[0]],
     ['A', 'C', bom_verdi[1]],
@@ -93,6 +98,8 @@ linjer = [
     ['H', 'E', 0]
 ]
 
+#Oppretter tabellen som i dijkstras algoritme vil oppdataeres med informasjon om den veien som gir lavest verdi til hvert punkt utforsket med algoritmen.
+#Inkludert er den totale verdien på vei til hver node. Denne starter vi med å sette til uendelig stor, vil reduseres underveis.
 tabell = [
     ['A', '', float('inf')],
     ['B', '', float('inf')],
@@ -104,48 +111,61 @@ tabell = [
     ['H', '', float('inf')]
 ]
 
+#Definerer dijkstra-funksjonen med listen over punkter, veier, start og stopp.
 def dijkstra(punkter, linjer, start, stopp):
+
+    #Oppretter lister og variabler brukt i algoritmen. Disse forklares senere i koden.
     ikke_utforsket = punkter
     utforsket = []
     kart = []
     dist1 = 0
     remlist = []
     kart1 = []
+
+    #Her fjerner vi alle ekstremalpunkter som ikke er satt til stopp punkt fra listen over noder som skal utforskes. 
+    #Dette gjøres fordi vi vet vi ikke ønsker å utforske disse nodene, dersom de hadde blitt utforsket ville funksjonen
+    #stoppe opp her.
     for e in range(len(ekstremalpunkter)):
         if ekstremalpunkter[e] != stopp:
             remlist.append(ekstremalpunkter[e])
     ikke_utforsket = [item for item in ikke_utforsket if item not in remlist]
-    
+
+    #Setter første node som utforskes til startpunktet
     for punkt in tabell:
         if punkt[0] == start:
             punkt[2] = 0
 
-    while len(utforsket) <= len(tabell):
-        for vei in linjer:
-            if vei[0] == start:
-                if vei[1] in ikke_utforsket:
-                    for punkt in tabell:
-                        if punkt[0] == vei[1] and vei[2] + dist1 < punkt[2]:
-                            punkt[1] = vei[0]
-                            for p in tabell:
+    #Denne delen kjøres igjennom helt til vi har nådd stopp noden via den veien med lavest verdier.
+    while len(utforsket) <= len(tabell): #Koden kjører til alle noder er utforsket
+        for vei in linjer: #Ser på alle veiene ut fra noden som utforskes
+            if vei[0] == start: #Utforsker først startnoden, dette punktet vil endres underveis når koden er ferdig med å utforske en node.
+                if vei[1] in ikke_utforsket: #Utforsker kun veier som går til ikke-utforskede noder.
+                    for punkt in tabell: #Ser gjennom listene i tabellen.
+                        if punkt[0] == vei[1] and vei[2] + dist1 < punkt[2]: #Finner listen i tabellen som samsvarer med noder koblet til noden vi utforsker via en vei.
+                                                                             #Sjekker at denne veien totalt er raskere enn tidligere utforsket vei til denne noden.
+                            punkt[1] = vei[0] #I det tifellet hvor alt i if-setningen stemmer settes noden som utforskes som vei med lavest verdi til noden koblet til denne med en vei.
+                            for p in tabell: #Denne for-løkken går gjennom tabellen  og finner den allerede totale veien til noden som utforskes.
                                 if p[0] == vei[0]:
-                                    dist = p[2]
-                            punkt[2] = vei[2] + dist
-                            dist1 = punkt[2]
+                                    dist = p[2] #dist-variabelen settes til den totale veien til noden som utforskes.
+                            punkt[2] = vei[2] + dist #veien til noden koblet til noden som utforskes via en vei får en ny verdi i tabellen som tilsvarer den totale veien hit.
+                            dist1 = punkt[2] #dist1-variabelen settes til den nye totale verdien til veien  
 
-        utforsket.append(start)
-        
+        utforsket.append(start) #noden som akkurat ble utforsket settes inn i en liste med alle utforskede noder 
+
+        #Fjerner den utforskede noden fra listen over ikke-utforskede noder:
         for punk in range(len(ikke_utforsket) - 1):
             if ikke_utforsket[punk] == start:
                 del ikke_utforsket[punk]
 
-        lengde = float('inf')
+        Setter nytt startpunkt basert på den noden med en vei til den akkurat utforskede noden med lavest verdi på veien mellom de.
+        lengde = float('inf') 
         for punkt in tabell:
             if punkt[0] in ikke_utforsket:
                 if lengde > punkt[2]:
                     lengde = punkt[2]
                     start = punkt[0]
 
+    #Lager en liste som inneholder nodene som gir den lavest mulige verdien på veien fra start til stopp punktet. Denne listen går motsatt vei, fra stopp til start.
     i = True
     while stopp != '':
         for punkt in tabell:
@@ -156,13 +176,17 @@ def dijkstra(punkter, linjer, start, stopp):
                 kart.append(punkt[0])
                 stopp = punkt[1]
 
+    #inverterer listen slik at den inneholder nodene fra start til stopp.
     kart1 = kart[::-1]
-    return kart1, total_lengde
+    return kart1, total_lengde #returnerer liste med noder i rekkefølge og den totale verdien til denne veien.
 
-def f():
+def f(): #Denne funksjonen tar listen fra dijkstra og omgjør det til en liste med instruksjoner til bilen. Intruksjonene er 1: kjør til høyre, 2: kjør rett fram, 3: kjør til venstre.
+
+    #Definerer to lister som brukes senere i funksjonen
     intKart = []
     dirKart = []
 
+    #Omgjør nodene i listen fra dijkstra til tall. Grunnen til at disse er i par er fordi kjørebanen er symmetrisk, slik at vi halverer mengden kode som trengs for å opprette liten med instruksjoner.
     for i in dijkstra(punkter, linjer, start, stopp)[0]:
         if(i == 'A' or i == 'F'):
             intKart.append(2)
@@ -172,7 +196,9 @@ def f():
             intKart.append(1)
         if(i == 'G' or i == 'H'):
             intKart.append(4)
-        
+
+    #Denne koden er hva man vil kalle hard-coded. Dette ble gjort av tidsmessige årsaker.
+    #Her genereres listen med instruksjoner.
     for i in range(len(intKart)-2):
         if(intKart[i] == 4):
             if(intKart[i+2] == 1):
@@ -211,14 +237,17 @@ def f():
                     dirKart.append(1)
                 else:
                     dirKart.append(2)
+
+    #Dersom vi stopper i punkt G, som er ladestasjonen, gis instrukser som trengs for lading av bilen.
     if(stopp == 'G'):
         dirKart.append(1)
         dirKart.append(5)
-
+        
+    #Dersom vi stopper i punkt H, som er parkeringsplassen, gis instruks som trengs for parkering
     if(stopp == 'H'):
         dirKart.append(6)
 
-    return dirKart
+    return dirKart #returnerer listen med instruksjoner
 
 #MQTT FUNKSJONER HER
 
