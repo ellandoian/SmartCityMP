@@ -24,11 +24,13 @@ int courseArray[30] = {};
 bool distSend = false;
 static int drip[5];  //Trengs for å kunne lese av spesifik sensor
 
-int rightSpeed, leftSpeed= 200;
+int rightSpeed = 250;
+int leftSpeed = 250;
 int previousError;
-double integral, derivative;
+float output;
+double integral;
+double derivative;
 unsigned int lineSensorValues[5];
-
 
 float distMeasure() { //Måler avstand kjørt, 1m kjørt tilsvarer 10km i simuleringen.
   int currRotLeft = encoder.getCountsAndResetLeft();
