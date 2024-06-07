@@ -14,7 +14,6 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
-string bomID = "NAVN PÅ BOM"  //Fyll inn med en unik ID for hver bom.
 
   int pushButton = 25;
 
@@ -77,7 +76,7 @@ void reconnect() {  //Denne funksjonen kobler ESPen til MQTT
   while (!client.connected()) {
     Serial.print("Forsøker å opprette kobling til mqtt...");
     // Attempt to connect
-    if (client.connect(bomID, "njaal", "3Inshallah4")) {
+    if (client.connect("bom1", "njaal", "3Inshallah4")) { //Erstatt bom1 med et unikt navn for hver bom du bruker koden på
       Serial.println("connected");
       // Topic som det subscribes til
       client.subscribe("esp32/output");
@@ -165,7 +164,7 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
   static short count;
   static int base[3], prevBase[3];
 
-  if (button(1200, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
+  if (button(1250, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
     int* read;
     read = colorRead();
     for (short i; i <= 2; i++) {
