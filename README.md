@@ -1,5 +1,5 @@
 # SmartCityMP
-for å kjøre carCode og BilForbruk kreves et litt modifisert versjon av biblioteket til zumo 32U4
+for å kjøre BilForbruk kreves et litt modifisert versjon av biblioteket til zumo 32U4
 pathen til filene er mest sansynlig "documents/arduino/library/zumo32U4/src
 
 i "QTRSensors.cpp" må følgende legges til:
