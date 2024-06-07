@@ -97,6 +97,7 @@ void sendCharge() {   //Sender antall kWh ladet til ESP, sendes en gang når bil
   }
 }
 
+//Kilde: .....
 void lineFollowPID() {  // Bilens linjefølgingskode. Vil følge en teip som representerer veien.
   static short prevPos;
   if (pidFlag) {
@@ -234,7 +235,7 @@ void drivingMain() {      //Konverterer rutedata til bilens kjøremønster.
 }
 
 
-
+//Kilde: .....
 void pidSetup() {   //Kalibrerer bilen til å følge teipen.
   lineSensors.initFiveSensors();
   bool startFlag = true;

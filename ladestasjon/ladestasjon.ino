@@ -4,7 +4,7 @@
 #include <Wire.h>
 
 
-// wifi og wifipassord
+//Wifi og wifipassord
 const char* ssid = "NTNU-IOT";
 const char* password = "";
 
@@ -25,7 +25,7 @@ void setup() {
   APDS.begin();
   pinMode(pushButton, INPUT);
   Serial.println("start");
-  // mqtt settup
+  //MQTT settup
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
@@ -33,7 +33,7 @@ void setup() {
 
 void setup_wifi() {
   delay(10);
-  // Kobler til wifi:
+  //Kobler til wifi:
   Serial.println();
   Serial.print("Kobler til: ");
   Serial.println(ssid);
@@ -51,6 +51,7 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 
+//Kilde: Jiteshsaini 2022
 void callback(char* topic, byte* message, unsigned int length) {  //Funksjon som kalles på når en melding på en abonnert topic kommer inn.
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
@@ -64,15 +65,16 @@ void callback(char* topic, byte* message, unsigned int length) {  //Funksjon som
   kwattsCharged = intValue;
 }
 
+//Kilde: Jiteshsaini 2022
 void reconnect() {  //Denne funksjonen kobler ESPen til MQTT
   client.subscribe("car2Charge");
-  // Looper til en kobling er opprettet
+  //Looper til en kobling er opprettet
   while (!client.connected()) {
     Serial.print("Forsøker å opprette kobling til mqtt...");
-    // Attempt to connect
+    //Forsøker å koble til
     if (client.connect("ESP32Charge", "njaal", "3Inshallah4")) {
       Serial.println("connected");
-      // Topic som det subscribes til
+      //Topic som det subscribes til
       client.subscribe("car2Charge");
     } else {
       Serial.print("mislykket kobling, rc=");
@@ -83,17 +85,16 @@ void reconnect() {  //Denne funksjonen kobler ESPen til MQTT
   }
 }
 
-//kilde, Øian 2024
+//Kilde: Øian 2024
 bool button(int trueTime, bool pulldown) {
-  //trueTime is how long you want the button to return "true", input "true" if using a pulldown system or "false" if pullup
-  //"pushButton" is the physical button, change name accordingly
+  //trueTime er hvor lenge man vil at knappen skal returnere "true"
   static bool val, buttonVar, lastButtonState = false;
   static uint32_t timer;
   if (digitalRead(pushButton) == pulldown) {
-    buttonVar = true;  // setter buttonVar til true mens knappen er klikket ned
+    buttonVar = true;  //Setter buttonVar til true mens knappen er klikket ned
     timer = millis();
   }
-  if ((digitalRead(pushButton) != pulldown) && (buttonVar == true))  // vil kjøre når knappen slippes og endrer retur variablen
+  if ((digitalRead(pushButton) != pulldown) && (buttonVar == true))  //Vil kjøre når knappen slippes og endrer retur variablen
   {
     val = true;
     if (millis() - timer > trueTime) {
@@ -104,7 +105,7 @@ bool button(int trueTime, bool pulldown) {
   return val;
 }
 
-int* colorRead() {  //leser av fargesensoren og returnerer det som ett array
+int* colorRead() {  //Leser av fargesensoren og returnerer det som ett array
   static int rgb[3];
   while (!APDS.colorAvailable()) {
     delay(5);
@@ -113,11 +114,11 @@ int* colorRead() {  //leser av fargesensoren og returnerer det som ett array
   return rgb;
 }
 
-int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsnittet
+int* calibrateCol() {  //Tar 10 målinger over 1.2 sekunder og finner gjennomsnittet
   static uint32_t colCalTime = millis();
   static short count;
   static int base[3], prevBase[3];
-  if (button(1250, true) && millis() - colCalTime >= 100) {  //hvert 100 millisekund tar den en måling,
+  if (button(1250, true) && millis() - colCalTime >= 100) {  //Hvert 100 millisekund tar den en måling
     Serial.print("Counts: ");
     Serial.println(count);
     int* read;
@@ -128,7 +129,7 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
     count++;
     colCalTime = millis();
   }
-  if (count == 10) {  // etter 10 målinger vil gjennomsnittet bli lagret
+  if (count == 10) {  //Etter 10 målinger vil gjennomsnittet bli lagret
     for (short i; i <= 2; i++) {
       base[i] = (base[i] - prevBase[i]) / 10;
       prevBase[i] = base[i];
@@ -138,7 +139,7 @@ int* calibrateCol() {  //tar 10 målinger over 1,2 sekunder og finner gjennomsni
   return base;
 }
 
-String IDcheck() {  //retunerer en komma seperert farge kode med lademengden på slutten
+String IDcheck() {  //Retunerer en kommaseparert fargekode med lademengden på slutten
   String ID;
   int* baseColor;
   baseColor = calibrateCol();
@@ -146,14 +147,14 @@ String IDcheck() {  //retunerer en komma seperert farge kode med lademengden på
   curColor = colorRead();
   static int colorCheck[3];
   for (short i; i <= 2; i++) {
-    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24));  //tar kalibrerte farge dataen, mapper det til ønsket omerådet
-    ID += ",";                                                                                       //konverter til string og komma seperer de
+    ID += String(colorCheck[i] = map(colorCheck[i] = curColor[i] - baseColor[i], -10, 255, 0, 24));  //Tar kalibrerte fargedataen, mapper det til ønsket område
+    ID += ",";                                                                                       //konverter til string og kommaseparer de
   }
   ID += String(kwattsCharged);
   return ID;
 }
 
-void printOnce() {  //printer kun når det er ny informasjon, og om den lagra informasjonen har hendt de siste 50 nye avlesningene vil det heller ikke bli printet
+void printOnce() {  //Printer kun når det er ny informasjon, og om den lagra informasjonen har hendt de siste 50 nye avlesningene vil det heller ikke bli printet
   static String prevInput = IDcheck();
   static String dataArr[50] = { String(0) };
   static uint32_t dataTime[50] = { millis() };
@@ -164,7 +165,7 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
   }
   if (prevInput != IDcheck()) {
     String data = IDcheck();
-    for (int i; i < 10; i++) {  //sjekker om nåværende datapunktet er anderledes fra de 10 siste
+    for (int i; i < 10; i++) {  //Sjekker om nåværende datapunktet er annerledes fra de 10 siste
       if (data == dataArr[i]) {
         io = true;
         break;
@@ -173,8 +174,8 @@ void printOnce() {  //printer kun når det er ny informasjon, og om den lagra in
         Serial.println("ji");
       }
     }
-    if (!io) {                               //om ny data er anderledes, send data
-      int length = data.length();            // kilde Geeks for geeks 2023
+    if (!io) {                               //Om ny data er anderledes, send data
+      int length = data.length();            //Kilde: Geeks for geeks 2023
       char* sendArr = new char[length + 1];  // -----""-----
       strcpy(sendArr, data.c_str());         // -----""-----
       Serial.println(data);
@@ -190,6 +191,5 @@ void loop() {
     reconnect();
   }
   client.loop();
-
   printOnce();
 }

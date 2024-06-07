@@ -39,7 +39,7 @@ void setup_wifi() { //Setter opp wifi tilkobling
   Serial.println(WiFi.localIP());
 }
 
-//
+//Kilde: Jiteshsaini 2022
 void callback(char* topic, byte* message, unsigned int length) { //Funksjon som kalles på når en melding på en abonnert topic kommer inn. 
   Serial.print("Melding ankommet topic: ");
   Serial.print(topic);
@@ -59,6 +59,7 @@ void callback(char* topic, byte* message, unsigned int length) { //Funksjon som 
   Serial.println();
 }
 
+//Kilde: Jiteshsaini 2022
 void reconnect() { //Denne funksjonen kobler ESPen til MQTT
   client.subscribe("web2Zumo");
   // Looper til en kobling er opprettet 
