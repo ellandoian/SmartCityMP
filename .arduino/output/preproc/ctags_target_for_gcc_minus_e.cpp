@@ -59,7 +59,7 @@ void callback(char* topic, byte* message, unsigned int length) { //Funksjon som 
   Serial.println();
 }
 
-void reconnect() { //
+void reconnect() { //Denne funksjonen kobler ESPen til MQTT
   client.subscribe("web2Zumo");
   // Looper til en kobling er opprettet 
   while (!client.connected()) {
