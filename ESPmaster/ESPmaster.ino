@@ -18,8 +18,7 @@ char courseGlobal[]={};
 byte courseLength;
 int send, lastSent;
 
-
-
+//Kilde: Jiteshsaini 2022
 void setup_wifi() { //Setter opp wifi tilkobling
   delay(10);
   Serial.println();

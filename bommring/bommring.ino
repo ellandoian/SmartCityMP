@@ -28,6 +28,7 @@ void setup() {
   client.setCallback(callback);
 }
 
+//Kilde: Jiteshsaini 2022
 void setup_wifi() {
   delay(10);
   //Kobler til wifi:
