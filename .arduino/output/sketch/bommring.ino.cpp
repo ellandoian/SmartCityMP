@@ -20,6 +20,33 @@ string bomID = "NAVN PÅ BOM"  //Fyll inn med en unik ID for hver bom.
 
   int pushButton = 25;
 
+#line 21 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void setup();
+#line 32 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void setup_wifi();
+#line 52 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void callback(char* topic, byte* message, unsigned int length);
+#line 74 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void reconnect();
+#line 94 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+bool button(int trueTime, bool pulldown);
+#line 114 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+short proxRead();
+#line 120 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+short carCount(short proxy);
+#line 131 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+short carCount60s();
+#line 154 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+int * colorRead();
+#line 163 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+int * calibrateCol();
+#line 188 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+String IDcheck();
+#line 206 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void printOnce();
+#line 236 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
+void loop();
+#line 21 "C:\\Users\\Magnus\\Documents\\GitHub\\SmartCityMP\\bommring\\bommring.ino"
 void setup() {
   Serial.begin(115200);
   APDS.begin();
